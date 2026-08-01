@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+Game Log
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ title|default:"Game Log" }}</h1>
+
+{% if logs %}
+
+    {% for log in logs %}
+
+    <a class="game-card" href="{% url 'game_detail' log.game.id %}">
+
+        <div class="game-card-header">
+            <h2>{{ log.game.away_team }}</h2>
+
+            <div class="vs">@</div>
+
+            <h2>{{ log.game.home_team }}</h2>
+        </div>
+
+        <div class="game-meta">
+            {{ log.game.game_date }} • {{ log.game.venue }}
+        </div>
+
+        {% if log.game.home_score is not None and log.game.away_score is not None %}
+            <p class="score">
+                {{ log.game.away_score }} - {{ log.game.home_score }}
+            </p>
+        {% endif %}
+
+        {% if log.watch_type %}
+            <p>📺 {{ log.get_watch_type_display }}</p>
+        {% endif %}
+
+        {% if log.watch_type != "HIGHLIGHTS" %}
+
+            {% if log.quality_rating %}
+                <p>⭐ Game: {{ log.quality_rating }}/5</p>
+            {% endif %}
+
+            {% if log.experience_rating %}
+                <p>🎟️ Experience: {{ log.experience_rating }}/5</p>
+            {% endif %}
+
+            {% if log.review %}
+                <div class="game-review">
+                    "{{ log.review|truncatechars:120 }}"
+                </div>
+            {% endif %}
+
+        {% endif %}
+
+        {% if log.favorite %}
+            <p class="favorite-game">
+                ⭐ Favorited
+            </p>
+        {% endif %}
+
+    </a>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>You haven't logged any games yet.</p>
+
+{% endif %}
+
+{% endblock %}

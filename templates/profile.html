@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ profile_user.username }}
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+
+    <div class="profile-header">
+
+        <div class="profile-avatar">
+
+    {% if profile_user.profile.profile_picture %}
+        <img
+            src="{{ profile_user.profile.profile_picture.url }}"
+            class="profile-picture"
+            alt="Profile Picture">
+    {% else %}
+        👤
+    {% endif %}
+
+</div>
+
+        <div class="profile-details">
+
+            <div class="profile-top-row">
+
+                <h1>{{ profile_user.username }}</h1>
+
+                {% if is_owner %}
+
+                    <a href="{% url 'edit_profile' %}" class="follow-btn">
+                        Edit Profile
+                    </a>
+
+                {% else %}
+
+                    {% if request.user.is_authenticated %}
+                    <form action="{% url 'follow_user' profile_user.username %}" method="post">
+                        {% csrf_token %}
+
+                        {% if is_following %}
+                            <button type="submit" class="follow-btn">
+                                Unfollow
+                            </button>
+                        {% else %}
+                            <button type="submit" class="follow-btn">
+                                Follow
+                            </button>
+                        {% endif %}
+
+                    </form>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+            <p class="profile-bio">
+                Sports Fan
+            </p>
+
+            {% if profile_user.profile.bio %}
+                <p>{{ profile_user.profile.bio }}</p>
+            {% endif %}
+
+            <div class="profile-stats-row">
+
+                <a href="{% url 'followers_list' profile_user.username %}">
+                    <strong>{{ followers_count }}</strong> Followers
+                </a>
+
+                <a href="{% url 'following_list' profile_user.username %}">
+                    <strong>{{ following_count }}</strong> Following
+                </a>
+
+                <span>
+                    <strong>{{ total_logs }}</strong> Games
+                </span>
+
+            </div>
+
+            <div class="favorite-teams">
+
+                {% if profile_user.profile.favorite_mlb_1 %}
+                    <span>⚾ {{ profile_user.profile.favorite_mlb_1 }}</span>
+                {% else %}
+                    <span>⚾ No Favorite MLB Team</span>
+                {% endif %}
+
+                {% if profile_user.profile.favorite_nba_1 %}
+                    <span>🏀 {{ profile_user.profile.favorite_nba_1 }}</span>
+                {% else %}
+                    <span>🏀 No Favorite NBA Team</span>
+                {% endif %}
+
+                {% if profile_user.profile.favorite_nfl_1 %}
+                    <span>🏈 {{ profile_user.profile.favorite_nfl_1 }}</span>
+                {% else %}
+                    <span>🏈 No Favorite NFL Team</span>
+                {% endif %}
+
+                {% if profile_user.profile.favorite_nhl_1 %}
+                    <span>🏒 {{ profile_user.profile.favorite_nhl_1 }}</span>
+                {% else %}
+                    <span>🏒 No Favorite NHL Team</span>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <h2>Stats</h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+    <h3>
+        {% if is_owner %}
+            <a href="{% url 'logged_games' %}" style="text-decoration:none;color:inherit;">
+        {% else %}
+            <a href="{% url 'user_logged_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+        {% endif %}
+            {{ total_logs }}
+        </a>
+    </h3>
+
+    <p>
+        {% if is_owner %}
+            <a href="{% url 'logged_games' %}" style="text-decoration:none;color:inherit;">
+        {% else %}
+            <a href="{% url 'user_logged_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+        {% endif %}
+            Games Logged
+        </a>
+    </p>
+</div>
+
+
+
+        <div class="stat-card">
+            <h3>
+                {% if is_owner %}
+                    <a href="{% url 'live_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_live_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    {{ live_count }}
+                </a>
+            </h3>
+            <p>
+                {% if is_owner %}
+                    <a href="{% url 'live_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_live_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    Live
+                </a>
+            </p>
+        </div>
+
+        <div class="stat-card">
+            <h3>
+                {% if is_owner %}
+                    <a href="{% url 'tv_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_tv_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    {{ tv_count }}
+                </a>
+            </h3>
+            <p>
+                {% if is_owner %}
+                    <a href="{% url 'tv_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_tv_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    TV
+                </a>
+            </p>
+        </div>
+
+        <div class="stat-card">
+            <h3>
+                {% if is_owner %}
+                    <a href="{% url 'replay_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_replay_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    {{ replay_count }}
+                </a>
+            </h3>
+            <p>
+                {% if is_owner %}
+                    <a href="{% url 'replay_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_replay_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    Replay
+                </a>
+            </p>
+        </div>
+
+        <div class="stat-card">
+            <h3>
+                {% if is_owner %}
+                    <a href="{% url 'highlights_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_highlights_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    {{ highlights_count }}
+                </a>
+            </h3>
+            <p>
+                {% if is_owner %}
+                    <a href="{% url 'highlights_games' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_highlights_games' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    Highlights
+                </a>
+            </p>
+        </div>
+
+        <div class="stat-card">
+            <h3>
+                {% if is_owner %}
+                    <a href="{% url 'stadiums' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_stadiums' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    {{ stadium_count }}
+                </a>
+            </h3>
+            <p>
+                {% if is_owner %}
+                    <a href="{% url 'stadiums' %}" style="text-decoration:none;color:inherit;">
+                {% else %}
+                    <a href="{% url 'user_stadiums' profile_user.username %}" style="text-decoration:none;color:inherit;">
+                {% endif %}
+                    Stadiums
+                </a>
+            </p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ favorite_count }}</h3>
+            <p>⭐ Favorited</p>
+        </div>
+<div class="stat-card">
+    <h3>
+        {% if is_owner %}
+            <a href="{% url 'stats' %}" style="text-decoration:none;color:inherit;">
+        {% else %}
+            <a href="{% url 'user_stats' profile_user.username %}" style="text-decoration:none;color:inherit;">
+        {% endif %}
+            📊
+        </a>
+    </h3>
+
+    <p>
+        {% if is_owner %}
+            <a href="{% url 'stats' %}" style="text-decoration:none;color:inherit;">
+        {% else %}
+            <a href="{% url 'user_stats' profile_user.username %}" style="text-decoration:none;color:inherit;">
+        {% endif %}
+            Stats
+        </a>
+    </p>
+</div>
+
+
+</div>
+
+
+
+
+
+<h2>Recent Activity</h2>
+
+
+
+    {% if logs %}
+
+        {% for log in logs %}
+
+            <a class="game-card" href="{% url 'game_detail' log.game.id %}">
+
+                <div class="game-card-header">
+                    <h2>{{ log.game.away_team }}</h2>
+
+                    <div class="vs">@</div>
+
+                    <h2>{{ log.game.home_team }}</h2>
+                </div>
+
+                <div class="game-meta">
+                    {{ log.game.game_date }} • {{ log.game.venue }}
+                </div>
+
+                {% if log.watch_type %}
+                    <p>📺 {{ log.get_watch_type_display }}</p>
+                {% endif %}
+
+                {% if log.quality_rating %}
+                    <p>⭐ Game: {{ log.quality_rating }}/5</p>
+                {% endif %}
+
+                {% if log.experience_rating %}
+                    <p>🎟️ Experience: {{ log.experience_rating }}/5</p>
+                {% endif %}
+
+                {% if log.favorite %}
+                    <p>⭐ Favorited</p>
+                {% endif %}
+
+            </a>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>You haven't logged any games yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

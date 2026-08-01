@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ profile_user.username }} - {{ title }}
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ profile_user.username }}'s {{ title }}</h1>
+
+{% if users %}
+
+    {% for user in users %}
+
+        <a class="game-card" href="{% url 'public_profile' user.username %}">
+            <h2>{{ user.username }}</h2>
+        </a>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No {{ title|lower }} yet.</p>
+
+{% endif %}
+
+{% endblock %}

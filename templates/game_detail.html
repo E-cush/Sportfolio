@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+{{ game.away_team }} @ {{ game.home_team }}
+{% endblock %}
+
+{% block content %}
+
+{% if boxscore %}
+
+<div class="linescore-container">
+
+    <table class="linescore-table">
+        <tr>
+            <th></th>
+            <th>R</th>
+            <th>H</th>
+            <th>E</th>
+        </tr>
+
+        <tr>
+            <td>{{ game.away_team }}</td>
+            <td>{{ boxscore.away.runs }}</td>
+            <td>{{ boxscore.away.hits }}</td>
+            <td>{{ boxscore.away.errors }}</td>
+        </tr>
+
+        <tr>
+            <td>{{ game.home_team }}</td>
+            <td>{{ boxscore.home.runs }}</td>
+            <td>{{ boxscore.home.hits }}</td>
+            <td>{{ boxscore.home.errors }}</td>
+        </tr>
+
+    </table>
+
+</div>
+
+{% endif %}
+
+<div class="game-card-header">
+
+    <h1 class="team-name">
+
+        {% if game.away_logo %}
+            <img src="{% static game.away_logo %}"
+                 class="team-logo"
+                 alt="{{ game.away_team }} logo">
+        {% else %}
+            <span class="team-logo-fallback">⚾</span>
+        {% endif %}
+
+        {{ game.away_team }}
+
+    </h1>
+
+    <span class="vs">@</span>
+
+    <h1 class="team-name">
+
+        {% if game.home_logo %}
+            <img src="{% static game.home_logo %}"
+                 class="team-logo"
+                 alt="{{ game.home_team }} logo">
+        {% else %}
+            <span class="team-logo-fallback">⚾</span>
+        {% endif %}
+
+        {{ game.home_team }}
+
+    </h1>
+
+</div>
+
+<p><strong>Date:</strong> {{ game.game_date }}</p>
+<p><strong>Venue:</strong> {{ game.venue }}</p>
+<p><strong>Status:</strong> {{ game.status }}</p>
+
+{% if game.home_score is not None and game.away_score is not None %}
+<h2 class="score">
+    {{ game.away_score }} - {{ game.home_score }}
+</h2>
+{% endif %}
+{% if average_quality_rating is not None %}
+
+<h2>Community Rating</h2>
+
+<p>
+    ⭐ {{ average_quality_rating }}/5
+</p>
+
+<p>
+    {{ rating_count }} rating{{ rating_count|pluralize }}
+</p>
+
+{% else %}
+
+<h2>Community Rating</h2>
+
+<p>No ratings yet.</p>
+
+{% endif %}
+<hr>
+
+{% if user.is_authenticated %}
+
+    {% if game_log %}
+
+        <h2>Your Log</h2>
+
+        <p><strong>Watch Type:</strong> {{ game_log.get_watch_type_display }}</p>
+
+        {% if game_log.watch_type != "HIGHLIGHTS" %}
+
+            {% if game_log.quality_rating %}
+                <p><strong>Game Quality:</strong> {{ game_log.quality_rating }}/5</p>
+            {% endif %}
+
+            {% if game_log.experience_rating %}
+                <p><strong>Experience:</strong> {{ game_log.experience_rating }}/5</p>
+            {% endif %}
+
+            {% if game_log.review %}
+                <p><strong>Your Review:</strong></p>
+                <p>{{ game_log.review }}</p>
+            {% endif %}
+
+        {% endif %}
+
+        <a href="{% url 'edit_log' game.id %}">
+            <button>Edit Log</button>
+        </a>
+
+    {% else %}
+
+        <form method="post" action="{% url 'log_game' game.id %}">
+            {% csrf_token %}
+            <button type="submit">Log Game</button>
+        </form>
+
+    {% endif %}
+
+{% else %}
+
+    <p>
+        <a href="{% url 'login' %}">Log in</a> to log this game.
+    </p>
+
+{% endif %}
+
+{% endblock %}

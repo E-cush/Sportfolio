@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>🏟 Stadiums Visited</h1>
+
+<p><strong>Total Stadiums:</strong> {{ stadium_count }}</p>
+
+{% if stadiums %}
+    <ul>
+        {% for stadium, count in stadiums %}
+            <li>
+                {{ stadium }} — {{ count }} live game{{ count|pluralize }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven't logged any live games yet.</p>
+{% endif %}
+
+{% endblock %}

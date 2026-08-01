@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ profile_user.username }}
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+
+    <div class="profile-header">
+
+    <div class="profile-avatar">
+        👤
+    </div>
+
+    <div class="profile-details">
+
+        <div class="profile-top-row">
+
+            <h1>{{ profile_user.username }}</h1>
+
+           {% if is_owner %}
+
+    <a href="{% url 'edit_profile' %}" class="follow-btn">
+        Edit Profile
+    </a>
+
+{% else %}
+
+    {% if request.user.is_authenticated %}
+    <form action="{% url 'follow_user' profile_user.username %}" method="post">
+        {% csrf_token %}
+
+        {% if is_following %}
+            <button type="submit" class="follow-btn">Unfollow</button>
+        {% else %}
+            <button type="submit" class="follow-btn">Follow</button>
+        {% endif %}
+
+    </form>
+    {% endif %}
+
+{% endif %}
+
+        </div>
+
+        <p class="profile-bio">
+            Sports Fan
+        </p>
+
+        <div class="profile-stats-row">
+
+    <a href="{% url 'followers_list' profile_user.username %}">
+        <strong>{{ followers_count }}</strong> Followers
+    </a>
+
+    <a href="{% url 'following_list' profile_user.username %}">
+        <strong>{{ following_count }}</strong> Following
+    </a>
+
+    <span>
+        <strong>{{ total_logs }}</strong> Games
+    </span>
+
+</div>
+
+        <div class="favorite-teams">
+
+    {% if profile_user.profile.favorite_mlb_1 %}
+        <span>⚾ {{ profile_user.profile.favorite_mlb_1 }}</span>
+    {% else %}
+        <span>⚾ No Favorite MLB Team</span>
+    {% endif %}
+
+    {% if profile_user.profile.favorite_nba_1 %}
+        <span>🏀 {{ profile_user.profile.favorite_nba_1 }}</span>
+    {% else %}
+        <span>🏀 No Favorite NBA Team</span>
+    {% endif %}
+
+    {% if profile_user.profile.favorite_nfl_1 %}
+        <span>🏈 {{ profile_user.profile.favorite_nfl_1 }}</span>
+    {% else %}
+        <span>🏈 No Favorite NFL Team</span>
+    {% endif %}
+
+    {% if profile_user.profile.favorite_nhl_1 %}
+        <span>🏒 {{ profile_user.profile.favorite_nhl_1 }}</span>
+    {% else %}
+        <span>🏒 No Favorite NHL Team</span>
+    {% endif %}
+
+</div>
+
+    </div>
+
+</div>
+
+    <h2>Stats</h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3>{{ total_logs }}</h3>
+            <p>Games Logged</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ live_count }}</h3>
+            <p>Live</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ tv_count }}</h3>
+            <p>TV</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ replay_count }}</h3>
+            <p>Replay</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ highlights_count }}</h3>
+            <p>Highlights</p>
+        </div>
+
+    </div>
+
+    <h2>Recent Activity</h2>
+
+    {% if logs %}
+
+        {% for log in logs %}
+
+            <a class="game-card" href="{% url 'game_detail' log.game.id %}">
+
+                <div class="game-card-header">
+                    <h2>{{ log.game.away_team }}</h2>
+
+                    <div class="vs">@</div>
+
+                    <h2>{{ log.game.home_team }}</h2>
+                </div>
+
+                <div class="game-meta">
+                    {{ log.game.game_date }} • {{ log.game.venue }}
+                </div>
+
+                {% if log.watch_type %}
+                    <p>📺 {{ log.get_watch_type_display }}</p>
+                {% endif %}
+
+                {% if log.quality_rating %}
+                    <p>⭐ Game: {{ log.quality_rating }}/5</p>
+                {% endif %}
+
+                {% if log.experience_rating %}
+                    <p>🎟️ Experience: {{ log.experience_rating }}/5</p>
+                {% endif %}
+
+            </a>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>This user hasn't logged any games yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

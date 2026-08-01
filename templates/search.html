@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Games{% endblock %}
+
+{% block content %}
+
+<h1>Browse Games</h1>
+
+<p>Select a league to explore every game.</p>
+
+<div class="league-grid">
+
+    <a href="{% url 'mlb_games' %}" class="league-card">
+        <h2>⚾ MLB</h2>
+        <p>Major League Baseball</p>
+    </a>
+
+    <a href="#" class="league-card">
+        <h2>🏀 NBA</h2>
+        <p>National Basketball Association</p>
+    </a>
+
+    <a href="#" class="league-card">
+        <h2>🏈 NFL</h2>
+        <p>National Football League</p>
+    </a>
+
+    <a href="#" class="league-card">
+        <h2>🏒 NHL</h2>
+        <p>National Hockey League</p>
+    </a>
+
+</div>
+
+<form method="get">
+    <input
+        type="text"
+        name="q"
+        placeholder="Search by team or season..."
+        value="{{ query }}"
+    >
+    <button type="submit">Search</button>
+</form>
+
+{% if games %}
+    <h2>Games</h2>
+
+    {% for game in games %}
+
+<a href="{% url 'game_detail' game.id %}" class="game-card">
+
+    <div class="game-card-header">
+        <h2>{{ game.away_team }}</h2>
+
+        <span class="vs">@</span>
+
+        <h2>{{ game.home_team }}</h2>
+    </div>
+
+    <div class="game-meta">
+        {{ game.game_date }}
+    </div>
+
+    {% if game.home_score is not None and game.away_score is not None %}
+        <div class="score">
+            {{ game.away_score }} - {{ game.home_score }}
+        </div>
+    {% endif %}
+
+    <p>
+        {% if game.is_upcoming %}
+            Upcoming
+        {% else %}
+            {{ game.status }}
+        {% endif %}
+    </p>
+
+</a>
+
+{% endfor %}
+
+{% elif query %}
+    <p>No games found.</p>
+{% endif %}
+
+{% if games.has_other_pages %}
+
+<div style="text-align:center; margin:40px 0;">
+
+    {% if games.has_previous %}
+        <a href="?q={{ query }}&page={{ games.previous_page_number }}">
+            ← Previous
+        </a>
+    {% endif %}
+
+    <span style="margin:0 20px;">
+        Page {{ games.number }} of {{ games.paginator.num_pages }}
+    </span>
+
+    {% if games.has_next %}
+        <a href="?q={{ query }}&page={{ games.next_page_number }}">
+            Next →
+        </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+Find People
+{% endblock %}
+
+{% block content %}
+
+<h1>Search for fans</h1>
+
+<form method="get">
+    <input
+        type="text"
+        name="q"
+        placeholder="Search usernames..."
+        value="{{ query }}"
+    >
+    <button type="submit">Search</button>
+</form>
+
+<br>
+
+{% if users %}
+
+    {% for user in users %}
+
+        <div class="game-card">
+            <h2>{{ user.username }}</h2>
+
+            <a href="{% url 'public_profile' user.username %}">
+                View Profile
+            </a>
+        </div>
+
+        <br>
+
+    {% endfor %}
+
+{% elif query %}
+
+    <p>No users found.</p>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+Stats
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+
+<h1>📊 My Stats</h1>
+
+<h2>Overall</h2>
+
+<p>⭐ Average Game Rating:
+{{ overall_game|floatformat:1 }}/5</p>
+
+<p>🎟️ Average Experience Rating:
+{{ overall_experience|floatformat:1 }}/5</p>
+
+<hr>
+
+<h2>⚾ {{ mlb_team_name }}</h2>
+
+<p>Games Logged: {{ mlb.games }}</p>
+<p>⭐ Average Game Rating:
+{{ mlb.game_rating|floatformat:1 }}/5</p>
+<p>🎟️ Average Experience Rating:
+{{ mlb.experience_rating|floatformat:1 }}/5</p>
+
+<hr>
+
+<h2>🏀 {{ nba_team_name }}</h2>
+
+<p>Games Logged: {{ nba.games }}</p>
+<p>⭐ Average Game Rating:
+{{ nba.game_rating|floatformat:1 }}/5</p>
+<p>🎟️ Average Experience Rating:
+{{ nba.experience_rating|floatformat:1 }}/5</p>
+
+<hr>
+
+<h2>🏈 {{ nfl_team_name }}</h2>
+
+<p>Games Logged: {{ nfl.games }}</p>
+<p>⭐ Average Game Rating:
+{{ nfl.game_rating|floatformat:1 }}/5</p>
+<p>🎟️ Average Experience Rating:
+{{ nfl.experience_rating|floatformat:1 }}/5</p>
+
+<hr>
+
+<h2>🏒 {{ nhl_team_name }}</h2>
+
+<p>Games Logged: {{ nhl.games }}</p>
+<p>⭐ Average Game Rating:
+{{ nhl.game_rating|floatformat:1 }}/5</p>
+<p>🎟️ Average Experience Rating:
+{{ nhl.experience_rating|floatformat:1 }}/5</p>
+
+</div>
+
+{% endblock %}

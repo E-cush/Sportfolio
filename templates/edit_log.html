@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Log
+{% endblock %}
+
+{% block content %}
+
+<h1>Edit Log</h1>
+
+<h2>{{ game.away_team }} @ {{ game.home_team }}</h2>
+
+<p>
+    {{ game.game_date }} • {{ game.venue }}
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label>Watch Type</label><br>
+        {{ form.watch_type }}
+    </p>
+
+    <p>
+        <label>Quality Rating</label><br>
+        {{ form.quality_rating }}
+    </p>
+
+    <p>
+        <label>Experience Rating</label><br>
+        {{ form.experience_rating }}
+    </p>
+
+    <p>
+        <label>
+            {{ form.favorite }}
+            ⭐ Favorite Game
+        </label>
+    </p>
+
+    <p>
+        <label>Review</label><br>
+        {{ form.review }}
+    </p>
+
+    <button type="submit">Save Log</button>
+
+</form>
+
+{% endblock %}

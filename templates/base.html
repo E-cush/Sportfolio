@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sportfolio{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<nav>
+    <h2><a href="{% url 'home' %}" class="logo-link">
+    🏆 Sportfolio
+</a></h2>
+
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li class="dropdown">
+    <a href="/search/">Games ▾</a>
+
+    <div class="dropdown-content">
+
+        <input type="text" placeholder="Search games...">
+
+        <a href="{% url 'mlb_games' %}">⚾ MLB</a>
+        <a href="{% url 'nba_games' %}">🏀 NBA</a>
+        <a href="{% url 'coming_soon' %}">🏈 NFL</a>
+        <a href="{% url 'coming_soon' %}">🏒 NHL</a>
+
+    </div>
+</li>
+        <li><a href="{% url 'coming_soon' %}">Lists</a></li>
+        <li class="dropdown">
+    <button class="dropbtn">
+        Profile ▼
+    </button>
+
+    <div class="dropdown-content">
+        <a href="{% url 'profile' %}">👤 My Profile</a>
+        <a href="{% url 'diary' %}">📖 Game Log</a>
+        <a href="{% url 'user_search' %}">👥 People</a>
+    </div>
+</li>
+        {% if user.is_authenticated %}
+
+<li class="dropdown">
+    <button class="dropbtn">
+        {{ user.username }} ▼
+    </button>
+
+    <div class="dropdown-content">
+
+        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="dropdown-button">
+                Log Out
+            </button>
+        </form>
+
+    </div>
+</li>
+
+{% else %}
+
+<li>
+    <a href="{% url 'login' %}">Login</a>
+</li>
+
+{% endif %}
+    </ul>
+</nav>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const soccerButton = document.getElementById("soccerButton");
+    const soccerMenu = document.getElementById("soccerMenu");
+
+    if (!soccerButton || !soccerMenu) {
+        return;
+    }
+
+    soccerButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+        soccerMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", function () {
+        soccerMenu.classList.remove("show");
+    });
+
+    soccerMenu.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+});
+</script>
+
+</body>
+</html>
