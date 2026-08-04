@@ -11,8 +11,8 @@ from .team_choices import (
 
 
 class Game(models.Model):
-    game_id = models.IntegerField(unique=True)
-    status = models.CharField(max_length=20)
+    game_id = models.BigIntegerField(unique=True)
+    status = models.CharField(max_length=40)
     league = models.CharField(max_length=20)
     competition = models.CharField(
         max_length=100,
