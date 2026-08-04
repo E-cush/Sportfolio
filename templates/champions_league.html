@@ -141,6 +141,31 @@
             </option>
         </select>
     </p>
+    <p>
+    <label>Sort By</label><br>
+
+    <select name="sort">
+        <option value="newest" {% if sort == "newest" %}selected{% endif %}>
+            Newest
+        </option>
+
+        <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>
+            Oldest
+        </option>
+
+        <option value="highest" {% if sort == "highest" %}selected{% endif %}>
+            Highest Rated
+        </option>
+
+        <option value="lowest" {% if sort == "lowest" %}selected{% endif %}>
+            Lowest Rated
+        </option>
+
+        <option value="watched" {% if sort == "watched" %}selected{% endif %}>
+            Most Watched
+        </option>
+    </select>
+</p>
 
     <button type="submit">Search</button>
 
@@ -155,8 +180,7 @@
 <div style="text-align:center; margin:25px 0;">
 
     {% if games.has_previous %}
-        <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&page={{ games.previous_page_number }}">
-            ← Previous
+    <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&sort={{ sort }}&page={{ games.previous_page_number }}">            ← Previous
         </a>
     {% endif %}
 
@@ -165,8 +189,7 @@
     </span>
 
     {% if games.has_next %}
-        <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&page={{ games.next_page_number }}">
-            Next →
+    <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&sort={{ sort }}&page={{ games.next_page_number }}">            Next →
         </a>
     {% endif %}
 
@@ -235,8 +258,7 @@
 <div style="text-align:center; margin:25px 0;">
 
     {% if games.has_previous %}
-        <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&page={{ games.previous_page_number }}">
-            ← Previous
+    <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&sort={{ sort }}&page={{ games.previous_page_number }}">            ← Previous
         </a>
     {% endif %}
 
@@ -245,8 +267,7 @@
     </span>
 
     {% if games.has_next %}
-        <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&page={{ games.next_page_number }}">
-            Next →
+    <a href="?team={{ team }}&opponent={{ opponent }}&month_from={{ month_from }}&month_to={{ month_to }}&day_from={{ day_from }}&day_to={{ day_to }}&year_from={{ year_from }}&year_to={{ year_to }}&season_type={{ season_type }}&sort={{ sort }}&page={{ games.next_page_number }}">            Next →
         </a>
     {% endif %}
 

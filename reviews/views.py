@@ -6,7 +6,7 @@ from .team_aliases import NFL_ALIASES, MLB_ALIASES, NBA_ALIASES
 from django.contrib.auth.models import User
 from .models import Game, GameLog, Follow, Profile
 from .forms import GameLogForm, ProfileForm
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.core.paginator import Paginator
 
 def home(request):
@@ -52,6 +52,7 @@ def mlb_games(request):
     year_from = request.GET.get("year_from", "")
     year_to = request.GET.get("year_to", "")
     season_type = request.GET.get("season_type", "")
+    sort = request.GET.get("sort", "newest")
     games = Game.objects.filter(league="MLB")
 
     if team:
@@ -87,6 +88,31 @@ def mlb_games(request):
     if season_type:
         games = games.filter(game_type=season_type)
 
+    # Sorting
+    if sort == "newest":
+        games = games.order_by("-game_date")
+
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+
+    else:
+        games = games.order_by("-game_date")
+
     if not any([
         team,
         opponent,
@@ -115,6 +141,7 @@ def mlb_games(request):
         "year_from": year_from,
         "year_to": year_to,
         "season_type": season_type,
+        "sort": sort,
     })
 
 
@@ -135,7 +162,7 @@ def nba_games(request):
     year_to = request.GET.get("year_to", "")
 
     season_type = request.GET.get("season_type", "")
-
+    sort = request.GET.get("sort", "newest")
     games = Game.objects.filter(league="NBA")
 
     if team:
@@ -170,7 +197,30 @@ def nba_games(request):
 
     if season_type:
         games = games.filter(game_type=season_type)
+    # Sorting
+    if sort == "newest":
+        games = games.order_by("-game_date")
 
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+
+    else:
+        games = games.order_by("-game_date")
     if not any([
         team,
         opponent,
@@ -199,6 +249,7 @@ def nba_games(request):
         "year_from": year_from,
         "year_to": year_to,
         "season_type": season_type,
+        "sort": sort,
     })
 def nfl_games(request):
     team = request.GET.get("team", "")
@@ -217,7 +268,7 @@ def nfl_games(request):
     year_to = request.GET.get("year_to", "")
 
     season_type = request.GET.get("season_type", "")
-
+    sort = request.GET.get("sort", "newest")
     games = Game.objects.filter(league="NFL")
 
     if team:
@@ -253,6 +304,31 @@ def nfl_games(request):
     if season_type:
         games = games.filter(game_type=season_type)
 
+    # Sorting
+    if sort == "newest":
+        games = games.order_by("-game_date")
+
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+
+    else:
+        games = games.order_by("-game_date")
+
     if not any([
         team,
         opponent,
@@ -281,6 +357,7 @@ def nfl_games(request):
         "year_from": year_from,
         "year_to": year_to,
         "season_type": season_type,
+        "sort": sort,
     })
 
 def champions_league(request):
@@ -297,7 +374,7 @@ def champions_league(request):
     year_to = request.GET.get("year_to", "")
 
     season_type = request.GET.get("season_type", "")
-
+    sort = request.GET.get("sort", "newest")
     games = Game.objects.filter(
         league="Soccer",
         competition="UEFA Champions League"
@@ -336,6 +413,31 @@ def champions_league(request):
     if season_type:
         games = games.filter(game_type=season_type)
 
+    # Sorting
+    if sort == "newest":
+        games = games.order_by("-game_date")
+
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+
+    else:
+        games = games.order_by("-game_date")
+
     if not any([
         team,
         opponent,
@@ -364,6 +466,7 @@ def champions_league(request):
         "year_from": year_from,
         "year_to": year_to,
         "season_type": season_type,
+        "sort": sort,
     })
 
 def game_detail(request, game_id):
