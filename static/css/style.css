@@ -804,3 +804,90 @@ button:hover {
     }
 
 }
+
+/* ==========================
+   Mobile Homepage
+========================== */
+
+@media (max-width: 768px) {
+
+    .hero {
+        padding: 55px 12px 35px;
+    }
+
+    .hero h1 {
+        font-size: 2.1rem;
+        line-height: 1.1;
+    }
+
+    .hero h2 {
+        font-size: 1rem;
+        line-height: 1.4;
+        margin-top: 10px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+        width: 80%;
+        box-sizing: border-box;
+        padding: 11px 18px;
+        font-size: 14px;
+    }
+
+    .league-section {
+        margin: 40px auto;
+        padding: 0 12px;
+    }
+
+    .league-section h2 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+
+    .league-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .league-card {
+        padding: 18px 15px;
+        border-radius: 12px;
+    }
+
+    .league-icon {
+        font-size: 2.3rem;
+        margin-bottom: 8px;
+    }
+
+    .league-card h3 {
+        font-size: 1.15rem;
+    }
+
+    .features-section {
+        margin: 45px auto;
+        padding: 0 12px;
+    }
+
+    .features-section h2 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .feature-card {
+        padding: 20px 15px;
+    }
+
+}
