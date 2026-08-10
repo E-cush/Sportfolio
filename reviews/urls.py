@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path("", views.home, name="home"),
-
+    path("comment/<int:comment_id>/delete/", views.delete_comment, name="delete_comment"),
     # Game search
     path("search/", views.search, name="search"),
 

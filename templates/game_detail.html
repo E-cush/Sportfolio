@@ -8,6 +8,10 @@
 
 {% block content %}
 
+<div class="game-layout">
+
+    <div class="game-main">
+
 {% if boxscore %}
 
 <div class="linescore-container">
@@ -149,5 +153,78 @@
     </p>
 
 {% endif %}
+
+    </div>
+
+    <div class="discussion-sidebar">
+
+        <h2>💬 Discussion</h2>
+
+        {% if user.is_authenticated %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <textarea
+                name="text"
+                rows="5"
+                class="comment-box"
+                placeholder="Join the discussion..."
+            ></textarea>
+
+            <br><br>
+
+            <button type="submit">
+                Post Comment
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <p>
+            <a href="{% url 'login' %}">Log in</a>
+            to join the discussion.
+        </p>
+
+        {% endif %}
+
+        <hr>
+
+        {% for comment in comments %}
+
+<div class="comment">
+
+    <strong>{{ comment.user.username }}</strong>
+
+    <br>
+
+    <small>
+        {{ comment.created_at|date:"M j, Y g:i A" }}
+    </small>
+
+    <p>{{ comment.text|linebreaks }}</p>
+
+    {% if user.is_authenticated and comment.user == user %}
+        <form method="post" action="{% url 'delete_comment' comment.id %}">
+            {% csrf_token %}
+            <button type="submit">Delete</button>
+        </form>
+    {% endif %}
+
+</div>
+
+<hr>
+
+{% empty %}
+
+<p>No comments yet.</p>
+
+{% endfor %}
+
+    </div>
+
+</div>
 
 {% endblock %}

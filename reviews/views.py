@@ -4,10 +4,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .team_aliases import NFL_ALIASES, MLB_ALIASES, NBA_ALIASES
 from django.contrib.auth.models import User
-from .models import Game, GameLog, Follow, Profile
+from .models import Game, GameLog, Follow, Profile, Comment
 from .forms import GameLogForm, ProfileForm
 from django.db.models import Avg, Count
 from django.core.paginator import Paginator
+from .forms import CommentForm
+
 
 def home(request):
     return render(request, "home.html")
@@ -502,6 +504,22 @@ def game_detail(request, game_id):
     if game.league == "MLB":
         boxscore = get_linescore(game.game_id)
 
+    comments = Comment.objects.filter(game=game)
+
+    if request.method == "POST" and request.user.is_authenticated:
+        comment_form = CommentForm(request.POST)
+
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.game = game
+            comment.user = request.user
+            comment.save()
+
+            return redirect("game_detail", game_id=game.id)
+
+    else:
+        comment_form = CommentForm()
+
     return render(
         request,
         "game_detail.html",
@@ -511,8 +529,26 @@ def game_detail(request, game_id):
             "boxscore": boxscore,
             "average_quality_rating": average_quality_rating,
             "rating_count": rating_count,
+            "comments": comments,
+            "comment_form": comment_form,
         },
     )
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(
+        Comment,
+        id=comment_id,
+        user=request.user,
+    )
+
+    game_id = comment.game.id
+
+    if request.method == "POST":
+        comment.delete()
+
+    return redirect("game_detail", game_id=game_id)
+
 @login_required
 def log_game(request, game_id):
     game = get_object_or_404(Game, id=game_id)
