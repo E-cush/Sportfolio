@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Today's Games | Sportfolio{% endblock %}
+
+{% block content %}
+
+<div class="todays-games-page">
+
+    <div class="todays-games-header">
+
+        <h1>Today's Games</h1>
+
+        <p>{{ today|date:"F j, Y" }}</p>
+
+    </div>
+
+
+    <!-- MLB -->
+
+    <section class="todays-league-section">
+
+        <h2>MLB</h2>
+
+        <div class="today-games-grid">
+
+            {% for game in mlb_games %}
+
+            <a href="{% url 'game_detail' game.id %}" class="today-game-card">
+
+                <div class="today-game-league">
+                    MLB
+                </div>
+
+                <div class="today-game-teams">
+
+                    <div class="today-team">
+
+                        {% if game.away_logo %}
+                            <img src="{% static game.away_logo %}"
+                                 alt="{{ game.away_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.away_team }}</span>
+
+                    </div>
+
+                    <div class="today-vs">@</div>
+
+                    <div class="today-team">
+
+                        {% if game.home_logo %}
+                            <img src="{% static game.home_logo %}"
+                                 alt="{{ game.home_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.home_team }}</span>
+
+                    </div>
+
+                </div>
+
+                <div class="today-game-status">
+
+                    {% if game.is_upcoming %}
+                        Upcoming
+                    {% else %}
+                        {{ game.status }}
+                    {% endif %}
+
+                </div>
+
+                {% if game.home_score is not None and game.away_score is not None %}
+                    <div class="today-game-score">
+                        {{ game.away_score }} - {{ game.home_score }}
+                    </div>
+                {% endif %}
+
+            </a>
+
+            {% empty %}
+
+            <p class="today-league-empty">
+                No MLB games today.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- NBA -->
+
+    <section class="todays-league-section">
+
+        <h2>NBA</h2>
+
+        <div class="today-games-grid">
+
+            {% for game in nba_games %}
+
+            <a href="{% url 'game_detail' game.id %}" class="today-game-card">
+
+                <div class="today-game-league">
+                    NBA
+                </div>
+
+                <div class="today-game-teams">
+
+                    <div class="today-team">
+
+                        {% if game.away_logo %}
+                            <img src="{% static game.away_logo %}"
+                                 alt="{{ game.away_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.away_team }}</span>
+
+                    </div>
+
+                    <div class="today-vs">@</div>
+
+                    <div class="today-team">
+
+                        {% if game.home_logo %}
+                            <img src="{% static game.home_logo %}"
+                                 alt="{{ game.home_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.home_team }}</span>
+
+                    </div>
+
+                </div>
+
+                <div class="today-game-status">
+
+                    {% if game.is_upcoming %}
+                        Upcoming
+                    {% else %}
+                        {{ game.status }}
+                    {% endif %}
+
+                </div>
+
+                {% if game.home_score is not None and game.away_score is not None %}
+                    <div class="today-game-score">
+                        {{ game.away_score }} - {{ game.home_score }}
+                    </div>
+                {% endif %}
+
+            </a>
+
+            {% empty %}
+
+            <p class="today-league-empty">
+                No NBA games today.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- NFL -->
+
+    <section class="todays-league-section">
+
+        <h2>NFL</h2>
+
+        <div class="today-games-grid">
+
+            {% for game in nfl_games %}
+
+            <a href="{% url 'game_detail' game.id %}" class="today-game-card">
+
+                <div class="today-game-league">
+                    NFL
+                </div>
+
+                <div class="today-game-teams">
+
+                    <div class="today-team">
+
+                        {% if game.away_logo %}
+                            <img src="{% static game.away_logo %}"
+                                 alt="{{ game.away_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.away_team }}</span>
+
+                    </div>
+
+                    <div class="today-vs">@</div>
+
+                    <div class="today-team">
+
+                        {% if game.home_logo %}
+                            <img src="{% static game.home_logo %}"
+                                 alt="{{ game.home_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.home_team }}</span>
+
+                    </div>
+
+                </div>
+
+                <div class="today-game-status">
+
+                    {% if game.is_upcoming %}
+                        Upcoming
+                    {% else %}
+                        {{ game.status }}
+                    {% endif %}
+
+                </div>
+
+                {% if game.home_score is not None and game.away_score is not None %}
+                    <div class="today-game-score">
+                        {{ game.away_score }} - {{ game.home_score }}
+                    </div>
+                {% endif %}
+
+            </a>
+
+            {% empty %}
+
+            <p class="today-league-empty">
+                No NFL games today.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- Champions League -->
+
+    <section class="todays-league-section">
+
+        <h2>Champions League</h2>
+
+        <div class="today-games-grid">
+
+            {% for game in champions_league_games %}
+
+            <a href="{% url 'game_detail' game.id %}" class="today-game-card">
+
+                <div class="today-game-league">
+                    UEFA Champions League
+                </div>
+
+                <div class="today-game-teams">
+
+                    <div class="today-team">
+
+                        {% if game.away_logo %}
+                            <img src="{% static game.away_logo %}"
+                                 alt="{{ game.away_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.away_team }}</span>
+
+                    </div>
+
+                    <div class="today-vs">@</div>
+
+                    <div class="today-team">
+
+                        {% if game.home_logo %}
+                            <img src="{% static game.home_logo %}"
+                                 alt="{{ game.home_team }} logo">
+                        {% endif %}
+
+                        <span>{{ game.home_team }}</span>
+
+                    </div>
+
+                </div>
+
+                <div class="today-game-status">
+
+                    {% if game.is_upcoming %}
+                        Upcoming
+                    {% else %}
+                        {{ game.status }}
+                    {% endif %}
+
+                </div>
+
+                {% if game.home_score is not None and game.away_score is not None %}
+                    <div class="today-game-score">
+                        {{ game.away_score }} - {{ game.home_score }}
+                    </div>
+                {% endif %}
+
+            </a>
+
+            {% empty %}
+
+            <p class="today-league-empty">
+                No Champions League games today.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

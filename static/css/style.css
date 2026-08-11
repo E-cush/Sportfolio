@@ -1010,6 +1010,64 @@ button:hover {
 
 }
 
+/* Today's Games Heading */
+
+.today-games-heading {
+    display: inline-block;
+    margin: 0 auto 30px;
+    padding: 14px 28px;
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.today-games-heading:hover {
+    border-color: #00c853;
+    transform: translateY(-2px);
+}
+
+.today-games-heading h2 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.today-games-heading h2 a,
+.today-games-heading h2 a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+.today-games-heading h2 a:hover,
+.today-games-heading h2 a:active {
+    color: white;
+    text-decoration: none;
+}
+
+.today-games-heading h2 {
+    margin: 0;
+    font-size: 2rem;
+    transition: transform 0.2s ease;
+}
+
+.today-games-heading h2:hover {
+    transform: translateY(-2px);
+}
+
+.today-games-heading h2 a,
+.today-games-heading h2 a:visited {
+    color: white;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.today-games-heading h2 a:hover,
+.today-games-heading h2 a:active {
+    color: #00c853;
+    text-decoration: none;
+}
+
 /* Today's Games */
 
 .today-games-grid {
@@ -1144,4 +1202,321 @@ button:hover {
     .today-game-score {
         font-size: 16px;
     }
+}
+
+/* ==========================
+   Today's Games Page
+========================== */
+
+.todays-games-page {
+    max-width: 1200px;
+    margin: 60px auto 100px;
+    padding: 0 20px;
+}
+
+.todays-games-header {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.todays-games-header h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.todays-games-header p {
+    color: #999;
+    font-size: 1.1rem;
+}
+
+.todays-league-section {
+    margin-bottom: 70px;
+}
+
+.todays-league-section h2 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #333;
+}
+
+.todays-league-section .today-games-grid {
+    margin: 0;
+    max-width: none;
+}
+
+.today-league-empty {
+    color: #888;
+    font-size: 1rem;
+    margin: 10px 0;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .todays-games-page {
+        margin: 40px auto 70px;
+        padding: 0 15px;
+    }
+
+    .todays-games-header {
+        margin-bottom: 45px;
+    }
+
+    .todays-games-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .todays-league-section {
+        margin-bottom: 50px;
+    }
+
+    .todays-league-section h2 {
+        font-size: 1.5rem;
+    }
+
+}
+
+/* ==========================
+   MLB Game Search
+========================== */
+
+.game-search-panel {
+    width: min(900px, calc(100% - 40px));
+    margin: 45px auto 70px;
+    padding: 35px 40px 40px;
+
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 16px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+}
+
+
+.game-search-title {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.game-search-title h2 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+}
+
+.game-search-title p {
+    margin: 0;
+    color: #999;
+    font-size: .95rem;
+}
+
+
+.game-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+
+.search-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+
+.date-row {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+
+.search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+.search-field label {
+    color: #ddd;
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+
+.search-field input,
+.search-field select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 11px 12px;
+
+    background: #121212;
+    color: white;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+
+    font-size: .95rem;
+
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.search-field input::placeholder {
+    color: #777;
+}
+
+
+.search-field input:focus,
+.search-field select:focus {
+    border-color: #00c853;
+    box-shadow: 0 0 0 2px rgba(0, 200, 83, .12);
+}
+
+
+.search-section-label {
+    color: #00c853;
+
+    font-size: .8rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .08em;
+
+    padding-bottom: 8px;
+
+    border-bottom: 1px solid #333;
+}
+
+
+/* Upcoming Games Checkbox */
+
+.upcoming-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    color: #ddd;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+
+.upcoming-checkbox input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.custom-checkbox {
+    width: 19px;
+    height: 19px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #121212;
+
+    border: 1px solid #555;
+    border-radius: 5px;
+
+    transition: all .2s ease;
+}
+
+
+.upcoming-checkbox input:checked + .custom-checkbox {
+    background: #00c853;
+    border-color: #00c853;
+}
+
+
+.upcoming-checkbox input:checked + .custom-checkbox::after {
+    content: "✓";
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+.upcoming-checkbox:hover .custom-checkbox {
+    border-color: #00c853;
+}
+
+
+/* Search Button */
+
+.search-submit {
+    align-self: center;
+
+    margin-top: 5px;
+
+    padding: 13px 35px;
+
+    background: #00c853;
+    color: white;
+
+    border: none;
+    border-radius: 9px;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+}
+
+
+.search-submit:hover {
+    background: #00a844;
+    transform: translateY(-2px);
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .game-search-panel {
+        width: calc(100% - 30px);
+
+        padding: 25px 20px 30px;
+
+        margin: 35px auto 50px;
+    }
+
+
+    .search-row,
+    .date-row {
+        grid-template-columns: 1fr;
+    }
+
+
+    .game-search-title h2 {
+        font-size: 1.5rem;
+    }
+
+
+    .search-submit {
+        width: 100%;
+    }
+
 }

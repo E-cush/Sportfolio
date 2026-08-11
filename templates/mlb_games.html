@@ -10,172 +10,232 @@
 
 <p>Search every MLB game in the Sportfolio database.</p>
 
-<form method="get">
+<div class="game-search-panel">
 
-    <p>
-        <label>Team:</label><br>
-        <input type="text" name="team" value="{{ team }}">
-    </p>
+    <div class="game-search-title">
+        <h2>Search MLB Games</h2>
+        <p>Find any MLB game in the Sportfolio database.</p>
+    </div>
 
-    <p>
-        <label>Opponent:</label><br>
-        <input type="text" name="opponent" value="{{ opponent }}">
-    </p>
+    <form method="get" class="game-search-form">
 
-    <p>
-   <label>Month Range:</label><br>
+        <!-- Team / Opponent -->
 
-<label for="month_from">From</label>
+        <div class="search-row">
 
-<select id="month_from" name="month_from">
-    <option value="">Any</option>
-    <option value="1" {% if month_from == "1" %}selected{% endif %}>January</option>
-    <option value="2" {% if month_from == "2" %}selected{% endif %}>February</option>
-    <option value="3" {% if month_from == "3" %}selected{% endif %}>March</option>
-    <option value="4" {% if month_from == "4" %}selected{% endif %}>April</option>
-    <option value="5" {% if month_from == "5" %}selected{% endif %}>May</option>
-    <option value="6" {% if month_from == "6" %}selected{% endif %}>June</option>
-    <option value="7" {% if month_from == "7" %}selected{% endif %}>July</option>
-    <option value="8" {% if month_from == "8" %}selected{% endif %}>August</option>
-    <option value="9" {% if month_from == "9" %}selected{% endif %}>September</option>
-    <option value="10" {% if month_from == "10" %}selected{% endif %}>October</option>
-    <option value="11" {% if month_from == "11" %}selected{% endif %}>November</option>
-    <option value="12" {% if month_from == "12" %}selected{% endif %}>December</option>
-</select>
+            <div class="search-field">
+                <label for="team">Team</label>
 
-<label for="month_to" style="margin-left:20px;">To</label>
+                <input
+                    type="text"
+                    id="team"
+                    name="team"
+                    value="{{ team }}"
+                    placeholder="e.g. Yankees"
+                >
+            </div>
 
-<select id="month_to" name="month_to">
-    <option value="">Any</option>
-    <option value="1" {% if month_to == "1" %}selected{% endif %}>January</option>
-    <option value="2" {% if month_to == "2" %}selected{% endif %}>February</option>
-    <option value="3" {% if month_to == "3" %}selected{% endif %}>March</option>
-    <option value="4" {% if month_to == "4" %}selected{% endif %}>April</option>
-    <option value="5" {% if month_to == "5" %}selected{% endif %}>May</option>
-    <option value="6" {% if month_to == "6" %}selected{% endif %}>June</option>
-    <option value="7" {% if month_to == "7" %}selected{% endif %}>July</option>
-    <option value="8" {% if month_to == "8" %}selected{% endif %}>August</option>
-    <option value="9" {% if month_to == "9" %}selected{% endif %}>September</option>
-    <option value="10" {% if month_to == "10" %}selected{% endif %}>October</option>
-    <option value="11" {% if month_to == "11" %}selected{% endif %}>November</option>
-    <option value="12" {% if month_to == "12" %}selected{% endif %}>December</option>
-</select>
-</p>
+            <div class="search-field">
+                <label for="opponent">Opponent</label>
 
-    <p>
-    <label>Day Range:</label><br>
+                <input
+                    type="text"
+                    id="opponent"
+                    name="opponent"
+                    value="{{ opponent }}"
+                    placeholder="e.g. Red Sox"
+                >
+            </div>
 
-    <label for="day_from">From</label>
-
-    <input
-        type="number"
-        id="day_from"
-        name="day_from"
-        min="1"
-        max="31"
-        value="{{ day_from }}"
-        placeholder="Any"
-    >
-
-    <label for="day_to" style="margin-left:20px;">To</label>
-
-    <input
-        type="number"
-        id="day_to"
-        name="day_to"
-        min="1"
-        max="31"
-        value="{{ day_to }}"
-        placeholder="Any"
-    >
-</p>
+        </div>
 
 
+        <!-- Date Range -->
+
+        <div class="search-section-label">
+            Date Range
+        </div>
+
+        <div class="search-row date-row">
+
+            <div class="search-field">
+                <label for="month_from">Month From</label>
+
+                <select id="month_from" name="month_from">
+                    <option value="">Any</option>
+
+                    <option value="1" {% if month_from == "1" %}selected{% endif %}>January</option>
+                    <option value="2" {% if month_from == "2" %}selected{% endif %}>February</option>
+                    <option value="3" {% if month_from == "3" %}selected{% endif %}>March</option>
+                    <option value="4" {% if month_from == "4" %}selected{% endif %}>April</option>
+                    <option value="5" {% if month_from == "5" %}selected{% endif %}>May</option>
+                    <option value="6" {% if month_from == "6" %}selected{% endif %}>June</option>
+                    <option value="7" {% if month_from == "7" %}selected{% endif %}>July</option>
+                    <option value="8" {% if month_from == "8" %}selected{% endif %}>August</option>
+                    <option value="9" {% if month_from == "9" %}selected{% endif %}>September</option>
+                    <option value="10" {% if month_from == "10" %}selected{% endif %}>October</option>
+                    <option value="11" {% if month_from == "11" %}selected{% endif %}>November</option>
+                    <option value="12" {% if month_from == "12" %}selected{% endif %}>December</option>
+                </select>
+            </div>
 
 
+            <div class="search-field">
+                <label for="month_to">Month To</label>
+
+                <select id="month_to" name="month_to">
+                    <option value="">Any</option>
+
+                    <option value="1" {% if month_to == "1" %}selected{% endif %}>January</option>
+                    <option value="2" {% if month_to == "2" %}selected{% endif %}>February</option>
+                    <option value="3" {% if month_to == "3" %}selected{% endif %}>March</option>
+                    <option value="4" {% if month_to == "4" %}selected{% endif %}>April</option>
+                    <option value="5" {% if month_to == "5" %}selected{% endif %}>May</option>
+                    <option value="6" {% if month_to == "6" %}selected{% endif %}>June</option>
+                    <option value="7" {% if month_to == "7" %}selected{% endif %}>July</option>
+                    <option value="8" {% if month_to == "8" %}selected{% endif %}>August</option>
+                    <option value="9" {% if month_to == "9" %}selected{% endif %}>September</option>
+                    <option value="10" {% if month_to == "10" %}selected{% endif %}>October</option>
+                    <option value="11" {% if month_to == "11" %}selected{% endif %}>November</option>
+                    <option value="12" {% if month_to == "12" %}selected{% endif %}>December</option>
+                </select>
+            </div>
 
 
+            <div class="search-field">
+                <label for="year_from">Year From</label>
 
-    <p>
-    <label>Year Range:</label><br>
+                <input
+                    type="number"
+                    id="year_from"
+                    name="year_from"
+                    value="{{ year_from }}"
+                    placeholder="Any"
+                >
+            </div>
 
-    <label for="year_from">From</label>
 
-    <input
-        type="number"
-        id="year_from"
-        name="year_from"
-        value="{{ year_from }}"
-        placeholder="Any"
-    >
+            <div class="search-field">
+                <label for="year_to">Year To</label>
 
-    <label for="year_to" style="margin-left:20px;">To</label>
+                <input
+                    type="number"
+                    id="year_to"
+                    name="year_to"
+                    value="{{ year_to }}"
+                    placeholder="Any"
+                >
+            </div>
 
-    <input
-        type="number"
-        id="year_to"
-        name="year_to"
-        value="{{ year_to }}"
-        placeholder="Any"
-    >
-</p>
-<p>
+        </div>
 
-    <label>Game Category</label><br>
 
-    <select name="season_type">
-        <option value="">Any</option>
+        <!-- Game Type / Sort -->
 
-        <option value="Preseason"
-            {% if season_type == "Preseason" %}selected{% endif %}>
-            Preseason
-        </option>
+        <div class="search-row">
 
-        <option value="Regular Season"
-            {% if season_type == "Regular Season" %}selected{% endif %}>
-            Regular Season
-        </option>
+            <div class="search-field">
 
-        <option value="Playoffs"
-            {% if season_type == "Playoffs" %}selected{% endif %}>
-            Playoffs
-        </option>
+                <label for="season_type">
+                    Game Type
+                </label>
 
-        <option value="All-Star"
-            {% if season_type == "All-Star" %}selected{% endif %}>
-            All-Star
-        </option>
-    </select>
-</p>
-    <p>
-    <label>Sort By</label><br>
+                <select id="season_type" name="season_type">
 
-    <select name="sort">
-        <option value="newest" {% if sort == "newest" %}selected{% endif %}>
-            Newest
-        </option>
+                    <option value="">Any</option>
 
-        <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>
-            Oldest
-        </option>
+                    <option value="Preseason"
+                        {% if season_type == "Preseason" %}selected{% endif %}>
+                        Preseason
+                    </option>
 
-        <option value="highest" {% if sort == "highest" %}selected{% endif %}>
-            Highest Rated
-        </option>
+                    <option value="Regular Season"
+                        {% if season_type == "Regular Season" %}selected{% endif %}>
+                        Regular Season
+                    </option>
 
-        <option value="lowest" {% if sort == "lowest" %}selected{% endif %}>
-            Lowest Rated
-        </option>
+                    <option value="Playoffs"
+                        {% if season_type == "Playoffs" %}selected{% endif %}>
+                        Playoffs
+                    </option>
 
-        <option value="watched" {% if sort == "watched" %}selected{% endif %}>
-            Most Watched
-        </option>
-    </select>
-</p>
+                    <option value="All-Star"
+                        {% if season_type == "All-Star" %}selected{% endif %}>
+                        All-Star
+                    </option>
 
-    <button type="submit">Search</button>
+                </select>
 
-</form>
+            </div>
+
+
+            <div class="search-field">
+
+                <label for="sort">
+                    Sort By
+                </label>
+
+                <select id="sort" name="sort">
+
+                    <option value="newest"
+                        {% if sort == "newest" %}selected{% endif %}>
+                        Newest
+                    </option>
+
+                    <option value="oldest"
+                        {% if sort == "oldest" %}selected{% endif %}>
+                        Oldest
+                    </option>
+
+                    <option value="highest"
+                        {% if sort == "highest" %}selected{% endif %}>
+                        Highest Rated
+                    </option>
+
+                    <option value="lowest"
+                        {% if sort == "lowest" %}selected{% endif %}>
+                        Lowest Rated
+                    </option>
+
+                    <option value="watched"
+                        {% if sort == "watched" %}selected{% endif %}>
+                        Most Watched
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- Upcoming Games -->
+
+        <label class="upcoming-checkbox">
+
+            <input
+                type="checkbox"
+                name="include_upcoming"
+                value="1"
+                {% if include_upcoming %}checked{% endif %}
+            >
+
+            <span class="custom-checkbox"></span>
+
+            <span>Include upcoming games</span>
+
+        </label>
+
+
+        <!-- Search -->
+
+        <button type="submit" class="search-submit">
+            Search Games
+        </button>
+
+    </form>
+
+</div>
 
 {% if team or opponent or month_from or month_to or day_from or day_to or year_from or year_to or season_type %}
 

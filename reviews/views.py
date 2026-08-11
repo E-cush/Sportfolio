@@ -10,6 +10,7 @@ from django.db.models import Avg, Count
 from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.utils import timezone
+from datetime import date
 
 def home(request):
     today = timezone.localdate()
@@ -20,6 +21,38 @@ def home(request):
 
     return render(request, "home.html", {
         "today_games": today_games,
+    })
+
+def todays_games(request):
+    today = timezone.localdate()
+
+    mlb_games = Game.objects.filter(
+        league="MLB",
+        game_date=today
+    ).order_by("id")
+
+    nba_games = Game.objects.filter(
+        league="NBA",
+        game_date=today
+    ).order_by("id")
+
+    nfl_games = Game.objects.filter(
+        league="NFL",
+        game_date=today
+    ).order_by("id")
+
+    champions_league_games = Game.objects.filter(
+        league="Soccer",
+        competition="UEFA Champions League",
+        game_date=today
+    ).order_by("id")
+
+    return render(request, "todays_games.html", {
+        "mlb_games": mlb_games,
+        "nba_games": nba_games,
+        "nfl_games": nfl_games,
+        "champions_league_games": champions_league_games,
+        "today": today,
     })
 
 def coming_soon(request):
@@ -63,7 +96,12 @@ def mlb_games(request):
     year_to = request.GET.get("year_to", "")
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
     games = Game.objects.filter(league="MLB")
+    # By default, only show games that have already happened.
+    # Checking "Include upcoming games" allows future games into the results.
+    if not include_upcoming:
+        games = games.filter(game_date__lte=date.today())
 
     if team:
         games = games.filter(
@@ -77,23 +115,35 @@ def mlb_games(request):
             Q(away_team__icontains=opponent_search)
         )
 
-    if year_from:
-        games = games.filter(game_date__year__gte=int(year_from))
+    if year_from and year_to:
+        games = games.filter(
+            game_date__year__gte=int(year_from),
+            game_date__year__lte=int(year_to)
+        )
+    elif year_from:
+        games = games.filter(game_date__year=int(year_from))
+    elif year_to:
+        games = games.filter(game_date__year=int(year_to))
 
-    if year_to:
-        games = games.filter(game_date__year__lte=int(year_to))
+    if month_from and month_to:
+        games = games.filter(
+            game_date__month__gte=int(month_from),
+            game_date__month__lte=int(month_to)
+        )
+    elif month_from:
+        games = games.filter(game_date__month=int(month_from))
+    elif month_to:
+        games = games.filter(game_date__month=int(month_to))
 
-    if month_from:
-        games = games.filter(game_date__month__gte=int(month_from))
-
-    if month_to:
-        games = games.filter(game_date__month__lte=int(month_to))
-
-    if day_from:
-        games = games.filter(game_date__day__gte=int(day_from))
-
-    if day_to:
-        games = games.filter(game_date__day__lte=int(day_to))
+    if day_from and day_to:
+        games = games.filter(
+            game_date__day__gte=int(day_from),
+            game_date__day__lte=int(day_to)
+        )
+    elif day_from:
+        games = games.filter(game_date__day=int(day_from))
+    elif day_to:
+        games = games.filter(game_date__day=int(day_to))
 
     if season_type:
         games = games.filter(game_type=season_type)
@@ -152,6 +202,7 @@ def mlb_games(request):
         "year_to": year_to,
         "season_type": season_type,
         "sort": sort,
+        "include_upcoming": include_upcoming,
     })
 
 
