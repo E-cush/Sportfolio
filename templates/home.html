@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %}Sportfolio{% endblock %}
 
 {% block content %}
@@ -18,6 +20,74 @@
         <a href="{% url 'user_search' %}" class="secondary-btn">
             Search Users
         </a>
+    </div>
+
+</div>
+
+<div class="today-games-section">
+
+    <h2>Today's Games</h2>
+
+    <div class="today-games-grid">
+
+        {% for game in today_games %}
+
+        <a href="{% url 'game_detail' game.id %}" class="today-game-card">
+
+            <div class="today-game-league">
+                {{ game.league }}
+            </div>
+
+            <div class="today-game-teams">
+
+                <div class="today-team">
+                    {% if game.away_logo %}
+                        <img src="{% static game.away_logo %}"
+                             alt="{{ game.away_team }} logo">
+                    {% endif %}
+
+                    <span>{{ game.away_team }}</span>
+                </div>
+
+                <div class="today-vs">@</div>
+
+                <div class="today-team">
+                    {% if game.home_logo %}
+                        <img src="{% static game.home_logo %}"
+                             alt="{{ game.home_team }} logo">
+                    {% endif %}
+
+                    <span>{{ game.home_team }}</span>
+                </div>
+
+            </div>
+
+            <div class="today-game-status">
+
+                {% if game.is_upcoming %}
+                    Upcoming
+                {% else %}
+                    {{ game.status }}
+                {% endif %}
+
+            </div>
+
+            {% if game.home_score is not None and game.away_score is not None %}
+                <div class="today-game-score">
+                    {{ game.away_score }} - {{ game.home_score }}
+                </div>
+            {% endif %}
+
+        </a>
+
+        {% empty %}
+
+        <p class="no-games">
+            No games scheduled for today.
+        </p>
+
+        {% endfor %}
+
     </div>
 
 </div>

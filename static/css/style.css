@@ -891,3 +891,257 @@ button:hover {
     }
 
 }
+
+/* ==========================
+   Today's Games
+========================== */
+
+.today-games-section {
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.today-games-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+}
+
+.today-games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.today-game-card {
+    display: block;
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 25px 20px;
+    text-decoration: none;
+    color: white;
+    transition: all .25s ease;
+}
+
+.today-game-card:hover {
+    transform: translateY(-6px);
+    border-color: #00c853;
+    box-shadow: 0 12px 30px rgba(0, 200, 83, .2);
+}
+
+.today-game-league {
+    color: #00c853;
+    font-size: .9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.today-game-teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.today-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.today-team img {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+}
+
+.today-team span {
+    font-weight: 600;
+    font-size: .95rem;
+    line-height: 1.2;
+}
+
+.today-vs {
+    color: #00c853;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.today-game-status {
+    margin-top: 20px;
+    color: #bdbdbd;
+    font-size: .9rem;
+}
+
+.today-game-score {
+    margin-top: 8px;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.no-games {
+    color: #bdbdbd;
+    font-size: 1rem;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .today-games-section {
+        margin: 60px auto;
+    }
+
+    .today-games-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .today-game-card {
+        padding: 22px 18px;
+    }
+
+}
+
+/* Today's Games */
+
+.today-games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1100px;
+    margin: 30px auto 60px;
+}
+
+.today-game-card {
+    display: block;
+    text-decoration: none;
+    color: white;
+
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 12px;
+
+    padding: 18px;
+
+    min-height: 170px;
+
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.today-game-card:hover {
+    transform: translateY(-3px);
+    border-color: #00cc66;
+}
+
+.today-game-league {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.today-game-teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.today-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    font-weight: 600;
+
+    flex: 1;
+    min-width: 0;
+}
+
+.today-team img {
+    width: 45px;
+    height: 45px;
+
+    object-fit: contain;
+
+    margin-bottom: 8px;
+}
+
+.today-team span {
+    font-size: 15px;
+}
+
+.today-vs {
+    font-weight: bold;
+    color: #00cc66;
+    font-size: 18px;
+}
+
+.today-game-status {
+    text-align: center;
+    color: #aaa;
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+.today-game-score {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .today-games-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 20px auto 40px;
+        padding: 0 12px;
+    }
+
+    .today-game-card {
+        padding: 14px;
+        min-height: 145px;
+    }
+
+    .today-team img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .today-team span {
+        font-size: 13px;
+    }
+
+    .today-vs {
+        font-size: 15px;
+    }
+
+    .today-game-league {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .today-game-status {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+
+    .today-game-score {
+        font-size: 16px;
+    }
+}

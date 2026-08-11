@@ -9,10 +9,18 @@ from .forms import GameLogForm, ProfileForm
 from django.db.models import Avg, Count
 from django.core.paginator import Paginator
 from .forms import CommentForm
-
+from django.utils import timezone
 
 def home(request):
-    return render(request, "home.html")
+    today = timezone.localdate()
+
+    today_games = Game.objects.filter(
+        game_date=today
+    ).order_by("id")[:3]
+
+    return render(request, "home.html", {
+        "today_games": today_games,
+    })
 
 def coming_soon(request):
     return render(request, "coming_soon.html")
