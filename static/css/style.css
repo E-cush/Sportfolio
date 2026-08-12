@@ -768,9 +768,11 @@ button:hover {
 ========================== */
 
 @media (max-width: 768px) {
-
     body {
         overflow-x: hidden;
+        overflow-y: auto;
+        touch-action: pan-y;
+        overscroll-behavior-x: none;
     }
 
     nav {
@@ -810,6 +812,10 @@ button:hover {
 ========================== */
 
 @media (max-width: 768px) {
+
+    .games-dropdown.mobile-open .dropdown-content {
+        display: block;
+    }
 
     .hero {
         padding: 55px 12px 35px;
@@ -1502,6 +1508,8 @@ button:hover {
 
         margin: 35px auto 50px;
     }
+
+
 
 
     .search-row,

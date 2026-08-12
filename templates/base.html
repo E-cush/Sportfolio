@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7, minimum-scale=0.7, maximum-scale=0.7, user-scalable=no">
     <title>{% block title %}Sportfolio{% endblock %}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -16,9 +16,8 @@
 </a></h2>
 
     <ul>
-        <li><a href="/">Home</a></li>
-        <li class="dropdown">
-    <a href="/search/">Games ▾</a>
+        <li><a href="/">Home</a></li><li class="dropdown games-dropdown">
+    <a href="/search/" class="games-link">Games ▾</a>
 
     <div class="dropdown-content">
 
@@ -83,22 +82,58 @@ document.addEventListener("DOMContentLoaded", function () {
     const soccerButton = document.getElementById("soccerButton");
     const soccerMenu = document.getElementById("soccerMenu");
 
-    if (!soccerButton || !soccerMenu) {
-        return;
+    if (soccerButton && soccerMenu) {
+        soccerButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            soccerMenu.classList.toggle("show");
+        });
+
+        document.addEventListener("click", function () {
+            soccerMenu.classList.remove("show");
+        });
+
+        soccerMenu.addEventListener("click", function (event) {
+            event.stopPropagation();
+        });
     }
 
-    soccerButton.addEventListener("click", function (event) {
-        event.stopPropagation();
-        soccerMenu.classList.toggle("show");
-    });
 
-    document.addEventListener("click", function () {
-        soccerMenu.classList.remove("show");
-    });
+    /* Mobile Games dropdown:
+       First tap = open dropdown
+       Second tap = go to Games page
+    */
 
-    soccerMenu.addEventListener("click", function (event) {
-        event.stopPropagation();
-    });
+    const gamesLink = document.querySelector(".games-link");
+    const gamesDropdown = document.querySelector(".games-dropdown");
+
+    if (gamesLink && gamesDropdown) {
+
+        gamesLink.addEventListener("click", function (event) {
+
+            // Only change behavior on mobile
+            if (window.innerWidth <= 768) {
+
+                // First tap opens the dropdown
+                if (!gamesDropdown.classList.contains("mobile-open")) {
+                    event.preventDefault();
+                    gamesDropdown.classList.add("mobile-open");
+                }
+
+                // Second tap allows the normal /search/ link to work
+            }
+        });
+
+
+        // Close Games dropdown when clicking somewhere else
+        document.addEventListener("click", function (event) {
+
+            if (!gamesDropdown.contains(event.target)) {
+                gamesDropdown.classList.remove("mobile-open");
+            }
+
+        });
+
+    }
 
 });
 </script>

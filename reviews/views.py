@@ -224,7 +224,12 @@ def nba_games(request):
 
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
     games = Game.objects.filter(league="NBA")
+
+    if not include_upcoming:
+        games = games.filter(game_date__lte=date.today())
 
     if team:
         games = games.filter(
@@ -238,23 +243,35 @@ def nba_games(request):
             Q(away_team__icontains=opponent_search)
         )
 
-    if year_from:
-        games = games.filter(game_date__year__gte=int(year_from))
+    if year_from and year_to:
+        games = games.filter(
+            game_date__year__gte=int(year_from),
+            game_date__year__lte=int(year_to)
+        )
+    elif year_from:
+        games = games.filter(game_date__year=int(year_from))
+    elif year_to:
+        games = games.filter(game_date__year=int(year_to))
 
-    if year_to:
-        games = games.filter(game_date__year__lte=int(year_to))
+    if month_from and month_to:
+        games = games.filter(
+            game_date__month__gte=int(month_from),
+            game_date__month__lte=int(month_to)
+        )
+    elif month_from:
+        games = games.filter(game_date__month=int(month_from))
+    elif month_to:
+        games = games.filter(game_date__month=int(month_to))
 
-    if month_from:
-        games = games.filter(game_date__month__gte=int(month_from))
-
-    if month_to:
-        games = games.filter(game_date__month__lte=int(month_to))
-
-    if day_from:
-        games = games.filter(game_date__day__gte=int(day_from))
-
-    if day_to:
-        games = games.filter(game_date__day__lte=int(day_to))
+    if day_from and day_to:
+        games = games.filter(
+            game_date__day__gte=int(day_from),
+            game_date__day__lte=int(day_to)
+        )
+    elif day_from:
+        games = games.filter(game_date__day=int(day_from))
+    elif day_to:
+        games = games.filter(game_date__day=int(day_to))
 
     if season_type:
         games = games.filter(game_type=season_type)
@@ -311,6 +328,7 @@ def nba_games(request):
         "year_to": year_to,
         "season_type": season_type,
         "sort": sort,
+        "include_upcoming": include_upcoming,
     })
 def nfl_games(request):
     team = request.GET.get("team", "")
@@ -330,7 +348,12 @@ def nfl_games(request):
 
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
     games = Game.objects.filter(league="NFL")
+
+    if not include_upcoming:
+        games = games.filter(game_date__lte=date.today())
 
     if team:
         games = games.filter(
@@ -344,23 +367,38 @@ def nfl_games(request):
             Q(away_team__icontains=opponent_search)
         )
 
-    if year_from:
-        games = games.filter(game_date__year__gte=int(year_from))
+    # Year filtering
+    if year_from and year_to:
+        games = games.filter(
+            game_date__year__gte=int(year_from),
+            game_date__year__lte=int(year_to)
+        )
+    elif year_from:
+        games = games.filter(game_date__year=int(year_from))
+    elif year_to:
+        games = games.filter(game_date__year=int(year_to))
 
-    if year_to:
-        games = games.filter(game_date__year__lte=int(year_to))
+    # Month filtering
+    if month_from and month_to:
+        games = games.filter(
+            game_date__month__gte=int(month_from),
+            game_date__month__lte=int(month_to)
+        )
+    elif month_from:
+        games = games.filter(game_date__month=int(month_from))
+    elif month_to:
+        games = games.filter(game_date__month=int(month_to))
 
-    if month_from:
-        games = games.filter(game_date__month__gte=int(month_from))
-
-    if month_to:
-        games = games.filter(game_date__month__lte=int(month_to))
-
-    if day_from:
-        games = games.filter(game_date__day__gte=int(day_from))
-
-    if day_to:
-        games = games.filter(game_date__day__lte=int(day_to))
+    # Day filtering
+    if day_from and day_to:
+        games = games.filter(
+            game_date__day__gte=int(day_from),
+            game_date__day__lte=int(day_to)
+        )
+    elif day_from:
+        games = games.filter(game_date__day=int(day_from))
+    elif day_to:
+        games = games.filter(game_date__day=int(day_to))
 
     if season_type:
         games = games.filter(game_type=season_type)
@@ -419,6 +457,7 @@ def nfl_games(request):
         "year_to": year_to,
         "season_type": season_type,
         "sort": sort,
+        "include_upcoming": include_upcoming,
     })
 
 def champions_league(request):
@@ -436,10 +475,17 @@ def champions_league(request):
 
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
     games = Game.objects.filter(
         league="Soccer",
         competition="UEFA Champions League"
     )
+
+    # By default, only show games that have already happened.
+    # Checking "Include upcoming games" allows future games into the results.
+    if not include_upcoming:
+        games = games.filter(game_date__lte=timezone.localdate())
 
     if team:
         games = games.filter(
@@ -528,6 +574,7 @@ def champions_league(request):
         "year_to": year_to,
         "season_type": season_type,
         "sort": sort,
+        "include_upcoming": include_upcoming,
     })
 
 def game_detail(request, game_id):
