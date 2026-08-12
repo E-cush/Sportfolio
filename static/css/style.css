@@ -1621,3 +1621,46 @@ button:hover {
     }
 
 }
+
+/* ==========================
+   Mobile Navigation
+========================== */
+
+@media (max-width: 768px) {
+
+    nav {
+    padding: 9px 12px;
+    min-height: 44px;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+    nav h2 {
+        font-size: 1.25rem;
+        white-space: nowrap;
+    }
+
+    nav ul {
+    gap: 9px;
+    align-items: center;
+    margin-left: auto;
+}
+
+nav .games-link {
+    position: relative;
+    left: 30px;
+}
+
+    nav ul li {
+        white-space: nowrap;
+    }
+
+    nav a,
+    nav .dropbtn {
+        font-size: 0.9rem;
+    }
+
+}
+
+
+
