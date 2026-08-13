@@ -143,3 +143,24 @@ NHL_TEAMS = [
     ("WSH", "Washington Capitals"),
     ("WPG", "Winnipeg Jets"),
 ]
+
+# WNBA
+
+WNBA_TEAMS = [
+    ("", "---------"),
+    ("ATL", "Atlanta Dream"),
+    ("CHI", "Chicago Sky"),
+    ("CON", "Connecticut Sun"),
+    ("DAL", "Dallas Wings"),
+    ("GS", "Golden State Valkyries"),
+    ("IND", "Indiana Fever"),
+    ("LAS", "Las Vegas Aces"),
+    ("LA", "Los Angeles Sparks"),
+    ("MIN", "Minnesota Lynx"),
+    ("NYL", "New York Liberty"),
+    ("PHX", "Phoenix Mercury"),
+    ("POR", "Portland Fire"),
+    ("SEA", "Seattle Storm"),
+    ("TOR", "Toronto Tempo"),
+    ("WAS", "Washington Mystics"),
+]

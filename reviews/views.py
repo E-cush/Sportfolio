@@ -10,7 +10,7 @@ from django.db.models import Avg, Count
 from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.utils import timezone
-from datetime import date
+from datetime import date, timedelta
 
 def home(request):
     today = timezone.localdate()
@@ -26,25 +26,38 @@ def home(request):
 def todays_games(request):
     today = timezone.localdate()
 
+    date_param = request.GET.get("date", "")
+
+    if date_param:
+        try:
+            selected_date = date.fromisoformat(date_param)
+        except ValueError:
+            selected_date = today
+    else:
+        selected_date = today
+
+    previous_date = selected_date - timedelta(days=1)
+    next_date = selected_date + timedelta(days=1)
+
     mlb_games = Game.objects.filter(
         league="MLB",
-        game_date=today
+        game_date=selected_date
     ).order_by("id")
 
     nba_games = Game.objects.filter(
         league="NBA",
-        game_date=today
+        game_date=selected_date
     ).order_by("id")
 
     nfl_games = Game.objects.filter(
         league="NFL",
-        game_date=today
+        game_date=selected_date
     ).order_by("id")
 
     champions_league_games = Game.objects.filter(
         league="Soccer",
         competition="UEFA Champions League",
-        game_date=today
+        game_date=selected_date
     ).order_by("id")
 
     return render(request, "todays_games.html", {
@@ -52,7 +65,10 @@ def todays_games(request):
         "nba_games": nba_games,
         "nfl_games": nfl_games,
         "champions_league_games": champions_league_games,
-        "today": today,
+        "today": selected_date,
+        "selected_date": selected_date,
+        "previous_date": previous_date,
+        "next_date": next_date,
     })
 
 def coming_soon(request):

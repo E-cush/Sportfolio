@@ -128,4 +128,19 @@ TEAM_LOGOS = {
     ("NFL", "TB"): "logos/nfl/tampa-bay-buccaneers.png",
     ("NFL", "TEN"): "logos/nfl/tennessee-titans.png",
     ("NFL", "WAS"): "logos/nfl/washington-commanders.png",
+
+("WNBA", "Atlanta Dream"): "logos/wnba/atlanta-dream.svg",
+("WNBA", "Chicago Sky"): "logos/wnba/chicago-sky.svg",
+("WNBA", "Connecticut Sun"): "logos/wnba/connecticut-sun.svg",
+("WNBA", "Dallas Wings"): "logos/wnba/dallas-wings.svg",
+("WNBA", "Golden State Valkyries"): "logos/wnba/golden-state-valkyries.svg",
+("WNBA", "Indiana Fever"): "logos/wnba/indiana-fever.svg",
+("WNBA", "Las Vegas Aces"): "logos/wnba/las-vegas-aces.svg",
+("WNBA", "Los Angeles Sparks"): "logos/wnba/los-angeles-sparks.svg",
+("WNBA", "Minnesota Lynx"): "logos/wnba/minnesota-lynx.svg",
+("WNBA", "New York Liberty"): "logos/wnba/new-york-liberty.svg",
+("WNBA", "Phoenix Mercury"): "logos/wnba/phoenix-mercury.svg",
+("WNBA", "Seattle Storm"): "logos/wnba/seattle-storm.svg",
+("WNBA", "Washington Mystics"): "logos/wnba/washington-mystics.svg",
 }
+
