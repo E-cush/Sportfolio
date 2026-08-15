@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.core.management.base import BaseCommand
 
@@ -27,8 +27,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        start_date = kwargs["start_date"]
-        end_date = kwargs["end_date"] or start_date
+        if kwargs["end_date"]:
+            start_date = kwargs["start_date"]
+            end_date = kwargs["end_date"]
+        else:
+            today = date.today()
+            start_date = (today - timedelta(days=1)).isoformat()
+            end_date = (today + timedelta(days=1)).isoformat()
 
         self.stdout.write("")
         self.stdout.write("=" * 40)
