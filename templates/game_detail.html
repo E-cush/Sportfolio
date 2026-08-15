@@ -124,6 +124,16 @@
 
             {% if game_log.experience_rating %}
                 <p><strong>Experience:</strong> {{ game_log.experience_rating }}/5</p>
+
+        {% if game_log.watched_with.exists %}
+    <p>
+        <strong>Watched with:</strong>
+        {% for person in game_log.watched_with.all %}
+            {{ person.username }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+{% endif %}
+
             {% endif %}
 
             {% if game_log.review %}

@@ -58,6 +58,12 @@ class GameLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
+    watched_with = models.ManyToManyField(
+        User,
+        blank=True,
+        related_name="games_watched_with",
+    )
+
     logged_at = models.DateTimeField(auto_now_add=True)
 
     quality_rating = models.PositiveSmallIntegerField(

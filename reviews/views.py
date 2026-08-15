@@ -694,7 +694,11 @@ def edit_log(request, game_id):
     )
 
     if request.method == "POST":
-        form = GameLogForm(request.POST, instance=game_log)
+        form = GameLogForm(
+            request.POST,
+            instance=game_log,
+            user=request.user,
+        )
 
         if form.is_valid():
             log = form.save(commit=False)
@@ -705,11 +709,20 @@ def edit_log(request, game_id):
                 log.review = ""
 
             log.save()
+            form.save_m2m()
 
             return redirect("game_detail", game_id=game.id)
 
+
     else:
-        form = GameLogForm(instance=game_log)
+
+        form = GameLogForm(
+
+            instance=game_log,
+
+            user=request.user,
+
+        )
 
     return render(request, "edit_log.html", {
         "game": game,

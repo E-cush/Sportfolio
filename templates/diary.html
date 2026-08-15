@@ -36,6 +36,14 @@ Game Log
             <p>📺 {{ log.get_watch_type_display }}</p>
         {% endif %}
 
+        {% if log.watched_with.exists %}
+    <p>👥 Watched with:
+        {% for person in log.watched_with.all %}
+            {{ person.username }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+{% endif %}
+
         {% if log.watch_type != "HIGHLIGHTS" %}
 
             {% if log.quality_rating %}

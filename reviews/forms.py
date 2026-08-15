@@ -1,6 +1,6 @@
 from django import forms
-from .models import GameLog, Profile
-from .models import Comment
+from django.contrib.auth.models import User
+from .models import GameLog, Profile, Comment, Follow
 
 class GameLogForm(forms.ModelForm):
     class Meta:
@@ -11,6 +11,7 @@ class GameLogForm(forms.ModelForm):
             "experience_rating",
             "favorite",
             "review",
+            "watched_with",
         ]
 
         widgets = {
@@ -34,15 +35,24 @@ class GameLogForm(forms.ModelForm):
                 "rows": 6,
                 "placeholder": "What did you think of the game?",
             }),
+            "watched_with": forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+
         super().__init__(*args, **kwargs)
 
         self.fields["watch_type"].required = True
         self.fields["quality_rating"].required = False
         self.fields["experience_rating"].required = False
         self.fields["review"].required = False
+        self.fields["watched_with"].required = False
+
+        if user:
+            self.fields["watched_with"].queryset = User.objects.filter(
+                followers__follower=user
+            ).distinct()
 
 class ProfileForm(forms.ModelForm):
     class Meta:
