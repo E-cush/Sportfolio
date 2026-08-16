@@ -20,6 +20,11 @@
         <a href="{% url 'user_search' %}" class="secondary-btn">
             Search Users
         </a>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="secondary-btn">
+                Create an Account
+            </a>
+        {% endif %}
     </div>
 
 </div>
