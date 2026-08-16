@@ -66,12 +66,16 @@ class GameLog(models.Model):
 
     logged_at = models.DateTimeField(auto_now_add=True)
 
-    quality_rating = models.PositiveSmallIntegerField(
+    quality_rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
         null=True,
         blank=True,
     )
 
-    experience_rating = models.PositiveSmallIntegerField(
+    experience_rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
         null=True,
         blank=True,
     )

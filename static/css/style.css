@@ -1727,4 +1727,513 @@ button:hover {
     }
 }
 
+/* =========================
+   EDIT LOG PAGE
+   ========================= */
+
+.edit-log-page {
+    max-width: 820px;
+    margin: 45px auto 70px;
+    padding: 0 20px;
+}
+
+.edit-log-card {
+    background: #181818;
+    border: 1px solid #303030;
+    border-radius: 16px;
+    padding: 42px 55px 50px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.edit-log-header {
+    text-align: center;
+    margin-bottom: 38px;
+}
+
+.edit-log-header h1 {
+    font-size: 34px;
+    margin: 0 0 18px;
+}
+
+.edit-log-header h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.edit-log-header h2 span {
+    color: #00d95f;
+    padding: 0 8px;
+}
+
+.edit-log-header p {
+    color: #999;
+    margin: 12px 0 0;
+    font-size: 15px;
+}
+
+
+/* =========================
+   FORM
+   ========================= */
+
+.edit-log-form {
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group > label {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 9px;
+}
+
+
+/* =========================
+   SELECTS
+   ========================= */
+
+.edit-log-form select {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    border-radius: 8px;
+    border: 1px solid #444;
+
+    background: #101010;
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+.edit-log-form select:focus {
+    outline: none;
+    border-color: #00d95f;
+}
+
+
+/* =========================
+   RATING ROW
+   ========================= */
+
+.rating-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+
+/* =========================
+   FAVORITE
+   ========================= */
+
+.favorite-option {
+    background: #111;
+    border: 1px solid #303030;
+    border-radius: 9px;
+
+    padding: 14px 16px;
+
+    margin: 28px 0;
+}
+
+.favorite-option label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.favorite-option input {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* =========================
+   WATCHED WITH
+   ========================= */
+
+.watched-with-group {
+    margin-top: 28px;
+}
+
+.watched-with-list {
+    background: #111;
+    border: 1px solid #303030;
+    border-radius: 10px;
+
+    padding: 16px 18px;
+}
+
+
+/*
+   Django's CheckboxSelectMultiple
+   creates a <ul>.
+*/
+
+.watched-with-list ul {
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.watched-with-list li {
+    margin: 0;
+    padding: 0;
+}
+
+.watched-with-list li label {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 10px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    color: #ddd;
+
+    transition: background 0.15s;
+}
+
+.watched-with-list li label:hover {
+    background: #202020;
+}
+
+.watched-with-list input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* =========================
+   REVIEW
+   ========================= */
+
+.review-group {
+    margin-top: 30px;
+}
+
+.review-group textarea {
+    display: block;
+
+    width: 100%;
+    min-height: 170px;
+
+    box-sizing: border-box;
+
+    padding: 14px;
+
+    border-radius: 9px;
+    border: 1px solid #444;
+
+    background: #101010;
+    color: white;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    resize: vertical;
+}
+
+.review-group textarea:focus {
+    outline: none;
+    border-color: #00d95f;
+}
+
+
+/* =========================
+   SAVE
+   ========================= */
+
+.save-log-button {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 32px;
+
+    padding: 14px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #00d95f;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.15s ease;
+}
+
+.save-log-button:hover {
+    background: #00bd52;
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 700px) {
+
+    .edit-log-page {
+        margin-top: 25px;
+        padding: 0 12px 45px;
+    }
+
+    .edit-log-card {
+        padding: 30px 20px 35px;
+    }
+
+    .edit-log-header h1 {
+        font-size: 28px;
+    }
+
+    .edit-log-header h2 {
+        font-size: 19px;
+    }
+
+    .rating-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .watched-with-list ul {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+/* =========================
+   EDIT LOG IMPROVEMENTS
+   ========================= */
+
+.edit-log-page {
+    max-width: 850px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.edit-log-card {
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 40px 50px;
+}
+
+.edit-log-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.edit-log-header h1 {
+    margin-bottom: 15px;
+}
+
+.edit-log-header h2 {
+    margin: 0;
+}
+
+.edit-log-header h2 span {
+    color: #00d95f;
+    padding: 0 8px;
+}
+
+.edit-log-header p {
+    color: #aaa;
+}
+
+
+/* FORM */
+
+.edit-log-form {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group > label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+
+/* WATCH TYPE */
+
+.edit-log-form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    background: #101010;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 7px;
+}
+
+
+/* RATINGS */
+
+.rating-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px;
+}
+
+.rating-row .form-group {
+    margin-bottom: 0;
+}
+
+
+/* FAVORITE */
+
+.favorite-option {
+    background: #101010;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 14px;
+    margin: 25px 0;
+}
+
+.favorite-option label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* WATCHED WITH */
+
+.watched-with-group {
+    margin-top: 25px;
+}
+
+.watched-with-list {
+    background: #101010;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.watched-with-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px;
+}
+
+.watched-with-list li {
+    list-style: none;
+}
+
+.watched-with-list li label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.watched-with-list li label:hover {
+    background: #202020;
+}
+
+
+/* REVIEW */
+
+.review-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 160px;
+    padding: 12px;
+
+    background: #101010;
+    color: white;
+
+    border: 1px solid #444;
+    border-radius: 8px;
+
+    font-family: inherit;
+    resize: vertical;
+}
+
+
+/* SAVE */
+
+.save-log-button {
+    width: 100%;
+    padding: 14px;
+
+    margin-top: 25px;
+
+    background: #00d95f;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.save-log-button:hover {
+    background: #00bd52;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .edit-log-card {
+        padding: 30px 20px;
+    }
+
+    .rating-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    .watched-with-list ul {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+}
+
 

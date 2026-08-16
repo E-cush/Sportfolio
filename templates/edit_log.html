@@ -6,51 +6,103 @@ Edit Log
 
 {% block content %}
 
-<h1>Edit Log</h1>
+<div class="edit-log-page">
 
-<h2>{{ game.away_team }} @ {{ game.home_team }}</h2>
+    <div class="edit-log-card">
 
-<p>
-    {{ game.game_date }} • {{ game.venue }}
-</p>
+        <div class="edit-log-header">
 
-<form method="post">
-    {% csrf_token %}
+            <h1>Edit Log</h1>
 
-    <p>
-        <label>Watch Type</label><br>
-        {{ form.watch_type }}
-    </p>
+            <h2>
+                {{ game.away_team }}
+                <span>@</span>
+                {{ game.home_team }}
+            </h2>
 
-    <p>
-        <label>Quality Rating</label><br>
-        {{ form.quality_rating }}
-    </p>
+            <p>
+                {{ game.game_date }} • {{ game.venue }}
+            </p>
 
-    <p>
-        <label>Experience Rating</label><br>
-        {{ form.experience_rating }}
-    </p>
+        </div>
 
-    <p>
-        <label>
-            {{ form.favorite }}
-            ⭐ Favorite Game
+        <form method="post" class="edit-log-form">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.watch_type.id_for_label }}">
+                    Watch Type
+                </label>
+
+                {{ form.watch_type }}
+            </div>
+
+
+            <div class="rating-row">
+
+    <div class="form-group">
+        <label for="{{ form.quality_rating.id_for_label }}">
+            Quality Rating
         </label>
-    </p>
 
-    <p>
-        <label>Watched With</label><br>
-        {{ form.watched_with }}
-    </p>
+        {{ form.quality_rating }}
+    </div>
 
-    <p>
-        <label>Review</label><br>
-        {{ form.review }}
-    </p>
+    <div class="form-group">
+        <label for="{{ form.experience_rating.id_for_label }}">
+            Experience Rating
+        </label>
 
-    <button type="submit">Save Log</button>
+        {{ form.experience_rating }}
+    </div>
 
-</form>
+</div>
+
+
+            <div class="favorite-option">
+
+                <label>
+                    {{ form.favorite }}
+
+                    <span>⭐ Favorite Game</span>
+                </label>
+
+            </div>
+
+
+            <div class="form-group watched-with-group">
+
+                <label>
+                    Watched With
+                </label>
+
+                <div class="watched-with-list">
+                    {{ form.watched_with }}
+                </div>
+
+            </div>
+
+
+            <div class="form-group review-group">
+
+                <label for="{{ form.review.id_for_label }}">
+                    Review
+                </label>
+
+                {{ form.review }}
+
+            </div>
+
+
+            <button type="submit" class="save-log-button">
+                Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
 {% endblock %}
