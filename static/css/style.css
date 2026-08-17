@@ -23,6 +23,7 @@ nav ul {
     gap: 25px;
     margin: 0;
     padding: 0;
+    margin-right: 30px;
 }
 
 nav a {
@@ -205,6 +206,9 @@ button:hover {
     min-width: 170px;
     border-radius: 8px;
     overflow: hidden;
+}
+.user-dropdown .dropdown-content {
+    right: 10px;
 }
 
 .dropdown-content a {
@@ -2242,3 +2246,36 @@ button:hover {
 }
 
 
+
+
+
+
+
+/* Username dropdown */
+.user-dropdown {
+    margin-left: 8px;
+}
+
+.user-dropdown .dropbtn {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    padding: 0;
+}
+
+/* Keep logout menu on screen */
+.user-dropdown .dropdown-content {
+    right: 0;
+    transform: translateX(-20px);
+}
+
+
+
+/* FINAL NAVBAR POSITION */
+nav > ul {
+    position: relative !important;
+    right: 60px !important;
+}
+
+nav {
+    padding-right: 80px !important;
+}

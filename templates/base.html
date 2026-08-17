@@ -15,7 +15,7 @@
     🏆 Sportfolio
 </a></h2>
 
-    <ul>
+    <ul style="position: relative; left: -40px;">
         <li><a href="{% url 'coming_soon' %}">Lists</a></li>
 
 <li class="dropdown games-dropdown">
@@ -56,9 +56,9 @@
 </li>
         {% if user.is_authenticated %}
 
-<li class="dropdown">
-    <button class="dropbtn">
-        {{ user.username }} ▼
+<li class="dropdown user-dropdown">
+    <button class="dropbtn" style="font-size: 22px !important;">
+        {{ user.username }} ▾
     </button>
 
     <div class="dropdown-content">
