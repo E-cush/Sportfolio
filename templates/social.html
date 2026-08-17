@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block title %}Social{% endblock %}
+
+{% block content %}
+
+<style>
+
+.social-page {
+    max-width: 850px;
+    margin: 50px auto;
+    padding: 0 20px 60px;
+}
+
+.social-page h1 {
+    text-align: center;
+    font-size: 42px;
+    margin-bottom: 25px;
+}
+
+.social-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 35px;
+}
+
+.social-tab {
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #292929;
+    color: white;
+}
+
+.social-tab.active {
+    background: #00c853;
+}
+
+.social-tab:hover {
+    opacity: 0.9;
+}
+
+
+/* SECTION TITLE */
+
+.social-tab-content h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+
+/* REVIEW CARD */
+
+.social-review {
+    background: #1b1b1b;
+    border-radius: 12px;
+    padding: 22px 25px;
+    margin-bottom: 18px;
+    border: 1px solid #292929;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.social-review:hover {
+    transform: translateY(-2px);
+    border-color: #444;
+}
+
+
+/* USER + DATE */
+
+.social-review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.social-review-user {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.social-review-user a {
+    color: #00c853;
+    text-decoration: none;
+}
+
+.social-review-user a:hover {
+    text-decoration: underline;
+}
+
+.social-review-date {
+    color: #999;
+    font-size: 14px;
+}
+
+
+/* GAME */
+
+.social-review-game {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.social-review-game:hover {
+    color: #00c853;
+}
+
+
+/* RATING */
+
+.social-rating {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+
+/* REVIEW TEXT */
+
+.social-review-text {
+    color: #ddd;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    overflow-wrap: break-word;
+}
+
+
+/* ACTIVITY */
+
+.social-activity {
+    background: #1b1b1b;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.social-activity a {
+    color: #00c853;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.social-activity a:hover {
+    text-decoration: underline;
+}
+
+.social-activity-time {
+    color: #999;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+
+/* EMPTY STATE */
+
+.social-empty {
+    background: #1b1b1b;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    padding: 35px;
+    text-align: center;
+    color: #999;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .social-page {
+        margin-top: 30px;
+        padding: 0 12px 40px;
+    }
+
+    .social-page h1 {
+        font-size: 34px;
+    }
+
+    .social-review {
+        padding: 18px;
+    }
+
+    .social-review-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .social-review-game {
+        font-size: 18px;
+    }
+
+}
+.social-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.social-pagination a {
+    background: #292929;
+    color: white;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.social-pagination a:hover {
+    background: #00c853;
+}
+
+.social-pagination span {
+    color: #aaa;
+    font-size: 15px;
+}
+</style>
+
+
+<div class="social-page">
+
+    <h1>Social</h1>
+
+
+    <!-- TABS -->
+
+    <div class="social-tabs">
+
+        <button
+            class="social-tab active"
+            onclick="showSocialTab('following')"
+        >
+            Following
+        </button>
+
+        <button
+            class="social-tab"
+            onclick="showSocialTab('activity')"
+        >
+            Activity
+        </button>
+
+    </div>
+
+
+    <!-- FOLLOWING TAB -->
+
+    <div id="following-tab" class="social-tab-content">
+
+        <h2>Recent Reviews</h2>
+
+        {% for log in following_reviews %}
+
+            <div class="social-review">
+
+                <div class="social-review-header">
+
+                    <div class="social-review-user">
+
+                        <a href="{% url 'public_profile' log.user.username %}">
+                            {{ log.user.username }}
+                        </a>
+
+                    </div>
+
+                    <div class="social-review-date">
+                        {{ log.logged_at|timesince }} ago
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'game_detail' log.game.id %}"
+                    class="social-review-game"
+                >
+                    {{ log.game.away_team }} @ {{ log.game.home_team }}
+                </a>
+
+
+                {% if log.quality_rating %}
+
+                    <div class="social-rating">
+                        ⭐ {{ log.quality_rating }}/5
+                    </div>
+
+                {% endif %}
+
+
+                {% if log.review %}
+
+                    <p class="social-review-text">
+                        {{ log.review }}
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+                {% empty %}
+
+            <div class="social-empty">
+                No reviews from people you follow yet.
+            </div>
+
+        {% endfor %}
+
+
+        {% if following_reviews.paginator.num_pages > 1 %}
+
+            <div class="social-pagination">
+
+                {% if following_reviews.has_previous %}
+                    <a href="?page={{ following_reviews.previous_page_number }}">
+                        ← Previous
+                    </a>
+                {% endif %}
+
+
+                <span>
+                    Page {{ following_reviews.number }}
+                    of {{ following_reviews.paginator.num_pages }}
+                </span>
+
+
+                {% if following_reviews.has_next %}
+                    <a href="?page={{ following_reviews.next_page_number }}">
+                        Next →
+                    </a>
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ACTIVITY TAB -->
+
+    <div
+        id="activity-tab"
+        class="social-tab-content"
+        style="display: none;"
+    >
+
+        <h2>Recent Activity</h2>
+
+
+        {% for follow in new_followers %}
+
+            <div class="social-activity">
+
+                👤
+
+                <a href="{% url 'public_profile' follow.follower.username %}">
+                    {{ follow.follower.username }}
+                </a>
+
+                started following you
+
+                <span class="social-activity-time">
+                    {{ follow.created_at|timesince }} ago
+                </span>
+
+            </div>
+
+        {% endfor %}
+
+
+        {% for log in watched_with %}
+
+            <div class="social-activity">
+
+                🎟️
+
+                <a href="{% url 'public_profile' log.user.username %}">
+                    {{ log.user.username }}
+                </a>
+
+                watched
+
+                <a href="{% url 'game_detail' log.game.id %}">
+                    {{ log.game.away_team }} @ {{ log.game.home_team }}
+                </a>
+
+                with you
+
+                <span class="social-activity-time">
+                    {{ log.logged_at|timesince }} ago
+                </span>
+
+            </div>
+
+        {% endfor %}
+
+
+        {% if not new_followers and not watched_with %}
+
+            <div class="social-empty">
+                No activity yet.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showSocialTab(tab) {
+
+    const followingTab = document.getElementById("following-tab");
+    const activityTab = document.getElementById("activity-tab");
+
+    const buttons = document.querySelectorAll(".social-tab");
+
+    if (tab === "following") {
+
+        followingTab.style.display = "block";
+        activityTab.style.display = "none";
+
+        buttons[0].classList.add("active");
+        buttons[1].classList.remove("active");
+
+    } else {
+
+        followingTab.style.display = "none";
+        activityTab.style.display = "block";
+
+        buttons[0].classList.remove("active");
+        buttons[1].classList.add("active");
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

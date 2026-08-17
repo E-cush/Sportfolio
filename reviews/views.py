@@ -729,6 +729,49 @@ def edit_log(request, game_id):
         "form": form,
     })
 
+@login_required
+def social(request):
+    following_ids = Follow.objects.filter(
+        follower=request.user
+    ).values_list("following_id", flat=True)
+
+    following_reviews = (
+        GameLog.objects.filter(
+            user_id__in=following_ids,
+        )
+        .select_related("user", "game")
+        .order_by("-logged_at")
+    )
+
+    # Show 10 reviews per page
+    paginator = Paginator(following_reviews, 10)
+
+    page_number = request.GET.get("page")
+
+    following_reviews = paginator.get_page(page_number)
+
+    new_followers = (
+        Follow.objects.filter(
+            following=request.user
+        )
+        .select_related("follower")
+        .order_by("-created_at")
+    )
+
+    watched_with = (
+        GameLog.objects.filter(
+            watched_with=request.user
+        )
+        .exclude(user=request.user)
+        .select_related("user", "game")
+        .order_by("-logged_at")
+    )
+
+    return render(request, "social.html", {
+        "following_reviews": following_reviews,
+        "new_followers": new_followers,
+        "watched_with": watched_with,
+    })
 
 @login_required
 def diary(request):

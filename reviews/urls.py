@@ -23,6 +23,7 @@ urlpatterns = [
     path("game/<int:game_id>/edit/", views.edit_log, name="edit_log"),
 
     # User pages
+    path("social/", views.social, name="social"),
     path("diary/", views.diary, name="diary"),
     path("profile/", views.profile, name="profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),
