@@ -1341,6 +1341,32 @@ button:hover {
     gap: 20px;
 }
 
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.date-input-wrapper::after {
+    content: "▣";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.date-input-wrapper input[type="date"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+}
+
 
 .date-row {
     grid-template-columns: repeat(4, 1fr);
