@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from django.utils import timezone
 
 from django.core.management.base import BaseCommand
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "start_date",
             nargs="?",
-            default=date.today().isoformat(),
+            default=timezone.localdate().isoformat(),
             help="Start date (YYYY-MM-DD)",
         )
 
