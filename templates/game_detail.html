@@ -144,8 +144,17 @@
         {% endif %}
 
         <a href="{% url 'edit_log' game.id %}">
-            <button>Edit Log</button>
-        </a>
+    <button>Edit Log</button>
+</a>
+
+<form method="post"
+      action="{% url 'remove_log' game.id %}"
+      onsubmit="return confirm('Are you sure you want to remove this log?');">
+    {% csrf_token %}
+    <button type="submit" class="remove-log-button">
+        Remove Log
+    </button>
+</form>
 
     {% else %}
 

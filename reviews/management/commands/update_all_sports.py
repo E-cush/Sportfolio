@@ -1,4 +1,5 @@
-from datetime import date, timedelta
+from datetime import timedelta
+from django.utils import timezone
 
 from django.core.management.base import BaseCommand
 
@@ -31,7 +32,7 @@ class Command(BaseCommand):
             start_date = kwargs["start_date"]
             end_date = kwargs["end_date"]
         else:
-            today = date.today()
+            today = timezone.localdate()
             start_date = (today - timedelta(days=1)).isoformat()
             end_date = (today + timedelta(days=1)).isoformat()
 

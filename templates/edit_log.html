@@ -99,7 +99,24 @@ Edit Log
                 Save Changes
             </button>
 
+            <button
+    type="submit"
+    form="delete-log-form"
+    class="delete-log-button"
+    onclick="return confirm('Are you sure you want to remove this log?');"
+>
+    Remove Log
+</button>
+
         </form>
+
+        <form
+    method="post"
+    action="{% url 'delete_log' game.id %}"
+    id="delete-log-form"
+>
+    {% csrf_token %}
+</form>
 
     </div>
 

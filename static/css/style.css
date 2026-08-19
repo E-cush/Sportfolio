@@ -2320,6 +2320,31 @@ button:hover {
     box-sizing: border-box !important;
 }
 
+.delete-log-button {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px;
+
+    border: 1px solid #d32f2f;
+    border-radius: 9px;
+
+    background: transparent;
+    color: #ff5252;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.remove-log-button {
+    margin-top: 10px;
+    background: transparent;
+    color: #ff3333;
+    border: 1px solid #ff3333;
+}
+
 
 
 

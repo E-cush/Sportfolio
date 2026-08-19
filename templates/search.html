@@ -37,14 +37,41 @@
 
 </div>
 
-<form method="get">
+<form method="get" class="game-search-form">
+
     <input
         type="text"
         name="q"
         placeholder="Search by team or season..."
         value="{{ query }}"
     >
+
+    <div class="date-search-row">
+
+        <div class="date-search-field">
+            <label for="date_from">From</label>
+            <input
+                type="date"
+                id="date_from"
+                name="date_from"
+                value="{{ date_from }}"
+            >
+        </div>
+
+        <div class="date-search-field">
+            <label for="date_to">To</label>
+            <input
+                type="date"
+                id="date_to"
+                name="date_to"
+                value="{{ date_to }}"
+            >
+        </div>
+
+    </div>
+
     <button type="submit">Search</button>
+
 </form>
 
 {% if games %}

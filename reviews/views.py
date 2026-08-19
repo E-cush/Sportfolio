@@ -78,46 +78,76 @@ def coming_soon(request):
 
 def search(request):
     query = request.GET.get("q", "")
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
     games = Game.objects.none()
 
-    if query:
-        if query.isdigit():
-            games = Game.objects.filter(season=int(query))
-        else:
-            games = Game.objects.filter(
-                Q(home_team__icontains=query) |
-                Q(away_team__icontains=query)
-            )
+    if query or date_from or date_to:
 
-    paginator = Paginator(games, 100)   # 100 results per page
+        if query:
+            if query.isdigit():
+                games = Game.objects.filter(
+                    season=int(query)
+                )
+            else:
+                games = Game.objects.filter(
+                    Q(home_team__icontains=query) |
+                    Q(away_team__icontains=query)
+                )
+        else:
+            games = Game.objects.all()
+
+        if date_from:
+            try:
+                games = games.filter(
+                    game_date__gte=date.fromisoformat(date_from)
+                )
+            except ValueError:
+                date_from = ""
+
+        if date_to:
+            try:
+                games = games.filter(
+                    game_date__lte=date.fromisoformat(date_to)
+                )
+            except ValueError:
+                date_to = ""
+
+        games = games.order_by("game_date")
+
+    paginator = Paginator(games, 100)
+
     page_number = request.GET.get("page")
     games = paginator.get_page(page_number)
 
     return render(request, "search.html", {
         "games": games,
         "query": query,
+        "date_from": date_from,
+        "date_to": date_to,
     })
 
 
 def mlb_games(request):
     team = request.GET.get("team", "")
     opponent = request.GET.get("opponent", "")
+
     team_search = MLB_ALIASES.get(team.lower(), team) if team else ""
     opponent_search = MLB_ALIASES.get(opponent.lower(), opponent) if opponent else ""
-    month_from = request.GET.get("month_from", "")
-    month_to = request.GET.get("month_to", "")
-    day_from = request.GET.get("day_from", "")
-    day_to = request.GET.get("day_to", "")
-    year_from = request.GET.get("year_from", "")
-    year_to = request.GET.get("year_to", "")
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
     include_upcoming = request.GET.get("include_upcoming") == "1"
+
     games = Game.objects.filter(league="MLB")
+
     # By default, only show games that have already happened.
-    # Checking "Include upcoming games" allows future games into the results.
     if not include_upcoming:
-        games = games.filter(game_date__lte=date.today())
+        games = games.filter(game_date__lte=timezone.localdate())
 
     if team:
         games = games.filter(
@@ -131,35 +161,21 @@ def mlb_games(request):
             Q(away_team__icontains=opponent_search)
         )
 
-    if year_from and year_to:
-        games = games.filter(
-            game_date__year__gte=int(year_from),
-            game_date__year__lte=int(year_to)
-        )
-    elif year_from:
-        games = games.filter(game_date__year=int(year_from))
-    elif year_to:
-        games = games.filter(game_date__year=int(year_to))
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
 
-    if month_from and month_to:
-        games = games.filter(
-            game_date__month__gte=int(month_from),
-            game_date__month__lte=int(month_to)
-        )
-    elif month_from:
-        games = games.filter(game_date__month=int(month_from))
-    elif month_to:
-        games = games.filter(game_date__month=int(month_to))
-
-    if day_from and day_to:
-        games = games.filter(
-            game_date__day__gte=int(day_from),
-            game_date__day__lte=int(day_to)
-        )
-    elif day_from:
-        games = games.filter(game_date__day=int(day_from))
-    elif day_to:
-        games = games.filter(game_date__day=int(day_to))
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
 
     if season_type:
         games = games.filter(game_type=season_type)
@@ -189,15 +205,12 @@ def mlb_games(request):
     else:
         games = games.order_by("-game_date")
 
+    # Don't show results until the user actually searches.
     if not any([
         team,
         opponent,
-        year_from,
-        year_to,
-        month_from,
-        month_to,
-        day_from,
-        day_to,
+        date_from,
+        date_to,
         season_type,
     ]):
         games = Game.objects.none()
@@ -210,18 +223,12 @@ def mlb_games(request):
         "games": games,
         "team": team,
         "opponent": opponent,
-        "month_from": month_from,
-        "month_to": month_to,
-        "day_from": day_from,
-        "day_to": day_to,
-        "year_from": year_from,
-        "year_to": year_to,
+        "date_from": date_from,
+        "date_to": date_to,
         "season_type": season_type,
         "sort": sort,
         "include_upcoming": include_upcoming,
     })
-
-
 def nba_games(request):
     team = request.GET.get("team", "")
     opponent = request.GET.get("opponent", "")
@@ -291,6 +298,7 @@ def nba_games(request):
 
     if season_type:
         games = games.filter(game_type=season_type)
+
     # Sorting
     if sort == "newest":
         games = games.order_by("-game_date")
@@ -315,6 +323,7 @@ def nba_games(request):
 
     else:
         games = games.order_by("-game_date")
+
     if not any([
         team,
         opponent,
@@ -728,6 +737,36 @@ def edit_log(request, game_id):
         "game": game,
         "form": form,
     })
+
+@login_required
+def remove_log(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+
+    game_log = get_object_or_404(
+        GameLog,
+        user=request.user,
+        game=game,
+    )
+
+    if request.method == "POST":
+        game_log.delete()
+
+    return redirect("game_detail", game_id=game.id)
+
+@login_required
+def delete_log(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+
+    game_log = get_object_or_404(
+        GameLog,
+        user=request.user,
+        game=game,
+    )
+
+    if request.method == "POST":
+        game_log.delete()
+
+    return redirect("game_detail", game_id=game.id)
 
 @login_required
 def social(request):

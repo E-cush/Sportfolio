@@ -22,6 +22,12 @@ urlpatterns = [
     path("game/<int:game_id>/log/", views.log_game, name="log_game"),
     path("game/<int:game_id>/edit/", views.edit_log, name="edit_log"),
 
+path(
+    "game/<int:game_id>/delete/",
+    views.delete_log,
+    name="delete_log",
+),
+
     # User pages
     path("social/", views.social, name="social"),
     path("diary/", views.diary, name="diary"),
@@ -110,4 +116,10 @@ path(
         views.coming_soon,
         name="coming_soon",
     ),
+
+path(
+    "game/<int:game_id>/remove-log/",
+    views.remove_log,
+    name="remove_log",
+),
 ]
