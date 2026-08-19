@@ -13,7 +13,12 @@ from django.utils import timezone
 from datetime import date, timedelta
 
 def home(request):
-    today = timezone.localdate()
+    now = timezone.localtime()
+
+    if now.hour < 6:
+        today = now.date() - timedelta(days=1)
+    else:
+        today = now.date()
 
     today_games = Game.objects.filter(
         game_date=today
@@ -24,7 +29,12 @@ def home(request):
     })
 
 def todays_games(request):
-    today = timezone.localdate()
+    now = timezone.localtime()
+
+    if now.hour < 6:
+        today = now.date() - timedelta(days=1)
+    else:
+        today = now.date()
 
     date_param = request.GET.get("date", "")
 
@@ -236,14 +246,8 @@ def nba_games(request):
     team_search = NBA_ALIASES.get(team.lower(), team) if team else ""
     opponent_search = NBA_ALIASES.get(opponent.lower(), opponent) if opponent else ""
 
-    month_from = request.GET.get("month_from", "")
-    month_to = request.GET.get("month_to", "")
-
-    day_from = request.GET.get("day_from", "")
-    day_to = request.GET.get("day_to", "")
-
-    year_from = request.GET.get("year_from", "")
-    year_to = request.GET.get("year_to", "")
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
 
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
@@ -252,7 +256,7 @@ def nba_games(request):
     games = Game.objects.filter(league="NBA")
 
     if not include_upcoming:
-        games = games.filter(game_date__lte=date.today())
+        games = games.filter(game_date__lte=timezone.localdate())
 
     if team:
         games = games.filter(
@@ -266,40 +270,25 @@ def nba_games(request):
             Q(away_team__icontains=opponent_search)
         )
 
-    if year_from and year_to:
-        games = games.filter(
-            game_date__year__gte=int(year_from),
-            game_date__year__lte=int(year_to)
-        )
-    elif year_from:
-        games = games.filter(game_date__year=int(year_from))
-    elif year_to:
-        games = games.filter(game_date__year=int(year_to))
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
 
-    if month_from and month_to:
-        games = games.filter(
-            game_date__month__gte=int(month_from),
-            game_date__month__lte=int(month_to)
-        )
-    elif month_from:
-        games = games.filter(game_date__month=int(month_from))
-    elif month_to:
-        games = games.filter(game_date__month=int(month_to))
-
-    if day_from and day_to:
-        games = games.filter(
-            game_date__day__gte=int(day_from),
-            game_date__day__lte=int(day_to)
-        )
-    elif day_from:
-        games = games.filter(game_date__day=int(day_from))
-    elif day_to:
-        games = games.filter(game_date__day=int(day_to))
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
 
     if season_type:
         games = games.filter(game_type=season_type)
 
-    # Sorting
     if sort == "newest":
         games = games.order_by("-game_date")
 
@@ -327,12 +316,8 @@ def nba_games(request):
     if not any([
         team,
         opponent,
-        month_from,
-        month_to,
-        day_from,
-        day_to,
-        year_from,
-        year_to,
+        date_from,
+        date_to,
         season_type,
     ]):
         games = Game.objects.none()
@@ -345,12 +330,8 @@ def nba_games(request):
         "games": games,
         "team": team,
         "opponent": opponent,
-        "month_from": month_from,
-        "month_to": month_to,
-        "day_from": day_from,
-        "day_to": day_to,
-        "year_from": year_from,
-        "year_to": year_to,
+        "date_from": date_from,
+        "date_to": date_to,
         "season_type": season_type,
         "sort": sort,
         "include_upcoming": include_upcoming,
@@ -362,14 +343,8 @@ def nfl_games(request):
     team_search = NFL_ALIASES.get(team.lower(), team) if team else ""
     opponent_search = NFL_ALIASES.get(opponent.lower(), opponent) if opponent else ""
 
-    month_from = request.GET.get("month_from", "")
-    month_to = request.GET.get("month_to", "")
-
-    day_from = request.GET.get("day_from", "")
-    day_to = request.GET.get("day_to", "")
-
-    year_from = request.GET.get("year_from", "")
-    year_to = request.GET.get("year_to", "")
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
 
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
@@ -378,7 +353,7 @@ def nfl_games(request):
     games = Game.objects.filter(league="NFL")
 
     if not include_upcoming:
-        games = games.filter(game_date__lte=date.today())
+        games = games.filter(game_date__lte=timezone.localdate())
 
     if team:
         games = games.filter(
@@ -392,43 +367,25 @@ def nfl_games(request):
             Q(away_team__icontains=opponent_search)
         )
 
-    # Year filtering
-    if year_from and year_to:
-        games = games.filter(
-            game_date__year__gte=int(year_from),
-            game_date__year__lte=int(year_to)
-        )
-    elif year_from:
-        games = games.filter(game_date__year=int(year_from))
-    elif year_to:
-        games = games.filter(game_date__year=int(year_to))
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
 
-    # Month filtering
-    if month_from and month_to:
-        games = games.filter(
-            game_date__month__gte=int(month_from),
-            game_date__month__lte=int(month_to)
-        )
-    elif month_from:
-        games = games.filter(game_date__month=int(month_from))
-    elif month_to:
-        games = games.filter(game_date__month=int(month_to))
-
-    # Day filtering
-    if day_from and day_to:
-        games = games.filter(
-            game_date__day__gte=int(day_from),
-            game_date__day__lte=int(day_to)
-        )
-    elif day_from:
-        games = games.filter(game_date__day=int(day_from))
-    elif day_to:
-        games = games.filter(game_date__day=int(day_to))
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
 
     if season_type:
         games = games.filter(game_type=season_type)
 
-    # Sorting
     if sort == "newest":
         games = games.order_by("-game_date")
 
@@ -456,12 +413,8 @@ def nfl_games(request):
     if not any([
         team,
         opponent,
-        month_from,
-        month_to,
-        day_from,
-        day_to,
-        year_from,
-        year_to,
+        date_from,
+        date_to,
         season_type,
     ]):
         games = Game.objects.none()
@@ -474,12 +427,8 @@ def nfl_games(request):
         "games": games,
         "team": team,
         "opponent": opponent,
-        "month_from": month_from,
-        "month_to": month_to,
-        "day_from": day_from,
-        "day_to": day_to,
-        "year_from": year_from,
-        "year_to": year_to,
+        "date_from": date_from,
+        "date_to": date_to,
         "season_type": season_type,
         "sort": sort,
         "include_upcoming": include_upcoming,
@@ -489,14 +438,8 @@ def champions_league(request):
     team = request.GET.get("team", "")
     opponent = request.GET.get("opponent", "")
 
-    month_from = request.GET.get("month_from", "")
-    month_to = request.GET.get("month_to", "")
-
-    day_from = request.GET.get("day_from", "")
-    day_to = request.GET.get("day_to", "")
-
-    year_from = request.GET.get("year_from", "")
-    year_to = request.GET.get("year_to", "")
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
 
     season_type = request.GET.get("season_type", "")
     sort = request.GET.get("sort", "newest")
@@ -507,8 +450,6 @@ def champions_league(request):
         competition="UEFA Champions League"
     )
 
-    # By default, only show games that have already happened.
-    # Checking "Include upcoming games" allows future games into the results.
     if not include_upcoming:
         games = games.filter(game_date__lte=timezone.localdate())
 
@@ -524,28 +465,25 @@ def champions_league(request):
             Q(away_team__icontains=opponent)
         )
 
-    if year_from:
-        games = games.filter(game_date__year__gte=int(year_from))
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
 
-    if year_to:
-        games = games.filter(game_date__year__lte=int(year_to))
-
-    if month_from:
-        games = games.filter(game_date__month__gte=int(month_from))
-
-    if month_to:
-        games = games.filter(game_date__month__lte=int(month_to))
-
-    if day_from:
-        games = games.filter(game_date__day__gte=int(day_from))
-
-    if day_to:
-        games = games.filter(game_date__day__lte=int(day_to))
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
 
     if season_type:
         games = games.filter(game_type=season_type)
 
-    # Sorting
     if sort == "newest":
         games = games.order_by("-game_date")
 
@@ -573,12 +511,8 @@ def champions_league(request):
     if not any([
         team,
         opponent,
-        month_from,
-        month_to,
-        day_from,
-        day_to,
-        year_from,
-        year_to,
+        date_from,
+        date_to,
         season_type,
     ]):
         games = Game.objects.none()
@@ -591,12 +525,8 @@ def champions_league(request):
         "games": games,
         "team": team,
         "opponent": opponent,
-        "month_from": month_from,
-        "month_to": month_to,
-        "day_from": day_from,
-        "day_to": day_to,
-        "year_from": year_from,
-        "year_to": year_to,
+        "date_from": date_from,
+        "date_to": date_to,
         "season_type": season_type,
         "sort": sort,
         "include_upcoming": include_upcoming,

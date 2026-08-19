@@ -31,11 +31,13 @@
 
                 {% if is_owner %}
 
-                    <a href="{% url 'edit_profile' %}" class="follow-btn">
-                        Edit Profile
-                    </a>
+    <a href="{% url 'edit_profile' %}" class="follow-btn">
+        Edit Profile
+    </a>
 
-                {% else %}
+
+
+{% else %}
 
                     {% if request.user.is_authenticated %}
                     <form action="{% url 'follow_user' profile_user.username %}" method="post">
@@ -329,5 +331,13 @@
     {% endif %}
 
 </div>
+
+<script>
+    window.history.replaceState(
+        {},
+        "",
+        "{% url 'public_profile' profile_user.username %}"
+    );
+</script>
 
 {% endblock %}
