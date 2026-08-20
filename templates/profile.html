@@ -34,10 +34,11 @@
     <a href="{% url 'edit_profile' %}" class="follow-btn">
         Edit Profile
     </a>
-
-
-
 {% else %}
+
+
+
+
 
                     {% if request.user.is_authenticated %}
                     <form action="{% url 'follow_user' profile_user.username %}" method="post">

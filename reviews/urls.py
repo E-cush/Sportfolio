@@ -122,4 +122,14 @@ path(
     views.remove_log,
     name="remove_log",
 ),
+
+path("privacy/", views.privacy_policy, name="privacy_policy"),
+
+path("support/", views.support, name="support"),
+
+path(
+    "delete-account/",
+    views.delete_account,
+    name="delete_account",
+),
 ]

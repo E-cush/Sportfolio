@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.utils import timezone
 from datetime import date, timedelta
+from django.contrib.auth import logout
 
 def home(request):
     now = timezone.localtime()
@@ -938,6 +939,29 @@ def public_profile(request, username):
     return render(request, "profile.html", context)
 
 @login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+
+        # Remove the uploaded profile picture file.
+        try:
+            profile = user.profile
+            if profile.profile_picture:
+                profile.profile_picture.delete(save=False)
+        except Profile.DoesNotExist:
+            pass
+
+        # Delete the user and all related account data.
+        user.delete()
+
+        # End the user's session.
+        logout(request)
+
+        return redirect("home")
+
+    return render(request, "delete_account.html")
+
+@login_required
 def follow_user(request, username):
     user_to_follow = get_object_or_404(User, username=username)
 
@@ -1158,3 +1182,9 @@ def user_stats(request, username):
     context["is_owner"] = False
 
     return render(request, "stats.html", context)
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+
+def support(request):
+    return render(request, "support.html")

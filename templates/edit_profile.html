@@ -16,4 +16,19 @@
     <a href="{% url 'profile' %}">← Back to Profile</a>
 </p>
 
+<hr>
+
+<div class="danger-zone">
+    <h2>Danger Zone</h2>
+
+    <p>
+        Permanently delete your Sportfolio account and all associated data.
+        This action cannot be undone.
+    </p>
+
+    <a href="{% url 'delete_account' %}" class="delete-account-btn">
+        Delete Account
+    </a>
+</div>
+
 {% endblock %}

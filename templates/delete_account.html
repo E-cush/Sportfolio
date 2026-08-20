@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+
+<div class="content-container">
+
+    <h1>Delete Your Account</h1>
+
+    <p>
+        Are you sure you want to permanently delete your Sportfolio account?
+    </p>
+
+    <p>
+        This will permanently delete your profile, game logs, comments,
+        follows, ratings, reviews, and other account-associated information.
+    </p>
+
+    <p>
+        <strong>This action cannot be undone.</strong>
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit">
+            Delete My Account
+        </button>
+
+        <a href="{% url 'profile' %}">
+            Cancel
+        </a>
+    </form>
+
+</div>
+
+{% endblock %}
