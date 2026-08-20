@@ -78,8 +78,14 @@ Edit Log
                 </label>
 
                 <div class="watched-with-list">
-                    {{ form.watched_with }}
-                </div>
+    {% if form.watched_with.field.queryset.exists %}
+        {{ form.watched_with }}
+    {% else %}
+        <div class="watched-with-empty">
+            Follow a user to tag them
+        </div>
+    {% endif %}
+</div>
 
             </div>
 
