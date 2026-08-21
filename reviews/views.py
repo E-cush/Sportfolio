@@ -2,7 +2,12 @@ from .services.mlb import get_linescore
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .team_aliases import NFL_ALIASES, MLB_ALIASES, NBA_ALIASES
+from .team_aliases import (
+    NFL_ALIASES,
+    MLB_ALIASES,
+    NBA_ALIASES,
+    NHL_ALIASES,
+)
 from django.contrib.auth.models import User
 from .models import Game, GameLog, Follow, Profile, Comment
 from .forms import GameLogForm, ProfileForm
@@ -425,6 +430,111 @@ def nfl_games(request):
     games = paginator.get_page(page_number)
 
     return render(request, "nfl_games.html", {
+        "games": games,
+        "team": team,
+        "opponent": opponent,
+        "date_from": date_from,
+        "date_to": date_to,
+        "season_type": season_type,
+        "sort": sort,
+        "include_upcoming": include_upcoming,
+    })
+
+def nhl_games(request):
+    team = request.GET.get("team", "")
+    opponent = request.GET.get("opponent", "")
+
+    team_search = NHL_ALIASES.get(
+        team.lower(), team
+    ) if team else ""
+
+    opponent_search = NHL_ALIASES.get(
+        opponent.lower(), opponent
+    ) if opponent else ""
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    season_type = request.GET.get("season_type", "")
+    sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
+    games = Game.objects.filter(league="NHL")
+
+    if not include_upcoming:
+        games = games.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+    if team:
+        games = games.filter(
+            Q(home_team__icontains=team_search) |
+            Q(away_team__icontains=team_search)
+        )
+
+    if opponent:
+        games = games.filter(
+            Q(home_team__icontains=opponent_search) |
+            Q(away_team__icontains=opponent_search)
+        )
+
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
+
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
+
+    if season_type:
+        games = games.filter(game_type=season_type)
+
+    if sort == "newest":
+        games = games.order_by("-game_date")
+
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+
+    else:
+        games = games.order_by("-game_date")
+
+    if not any([
+        team,
+        opponent,
+        date_from,
+        date_to,
+        season_type,
+    ]):
+        games = Game.objects.none()
+
+    paginator = Paginator(games, 100)
+    page_number = request.GET.get("page")
+    games = paginator.get_page(page_number)
+
+    return render(request, "nhl_games.html", {
         "games": games,
         "team": team,
         "opponent": opponent,

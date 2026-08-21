@@ -15,6 +15,7 @@ urlpatterns = [
     path("mlb/", views.mlb_games, name="mlb_games"),
     path("nba/", views.nba_games, name="nba_games"),
     path("nfl/", views.nfl_games, name="nfl_games"),
+    path("nhl/", views.nhl_games, name="nhl_games"),
     path("champions-league/", views.champions_league, name="champions_league"),
 
     # Game pages

@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}NHL Games{% endblock %}
+
+{% block content %}
+
+<h1>🏒 National Hockey League</h1>
+
+<p>Search every NHL game in the Sportfolio database.</p>
+
+<div class="game-search-panel">
+
+    <div class="game-search-title">
+        <h2>Search NHL Games</h2>
+        <p>Find any NHL game in the Sportfolio database.</p>
+    </div>
+
+    <form method="get" class="game-search-form">
+
+        <!-- Team / Opponent -->
+
+        <div class="search-row">
+
+            <div class="search-field">
+                <label for="team">Team</label>
+
+                <input
+                    type="text"
+                    id="team"
+                    name="team"
+                    value="{{ team }}"
+                    placeholder="e.g. Rangers"
+                >
+            </div>
+
+            <div class="search-field">
+                <label for="opponent">Opponent</label>
+
+                <input
+                    type="text"
+                    id="opponent"
+                    name="opponent"
+                    value="{{ opponent }}"
+                    placeholder="e.g. Islanders"
+                >
+            </div>
+
+        </div>
+
+        <!-- Date Range -->
+
+        <div class="search-section-label">
+            Date Range
+        </div>
+
+        <div class="search-row date-row">
+
+            <div class="search-field">
+                <label for="date_from">From</label>
+
+                <input
+                    type="date"
+                    id="date_from"
+                    name="date_from"
+                    value="{{ date_from }}"
+                >
+            </div>
+
+            <div class="search-field">
+                <label for="date_to">To</label>
+
+                <input
+                    type="date"
+                    id="date_to"
+                    name="date_to"
+                    value="{{ date_to }}"
+                >
+            </div>
+
+        </div>
+
+        <!-- Game Type / Sort -->
+
+        <div class="search-row">
+
+            <div class="search-field">
+
+                <label for="season_type">
+                    Game Type
+                </label>
+
+                <select id="season_type" name="season_type">
+
+                    <option value="">Any</option>
+
+                    <option value="Preseason"
+                        {% if season_type == "Preseason" %}selected{% endif %}>
+                        Preseason
+                    </option>
+
+                    <option value="Regular Season"
+                        {% if season_type == "Regular Season" %}selected{% endif %}>
+                        Regular Season
+                    </option>
+
+                    <option value="Playoffs"
+                        {% if season_type == "Playoffs" %}selected{% endif %}>
+                        Playoffs
+                    </option>
+
+                    <option value="All-Star"
+                        {% if season_type == "All-Star" %}selected{% endif %}>
+                        All-Star
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="search-field">
+
+                <label for="sort">
+                    Sort By
+                </label>
+
+                <select id="sort" name="sort">
+
+                    <option value="newest"
+                        {% if sort == "newest" %}selected{% endif %}>
+                        Newest
+                    </option>
+
+                    <option value="oldest"
+                        {% if sort == "oldest" %}selected{% endif %}>
+                        Oldest
+                    </option>
+
+                    <option value="highest"
+                        {% if sort == "highest" %}selected{% endif %}>
+                        Highest Rated
+                    </option>
+
+                    <option value="lowest"
+                        {% if sort == "lowest" %}selected{% endif %}>
+                        Lowest Rated
+                    </option>
+
+                    <option value="watched"
+                        {% if sort == "watched" %}selected{% endif %}>
+                        Most Watched
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <!-- Upcoming Games -->
+
+        <label class="upcoming-checkbox">
+
+            <input
+                type="checkbox"
+                name="include_upcoming"
+                value="1"
+                {% if include_upcoming %}checked{% endif %}
+            >
+
+            <span class="custom-checkbox"></span>
+
+            <span>Include upcoming games</span>
+
+        </label>
+
+        <!-- Search -->
+
+        <button type="submit" class="search-submit">
+            Search Games
+        </button>
+
+    </form>
+
+</div>
+
+{% if team or opponent or date_from or date_to or season_type %}
+
+<h2>Search Results</h2>
+
+{% if games.has_other_pages %}
+
+<div style="text-align:center; margin:25px 0;">
+
+    {% if games.has_previous %}
+    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.previous_page_number }}">
+        ← Previous
+    </a>
+    {% endif %}
+
+    <span style="margin:0 20px;">
+        Page {{ games.number }} of {{ games.paginator.num_pages }}
+    </span>
+
+    {% if games.has_next %}
+    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.next_page_number }}">
+        Next →
+    </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% for game in games %}
+
+<a href="{% url 'game_detail' game.id %}" class="game-card">
+
+    <div class="game-card-header">
+
+        <h2 class="team-name">
+
+            {% if game.away_logo %}
+                <img
+                    src="{% static game.away_logo %}"
+                    class="team-logo"
+                    alt="{{ game.away_team }} logo">
+            {% else %}
+                <span class="team-logo-fallback">🏒</span>
+            {% endif %}
+
+            {{ game.away_team }}
+
+        </h2>
+
+        <span class="vs">@</span>
+
+        <h2 class="team-name">
+
+            {% if game.home_logo %}
+                <img
+                    src="{% static game.home_logo %}"
+                    class="team-logo"
+                    alt="{{ game.home_team }} logo">
+            {% else %}
+                <span class="team-logo-fallback">🏒</span>
+            {% endif %}
+
+            {{ game.home_team }}
+
+        </h2>
+
+    </div>
+
+    <div class="game-meta">
+        {{ game.game_date }}
+    </div>
+
+    {% if game.home_score is not None and game.away_score is not None %}
+    <div class="score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+    {% endif %}
+
+    <p>
+        {% if game.is_upcoming %}
+            Upcoming
+        {% else %}
+            {{ game.status }}
+        {% endif %}
+    </p>
+
+</a>
+
+{% empty %}
+
+<p>No games matched your search.</p>
+
+{% endfor %}
+
+{% if games.has_other_pages %}
+
+<div style="text-align:center; margin:40px 0;">
+
+    {% if games.has_previous %}
+    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.previous_page_number }}">
+        ← Previous
+    </a>
+    {% endif %}
+
+    <span style="margin:0 20px;">
+        Page {{ games.number }} of {{ games.paginator.num_pages }}
+    </span>
+
+    {% if games.has_next %}
+    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.next_page_number }}">
+        Next →
+    </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

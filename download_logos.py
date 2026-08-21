@@ -155,8 +155,72 @@ def download_nfl():
         else:
             print(f"✗ {row['team_name']}")
 
+# ==========================================
+# NHL
+# ==========================================
+
+NHL_OUTPUT = os.path.join(BASE_DIR, "static", "logos", "nhl")
+os.makedirs(NHL_OUTPUT, exist_ok=True)
+
+NHL_TEAM_CODES = {
+    "anaheim-ducks": "ana",
+    "boston-bruins": "bos",
+    "buffalo-sabres": "buf",
+    "calgary-flames": "cgy",
+    "carolina-hurricanes": "car",
+    "chicago-blackhawks": "chi",
+    "colorado-avalanche": "col",
+    "columbus-blue-jackets": "cbj",
+    "dallas-stars": "dal",
+    "detroit-red-wings": "det",
+    "edmonton-oilers": "edm",
+    "florida-panthers": "fla",
+    "los-angeles-kings": "la",
+    "minnesota-wild": "min",
+    "montreal-canadiens": "mtl",
+    "nashville-predators": "nsh",
+    "new-jersey-devils": "njd",
+    "new-york-islanders": "nyi",
+    "new-york-rangers": "nyr",
+    "ottawa-senators": "ott",
+    "philadelphia-flyers": "phi",
+    "pittsburgh-penguins": "pit",
+    "san-jose-sharks": "sj",
+    "seattle-kraken": "sea",
+    "st-louis-blues": "stl",
+    "tampa-bay-lightning": "tb",
+    "toronto-maple-leafs": "tor",
+    "utah-mammoth": "uta",
+    "vancouver-canucks": "van",
+    "vegas-golden-knights": "vgk",
+    "washington-capitals": "wsh",
+    "winnipeg-jets": "wpg",
+}
+
+def download_nhl():
+    print("\nDownloading NHL logos...\n")
+
+    for filename, team_code in NHL_TEAM_CODES.items():
+        url = (
+            f"https://a.espncdn.com/i/teamlogos/nhl/500/"
+            f"{team_code}.png"
+        )
+
+        response = requests.get(url, timeout=20)
+
+        if response.status_code == 200:
+            with open(
+                os.path.join(NHL_OUTPUT, f"{filename}.png"),
+                "wb",
+            ) as f:
+                f.write(response.content)
+
+            print(f"✓ {filename}")
+        else:
+            print(f"✗ {filename}")
 
 if __name__ == "__main__":
     download_mlb()
     download_nba()
     download_nfl()
+    download_nhl()
