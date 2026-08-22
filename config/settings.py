@@ -140,6 +140,9 @@ LOGOUT_REDIRECT_URL = "/users/login/"
 # Football-Data.org API
 FOOTBALL_DATA_API_KEY = os.getenv("FOOTBALL_DATA_API_KEY")
 
+# TheSportsDB API
+THESPORTSDB_API_KEY = os.getenv("THESPORTSDB_API_KEY")
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

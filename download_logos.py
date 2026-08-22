@@ -1,226 +1,292 @@
 import os
+import re
+import time
 import requests
+from pathlib import Path
+from dotenv import load_dotenv
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).resolve().parent
 
-# ==========================================
-# MLB
-# ==========================================
+# Load .env
+load_dotenv(BASE_DIR / ".env")
 
-MLB_OUTPUT = os.path.join(BASE_DIR, "static", "logos", "mlb")
-os.makedirs(MLB_OUTPUT, exist_ok=True)
+API_KEY = os.getenv("THESPORTSDB_API_KEY")
 
-MLB_TEAM_IDS = {
-    "arizona-diamondbacks": 109,
-    "athletics": 133,
-    "atlanta-braves": 144,
-    "baltimore-orioles": 110,
-    "boston-red-sox": 111,
-    "chicago-cubs": 112,
-    "chicago-white-sox": 145,
-    "cincinnati-reds": 113,
-    "cleveland-guardians": 114,
-    "colorado-rockies": 115,
-    "detroit-tigers": 116,
-    "houston-astros": 117,
-    "kansas-city-royals": 118,
-    "los-angeles-angels": 108,
-    "los-angeles-dodgers": 119,
-    "miami-marlins": 146,
-    "milwaukee-brewers": 158,
-    "minnesota-twins": 142,
-    "new-york-mets": 121,
-    "new-york-yankees": 147,
-    "philadelphia-phillies": 143,
-    "pittsburgh-pirates": 134,
-    "san-diego-padres": 135,
-    "san-francisco-giants": 137,
-    "seattle-mariners": 136,
-    "st-louis-cardinals": 138,
-    "tampa-bay-rays": 139,
-    "texas-rangers": 140,
-    "toronto-blue-jays": 141,
-    "washington-nationals": 120,
-}
+if not API_KEY:
+    raise RuntimeError(
+        "THESPORTSDB_API_KEY was not found in .env"
+    )
 
-def download_mlb():
-    print("\nDownloading MLB logos...\n")
-
-    for filename, team_id in MLB_TEAM_IDS.items():
-        url = f"https://www.mlbstatic.com/team-logos/{team_id}.svg"
-
-        response = requests.get(url, timeout=20)
-
-        if response.status_code == 200:
-            with open(os.path.join(MLB_OUTPUT, f"{filename}.svg"), "wb") as f:
-                f.write(response.content)
-            print(f"✓ {filename}")
-        else:
-            print(f"✗ {filename}")
-
-
-# ==========================================
-# NBA
-# ==========================================
-
-NBA_OUTPUT = os.path.join(BASE_DIR, "static", "logos", "nba")
-os.makedirs(NBA_OUTPUT, exist_ok=True)
-
-NBA_TEAM_IDS = {
-    "atlanta-hawks": 1610612737,
-    "boston-celtics": 1610612738,
-    "brooklyn-nets": 1610612751,
-    "charlotte-hornets": 1610612766,
-    "chicago-bulls": 1610612741,
-    "cleveland-cavaliers": 1610612739,
-    "dallas-mavericks": 1610612742,
-    "denver-nuggets": 1610612743,
-    "detroit-pistons": 1610612765,
-    "golden-state-warriors": 1610612744,
-    "houston-rockets": 1610612745,
-    "indiana-pacers": 1610612754,
-    "los-angeles-clippers": 1610612746,
-    "los-angeles-lakers": 1610612747,
-    "memphis-grizzlies": 1610612763,
-    "miami-heat": 1610612748,
-    "milwaukee-bucks": 1610612749,
-    "minnesota-timberwolves": 1610612750,
-    "new-orleans-pelicans": 1610612740,
-    "new-york-knicks": 1610612752,
-    "oklahoma-city-thunder": 1610612760,
-    "orlando-magic": 1610612753,
-    "philadelphia-76ers": 1610612755,
-    "phoenix-suns": 1610612756,
-    "portland-trail-blazers": 1610612757,
-    "sacramento-kings": 1610612758,
-    "san-antonio-spurs": 1610612759,
-    "toronto-raptors": 1610612761,
-    "utah-jazz": 1610612762,
-    "washington-wizards": 1610612764,
-}
-
-def download_nba():
-    print("\nDownloading NBA logos...\n")
-
-    for filename, team_id in NBA_TEAM_IDS.items():
-        url = f"https://cdn.nba.com/logos/nba/{team_id}/global/L/logo.svg"
-
-        response = requests.get(url, timeout=20)
-
-        if response.status_code == 200:
-            with open(os.path.join(NBA_OUTPUT, f"{filename}.svg"), "wb") as f:
-                f.write(response.content)
-            print(f"✓ {filename}")
-        else:
-            print(f"✗ {filename}")
-
-import pandas as pd
-
-NFL_OUTPUT = os.path.join(BASE_DIR, "static", "logos", "nfl")
-os.makedirs(NFL_OUTPUT, exist_ok=True)
-
-NFL_DATA_URL = (
-    "https://raw.githubusercontent.com/nflverse/nflverse-pbp/master/teams_colors_logos.csv"
+API_BASE = (
+    f"https://www.thesportsdb.com/api/v1/json/{API_KEY}"
 )
 
-def download_nfl():
-    print("\nDownloading NFL logos...\n")
+OUTPUT_BASE = BASE_DIR / "static" / "logos" / "tsdb"
 
-    teams = pd.read_csv(NFL_DATA_URL)
 
-    # Only real NFL franchises
-    teams = teams[teams["team_abbr"].str.len() <= 3]
+# ==========================================================
+# SPORTFOLIO TEAMS
+# ==========================================================
 
-    for _, row in teams.iterrows():
+TEAMS = {
+    "mlb": {
+        "Arizona Diamondbacks": "arizona-diamondbacks",
+        "Athletics": "athletics",
+        "Atlanta Braves": "atlanta-braves",
+        "Baltimore Orioles": "baltimore-orioles",
+        "Boston Red Sox": "boston-red-sox",
+        "Chicago Cubs": "chicago-cubs",
+        "Chicago White Sox": "chicago-white-sox",
+        "Cincinnati Reds": "cincinnati-reds",
+        "Cleveland Guardians": "cleveland-guardians",
+        "Colorado Rockies": "colorado-rockies",
+        "Detroit Tigers": "detroit-tigers",
+        "Houston Astros": "houston-astros",
+        "Kansas City Royals": "kansas-city-royals",
+        "Los Angeles Angels": "los-angeles-angels",
+        "Los Angeles Dodgers": "los-angeles-dodgers",
+        "Miami Marlins": "miami-marlins",
+        "Milwaukee Brewers": "milwaukee-brewers",
+        "Minnesota Twins": "minnesota-twins",
+        "New York Mets": "new-york-mets",
+        "New York Yankees": "new-york-yankees",
+        "Philadelphia Phillies": "philadelphia-phillies",
+        "Pittsburgh Pirates": "pittsburgh-pirates",
+        "San Diego Padres": "san-diego-padres",
+        "San Francisco Giants": "san-francisco-giants",
+        "Seattle Mariners": "seattle-mariners",
+        "St. Louis Cardinals": "st-louis-cardinals",
+        "Tampa Bay Rays": "tampa-bay-rays",
+        "Texas Rangers": "texas-rangers",
+        "Toronto Blue Jays": "toronto-blue-jays",
+        "Washington Nationals": "washington-nationals",
+    },
 
-        filename = (
-            row["team_name"]
-            .lower()
-            .replace(".", "")
-            .replace(" ", "-")
-        )
+    "nba": {
+        "Atlanta Hawks": "atlanta-hawks",
+        "Boston Celtics": "boston-celtics",
+        "Brooklyn Nets": "brooklyn-nets",
+        "Charlotte Hornets": "charlotte-hornets",
+        "Chicago Bulls": "chicago-bulls",
+        "Cleveland Cavaliers": "cleveland-cavaliers",
+        "Dallas Mavericks": "dallas-mavericks",
+        "Denver Nuggets": "denver-nuggets",
+        "Detroit Pistons": "detroit-pistons",
+        "Golden State Warriors": "golden-state-warriors",
+        "Houston Rockets": "houston-rockets",
+        "Indiana Pacers": "indiana-pacers",
+        "Los Angeles Clippers": "los-angeles-clippers",
+        "Los Angeles Lakers": "los-angeles-lakers",
+        "Memphis Grizzlies": "memphis-grizzlies",
+        "Miami Heat": "miami-heat",
+        "Milwaukee Bucks": "milwaukee-bucks",
+        "Minnesota Timberwolves": "minnesota-timberwolves",
+        "New Orleans Pelicans": "new-orleans-pelicans",
+        "New York Knicks": "new-york-knicks",
+        "Oklahoma City Thunder": "oklahoma-city-thunder",
+        "Orlando Magic": "orlando-magic",
+        "Philadelphia 76ers": "philadelphia-76ers",
+        "Phoenix Suns": "phoenix-suns",
+        "Portland Trail Blazers": "portland-trail-blazers",
+        "Sacramento Kings": "sacramento-kings",
+        "San Antonio Spurs": "san-antonio-spurs",
+        "Toronto Raptors": "toronto-raptors",
+        "Utah Jazz": "utah-jazz",
+        "Washington Wizards": "washington-wizards",
+    },
 
-        logo_url = row["team_logo_espn"]
+    "nfl": {
+        "Arizona Cardinals": "arizona-cardinals",
+        "Atlanta Falcons": "atlanta-falcons",
+        "Baltimore Ravens": "baltimore-ravens",
+        "Buffalo Bills": "buffalo-bills",
+        "Carolina Panthers": "carolina-panthers",
+        "Chicago Bears": "chicago-bears",
+        "Cincinnati Bengals": "cincinnati-bengals",
+        "Cleveland Browns": "cleveland-browns",
+        "Dallas Cowboys": "dallas-cowboys",
+        "Denver Broncos": "denver-broncos",
+        "Detroit Lions": "detroit-lions",
+        "Green Bay Packers": "green-bay-packers",
+        "Houston Texans": "houston-texans",
+        "Indianapolis Colts": "indianapolis-colts",
+        "Jacksonville Jaguars": "jacksonville-jaguars",
+        "Kansas City Chiefs": "kansas-city-chiefs",
+        "Las Vegas Raiders": "las-vegas-raiders",
+        "Los Angeles Chargers": "los-angeles-chargers",
+        "Los Angeles Rams": "los-angeles-rams",
+        "Miami Dolphins": "miami-dolphins",
+        "Minnesota Vikings": "minnesota-vikings",
+        "New England Patriots": "new-england-patriots",
+        "New Orleans Saints": "new-orleans-saints",
+        "New York Giants": "new-york-giants",
+        "New York Jets": "new-york-jets",
+        "Philadelphia Eagles": "philadelphia-eagles",
+        "Pittsburgh Steelers": "pittsburgh-steelers",
+        "San Francisco 49ers": "san-francisco-49ers",
+        "Seattle Seahawks": "seattle-seahawks",
+        "Tampa Bay Buccaneers": "tampa-bay-buccaneers",
+        "Tennessee Titans": "tennessee-titans",
+        "Washington Commanders": "washington-commanders",
+    },
 
-        response = requests.get(logo_url, timeout=20)
-
-        if response.status_code == 200:
-            with open(
-                    os.path.join(NFL_OUTPUT, f"{filename}.png"),
-                    "wb"
-            ) as f:
-                f.write(response.content)
-
-            print(f"✓ {row['team_name']}")
-        else:
-            print(f"✗ {row['team_name']}")
-
-# ==========================================
-# NHL
-# ==========================================
-
-NHL_OUTPUT = os.path.join(BASE_DIR, "static", "logos", "nhl")
-os.makedirs(NHL_OUTPUT, exist_ok=True)
-
-NHL_TEAM_CODES = {
-    "anaheim-ducks": "ana",
-    "boston-bruins": "bos",
-    "buffalo-sabres": "buf",
-    "calgary-flames": "cgy",
-    "carolina-hurricanes": "car",
-    "chicago-blackhawks": "chi",
-    "colorado-avalanche": "col",
-    "columbus-blue-jackets": "cbj",
-    "dallas-stars": "dal",
-    "detroit-red-wings": "det",
-    "edmonton-oilers": "edm",
-    "florida-panthers": "fla",
-    "los-angeles-kings": "la",
-    "minnesota-wild": "min",
-    "montreal-canadiens": "mtl",
-    "nashville-predators": "nsh",
-    "new-jersey-devils": "njd",
-    "new-york-islanders": "nyi",
-    "new-york-rangers": "nyr",
-    "ottawa-senators": "ott",
-    "philadelphia-flyers": "phi",
-    "pittsburgh-penguins": "pit",
-    "san-jose-sharks": "sj",
-    "seattle-kraken": "sea",
-    "st-louis-blues": "stl",
-    "tampa-bay-lightning": "tb",
-    "toronto-maple-leafs": "tor",
-    "utah-mammoth": "uta",
-    "vancouver-canucks": "van",
-    "vegas-golden-knights": "vgk",
-    "washington-capitals": "wsh",
-    "winnipeg-jets": "wpg",
+    "nhl": {
+        "Anaheim Ducks": "anaheim-ducks",
+        "Boston Bruins": "boston-bruins",
+        "Buffalo Sabres": "buffalo-sabres",
+        "Calgary Flames": "calgary-flames",
+        "Carolina Hurricanes": "carolina-hurricanes",
+        "Chicago Blackhawks": "chicago-blackhawks",
+        "Colorado Avalanche": "colorado-avalanche",
+        "Columbus Blue Jackets": "columbus-blue-jackets",
+        "Dallas Stars": "dallas-stars",
+        "Detroit Red Wings": "detroit-red-wings",
+        "Edmonton Oilers": "edmonton-oilers",
+        "Florida Panthers": "florida-panthers",
+        "Los Angeles Kings": "los-angeles-kings",
+        "Minnesota Wild": "minnesota-wild",
+        "Montreal Canadiens": "montreal-canadiens",
+        "Nashville Predators": "nashville-predators",
+        "New Jersey Devils": "new-jersey-devils",
+        "New York Islanders": "new-york-islanders",
+        "New York Rangers": "new-york-rangers",
+        "Ottawa Senators": "ottawa-senators",
+        "Philadelphia Flyers": "philadelphia-flyers",
+        "Pittsburgh Penguins": "pittsburgh-penguins",
+        "San Jose Sharks": "san-jose-sharks",
+        "Seattle Kraken": "seattle-kraken",
+        "St. Louis Blues": "st-louis-blues",
+        "Tampa Bay Lightning": "tampa-bay-lightning",
+        "Toronto Maple Leafs": "toronto-maple-leafs",
+        "Utah Mammoth": "utah-mammoth",
+        "Vancouver Canucks": "vancouver-canucks",
+        "Vegas Golden Knights": "vegas-golden-knights",
+        "Washington Capitals": "washington-capitals",
+        "Winnipeg Jets": "winnipeg-jets",
+    },
 }
 
-def download_nhl():
-    print("\nDownloading NHL logos...\n")
 
-    for filename, team_code in NHL_TEAM_CODES.items():
-        url = (
-            f"https://a.espncdn.com/i/teamlogos/nhl/500/"
-            f"{team_code}.png"
+# ==========================================================
+# HELPERS
+# ==========================================================
+
+def search_team(team_name, expected_league):
+    """Find a team and make sure it belongs to the expected league."""
+
+    url = f"{API_BASE}/searchteams.php"
+
+    response = requests.get(
+        url,
+        params={"t": team_name},
+        timeout=20,
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+    teams = data.get("teams") or []
+
+    for team in teams:
+        league = (team.get("strLeague") or "").lower()
+
+        if expected_league.lower() in league:
+            return team
+
+    return None
+
+
+def download_team_badge(team_name, filename, league):
+    """Download a team's TheSportsDB badge."""
+
+    team = search_team(team_name, league)
+
+    if not team:
+        print(
+            f"✗ {league.upper()} | {team_name} "
+            f"— team not found"
         )
+        return False
 
-        response = requests.get(url, timeout=20)
+    badge_url = team.get("strBadge")
 
-        if response.status_code == 200:
-            with open(
-                os.path.join(NHL_OUTPUT, f"{filename}.png"),
-                "wb",
-            ) as f:
-                f.write(response.content)
+    if not badge_url:
+        print(
+            f"✗ {league.upper()} | {team_name} "
+            f"— no badge"
+        )
+        return False
 
-            print(f"✓ {filename}")
-        else:
-            print(f"✗ {filename}")
+    response = requests.get(
+        badge_url,
+        timeout=20,
+    )
+
+    if response.status_code != 200:
+        print(
+            f"✗ {league.upper()} | {team_name} "
+            f"— image HTTP {response.status_code}"
+        )
+        return False
+
+    output_dir = OUTPUT_BASE / league
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    output_file = output_dir / f"{filename}.png"
+
+    with open(output_file, "wb") as f:
+        f.write(response.content)
+
+    print(
+        f"✓ {league.upper()} | {team_name}"
+        f" → {output_file.name}"
+    )
+
+    return True
+
+
+# ==========================================================
+# MAIN
+# ==========================================================
 
 if __name__ == "__main__":
-    download_mlb()
-    download_nba()
-    download_nfl()
-    download_nhl()
+
+    print("\nDownloading Sportfolio logos from TheSportsDB...\n")
+
+    successful = 0
+    failed = 0
+
+    for league, teams in TEAMS.items():
+
+        print(f"\n===== {league.upper()} =====")
+
+        for team_name, filename in teams.items():
+
+            try:
+                if download_team_badge(
+                    team_name,
+                    filename,
+                    league,
+                ):
+                    successful += 1
+                else:
+                    failed += 1
+
+            except Exception as e:
+                print(
+                    f"✗ {league.upper()} | {team_name}"
+                    f" — {e}"
+                )
+                failed += 1
+
+            # Stay comfortably below the API rate limit.
+            time.sleep(0.15)
+
+    print("\n================================")
+    print("Download complete.")
+    print(f"Successful: {successful}")
+    print(f"Failed:     {failed}")
+    print("================================\n")

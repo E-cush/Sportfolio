@@ -7,6 +7,12 @@ from reviews.models import Game
 class Command(BaseCommand):
     help = "Imports NHL games for a specific date"
 
+    GAME_TYPES = {
+        1: "Preseason",
+        2: "Regular Season",
+        3: "Playoffs",
+    }
+
     def add_arguments(self, parser):
         parser.add_argument(
             "date",
@@ -39,11 +45,15 @@ class Command(BaseCommand):
             return
 
         games = data.get("events", [])
+
         games = [
             game
             for game in games
-            if game.get("status", {}).get("type", {}).get("description") != "OFF"
+            if game.get("status", {})
+            .get("type", {})
+            .get("description") not in {"OFF", "Canceled"}
         ]
+
         imported = 0
 
         for event in games:
@@ -83,12 +93,17 @@ class Command(BaseCommand):
                     "",
                 )
 
+            game_type = self.GAME_TYPES.get(
+                event.get("season", {}).get("type"),
+                "Regular Season",
+            )
+
             Game.objects.update_or_create(
                 game_id=int(event["id"]),
                 defaults={
                     "league": "NHL",
                     "season": int(date[:4]),
-                    "game_type": "Regular Season",
+                    "game_type": game_type,
                     "home_team": home_team,
                     "away_team": away_team,
                     "game_date": date,
