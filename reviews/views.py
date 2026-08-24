@@ -76,15 +76,42 @@ def todays_games(request):
         game_date=selected_date
     ).order_by("id")
 
+    premier_league_games = Game.objects.filter(
+        league="Soccer",
+        competition="English Premier League",
+        game_date=selected_date
+    ).order_by("id")
+
+    laliga_games = Game.objects.filter(
+        league="Soccer",
+        competition="Spanish La Liga",
+        game_date=selected_date
+    ).order_by("id")
+
+    college_football_games = Game.objects.filter(
+        league="NCAA",
+        competition="College Football",
+        game_date=selected_date
+    ).order_by("id")
+
+    nhl_games = Game.objects.filter(
+        league="NHL",
+        game_date=selected_date
+    ).order_by("id")
+
     return render(request, "todays_games.html", {
         "mlb_games": mlb_games,
         "nba_games": nba_games,
         "nfl_games": nfl_games,
         "champions_league_games": champions_league_games,
+        "premier_league_games": premier_league_games,
+        "laliga_games": laliga_games,
+        "nhl_games": nhl_games,
         "today": selected_date,
         "selected_date": selected_date,
         "previous_date": previous_date,
         "next_date": next_date,
+        "college_football_games": college_football_games,
     })
 
 def coming_soon(request):
@@ -440,6 +467,9 @@ def nfl_games(request):
         "include_upcoming": include_upcoming,
     })
 
+def ncaaf_games(request):
+    return render(request, "ncaaf_games.html")
+
 def nhl_games(request):
     team = request.GET.get("team", "")
     opponent = request.GET.get("opponent", "")
@@ -633,6 +663,293 @@ def champions_league(request):
     games = paginator.get_page(page_number)
 
     return render(request, "champions_league.html", {
+        "games": games,
+        "team": team,
+        "opponent": opponent,
+        "date_from": date_from,
+        "date_to": date_to,
+        "season_type": season_type,
+        "sort": sort,
+        "include_upcoming": include_upcoming,
+    })
+
+def soccer(request):
+    competition = request.GET.get("competition", "")
+    team = request.GET.get("team", "")
+    opponent = request.GET.get("opponent", "")
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    season_type = request.GET.get("season_type", "")
+    sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
+    games = Game.objects.filter(league="Soccer")
+
+    if competition:
+        games = games.filter(competition=competition)
+
+    if not include_upcoming:
+        games = games.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+    if team:
+        games = games.filter(
+            Q(home_team__icontains=team) |
+            Q(away_team__icontains=team)
+        )
+
+    if opponent:
+        games = games.filter(
+            Q(home_team__icontains=opponent) |
+            Q(away_team__icontains=opponent)
+        )
+
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
+
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
+
+    if season_type:
+        games = games.filter(game_type=season_type)
+
+    if sort == "newest":
+        games = games.order_by("-game_date")
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+    else:
+        games = games.order_by("-game_date")
+
+    if not any([
+        competition,
+        team,
+        opponent,
+        date_from,
+        date_to,
+        season_type,
+    ]):
+        games = Game.objects.none()
+
+    paginator = Paginator(games, 100)
+    page_number = request.GET.get("page")
+    games = paginator.get_page(page_number)
+
+    return render(request, "soccer.html", {
+        "games": games,
+        "competition": competition,
+        "team": team,
+        "opponent": opponent,
+        "date_from": date_from,
+        "date_to": date_to,
+        "season_type": season_type,
+        "sort": sort,
+        "include_upcoming": include_upcoming,
+    })
+def laliga(request):
+    team = request.GET.get("team", "")
+    opponent = request.GET.get("opponent", "")
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    season_type = request.GET.get("season_type", "")
+    sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
+    games = Game.objects.filter(
+        league="Soccer",
+        competition="Spanish La Liga"
+    )
+
+    if not include_upcoming:
+        games = games.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+    if team:
+        games = games.filter(
+            Q(home_team__icontains=team) |
+            Q(away_team__icontains=team)
+        )
+
+    if opponent:
+        games = games.filter(
+            Q(home_team__icontains=opponent) |
+            Q(away_team__icontains=opponent)
+        )
+
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
+
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
+
+    if season_type:
+        games = games.filter(game_type=season_type)
+
+    if sort == "newest":
+        games = games.order_by("-game_date")
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+    else:
+        games = games.order_by("-game_date")
+
+    if not any([
+        team,
+        opponent,
+        date_from,
+        date_to,
+        season_type,
+    ]):
+        games = Game.objects.none()
+
+    paginator = Paginator(games, 100)
+    page_number = request.GET.get("page")
+    games = paginator.get_page(page_number)
+
+    return render(request, "laliga.html", {
+        "games": games,
+        "team": team,
+        "opponent": opponent,
+        "date_from": date_from,
+        "date_to": date_to,
+        "season_type": season_type,
+        "sort": sort,
+        "include_upcoming": include_upcoming,
+    })
+
+def premier_league(request):
+    team = request.GET.get("team", "")
+    opponent = request.GET.get("opponent", "")
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    season_type = request.GET.get("season_type", "")
+    sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
+    games = Game.objects.filter(
+        league="Soccer",
+        competition="English Premier League"
+    )
+
+    if not include_upcoming:
+        games = games.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+    if team:
+        games = games.filter(
+            Q(home_team__icontains=team) |
+            Q(away_team__icontains=team)
+        )
+
+    if opponent:
+        games = games.filter(
+            Q(home_team__icontains=opponent) |
+            Q(away_team__icontains=opponent)
+        )
+
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
+
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
+
+    if season_type:
+        games = games.filter(game_type=season_type)
+
+    if sort == "newest":
+        games = games.order_by("-game_date")
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("-avg_rating", "-game_date")
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by("avg_rating", "-game_date")
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by("-watch_count", "-game_date")
+    else:
+        games = games.order_by("-game_date")
+
+    if not any([
+        team,
+        opponent,
+        date_from,
+        date_to,
+        season_type,
+    ]):
+        games = Game.objects.none()
+
+    paginator = Paginator(games, 100)
+    page_number = request.GET.get("page")
+    games = paginator.get_page(page_number)
+
+    return render(request, "premier_league.html", {
         "games": games,
         "team": team,
         "opponent": opponent,

@@ -2,22 +2,54 @@
 
 {% load static %}
 
-{% block title %}NCAA Football Games{% endblock %}
+{% block title %}Soccer Games{% endblock %}
 
 {% block content %}
 
-<h1>🏈 NCAA Football</h1>
+<h1>⚽ Soccer</h1>
 
-<p>Search every college football game in the Sportfolio database.</p>
+<p>Search soccer games across all available competitions in the Sportfolio database.</p>
 
 <div class="game-search-panel">
 
     <div class="game-search-title">
-        <h2>Search NCAA Football Games</h2>
-        <p>Find any college football game in the Sportfolio database.</p>
+        <h2>Search Soccer Games</h2>
+        <p>Find soccer games from any competition in the Sportfolio database.</p>
     </div>
 
     <form method="get" class="game-search-form">
+
+        <!-- League -->
+
+        <div class="search-row">
+
+            <div class="search-field">
+                <label for="competition">League</label>
+
+                <select id="competition" name="competition">
+
+                    <option value="">All Leagues</option>
+
+                    <option value="English Premier League"
+                        {% if competition == "English Premier League" %}selected{% endif %}>
+                        Premier League
+                    </option>
+
+                    <option value="Spanish La Liga"
+                        {% if competition == "Spanish La Liga" %}selected{% endif %}>
+                        La Liga
+                    </option>
+
+                    <option value="UEFA Champions League"
+                        {% if competition == "UEFA Champions League" %}selected{% endif %}>
+                        UEFA Champions League
+                    </option>
+
+                </select>
+            </div>
+
+        </div>
+
 
         <!-- Team / Opponent -->
 
@@ -31,7 +63,7 @@
                     id="team"
                     name="team"
                     value="{{ team }}"
-                    placeholder="e.g. Michigan"
+                    placeholder="e.g. Real Madrid"
                 >
             </div>
 
@@ -43,7 +75,7 @@
                     id="opponent"
                     name="opponent"
                     value="{{ opponent }}"
-                    placeholder="e.g. Ohio State"
+                    placeholder="e.g. Barcelona"
                 >
             </div>
 
@@ -102,11 +134,6 @@
                         Regular Season
                     </option>
 
-                    <option value="Playoffs"
-                        {% if season_type == "Playoffs" %}selected{% endif %}>
-                        Playoffs
-                    </option>
-
                 </select>
 
             </div>
@@ -152,7 +179,7 @@
         </div>
 
 
-        <!-- Upcoming Games -->
+        <!-- Upcoming -->
 
         <label class="upcoming-checkbox">
 
@@ -170,8 +197,6 @@
         </label>
 
 
-        <!-- Search -->
-
         <button type="submit" class="search-submit">
             Search Games
         </button>
@@ -181,16 +206,19 @@
 </div>
 
 
-{% if team or opponent or date_from or date_to or season_type %}
+{% if competition or team or opponent or date_from or date_to or season_type %}
 
 <h2>Search Results</h2>
+
 
 {% if games.has_other_pages %}
 
 <div style="text-align:center; margin:25px 0;">
 
     {% if games.has_previous %}
-    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.previous_page_number }}">
+        <a href="?competition={{ competition }}&team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.previous_page_number }}">
+            ← Previous
+        </a>
     {% endif %}
 
     <span style="margin:0 20px;">
@@ -198,7 +226,9 @@
     </span>
 
     {% if games.has_next %}
-    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.next_page_number }}">
+        <a href="?competition={{ competition }}&team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.next_page_number }}">
+            Next →
+        </a>
     {% endif %}
 
 </div>
@@ -221,7 +251,7 @@
                     alt="{{ game.away_team }} logo"
                 >
             {% else %}
-                <span class="team-logo-fallback">🏈</span>
+                <span class="team-logo-fallback">⚽</span>
             {% endif %}
 
             {{ game.away_team }}
@@ -239,7 +269,7 @@
                     alt="{{ game.home_team }} logo"
                 >
             {% else %}
-                <span class="team-logo-fallback">🏈</span>
+                <span class="team-logo-fallback">⚽</span>
             {% endif %}
 
             {{ game.home_team }}
@@ -254,23 +284,17 @@
     </div>
 
 
-    {% if game.home_score is not None and game.away_score is not None %}
-
     <div class="score">
         {{ game.away_score }} - {{ game.home_score }}
     </div>
 
-    {% endif %}
-
 
     <p>
-
         {% if game.is_upcoming %}
             Upcoming
         {% else %}
             {{ game.status }}
         {% endif %}
-
     </p>
 
 </a>
@@ -288,7 +312,9 @@
 <div style="text-align:center; margin:40px 0;">
 
     {% if games.has_previous %}
-    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.previous_page_number }}">
+        <a href="?competition={{ competition }}&team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.previous_page_number }}">
+            ← Previous
+        </a>
     {% endif %}
 
     <span style="margin:0 20px;">
@@ -296,7 +322,9 @@
     </span>
 
     {% if games.has_next %}
-    <a href="?team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.next_page_number }}">
+        <a href="?competition={{ competition }}&team={{ team }}&opponent={{ opponent }}&date_from={{ date_from }}&date_to={{ date_to }}&season_type={{ season_type }}&sort={{ sort }}&include_upcoming={{ include_upcoming }}&page={{ games.next_page_number }}">
+            Next →
+        </a>
     {% endif %}
 
 </div>

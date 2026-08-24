@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import timedelta
 from django.utils import timezone
 
 from django.core.management.base import BaseCommand
@@ -7,7 +7,8 @@ from reviews.updates.mlb import update_mlb
 from reviews.updates.nba import update_nba
 from reviews.updates.nfl import update_nfl
 from reviews.updates.nhl import update_nhl
-
+from reviews.updates.PL import update_PL
+from reviews.updates.laliga import update_laliga
 
 class Command(BaseCommand):
     help = "Updates games for one day or a date range"
@@ -47,6 +48,8 @@ class Command(BaseCommand):
         update_nba(start_date, end_date)
         update_nfl(start_date, end_date)
         update_nhl(start_date, end_date)
+        update_PL(start_date, end_date)
+        update_laliga(start_date, end_date)
 
         self.stdout.write("")
         self.stdout.write(

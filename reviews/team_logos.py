@@ -177,5 +177,52 @@ TEAM_LOGOS = {
     ("NHL", "Vegas Golden Knights"): "logos/tsdb/nhl/vegas-golden-knights.png",
     ("NHL", "Washington Capitals"): "logos/tsdb/nhl/washington-capitals.png",
     ("NHL", "Winnipeg Jets"): "logos/tsdb/nhl/winnipeg-jets.png",
+
+    # Premier League
+
+    ("Soccer", "Arsenal"): "logos/tsdb/PL/arsenal.png",
+    ("Soccer", "AFC Bournemouth"): "logos/tsdb/PL/bournemouth.png",
+    ("Soccer", "Aston Villa"): "logos/tsdb/PL/aston-villa.png",
+    ("Soccer", "Brentford"): "logos/tsdb/PL/brentford.png",
+    ("Soccer", "Brighton & Hove Albion"): "logos/tsdb/PL/brighton.png",
+    ("Soccer", "Chelsea"): "logos/tsdb/PL/chelsea.png",
+    ("Soccer", "Coventry City"): "logos/tsdb/PL/coventry-city.png",
+    ("Soccer", "Crystal Palace"): "logos/tsdb/PL/crystal-palace.png",
+    ("Soccer", "Everton"): "logos/tsdb/PL/everton.png",
+    ("Soccer", "Fulham"): "logos/tsdb/PL/fulham.png",
+    ("Soccer", "Hull City"): "logos/tsdb/PL/hull-city.png",
+    ("Soccer", "Ipswich Town"): "logos/tsdb/PL/ipswich-town.png",
+    ("Soccer", "Leeds United"): "logos/tsdb/PL/leeds-united.png",
+    ("Soccer", "Liverpool"): "logos/tsdb/PL/liverpool.png",
+    ("Soccer", "Manchester City"): "logos/tsdb/PL/manchester-city.png",
+    ("Soccer", "Manchester United"): "logos/tsdb/PL/manchester-united.png",
+    ("Soccer", "Newcastle United"): "logos/tsdb/PL/newcastle-united.png",
+    ("Soccer", "Nottingham Forest"): "logos/tsdb/PL/nottingham-forest.png",
+    ("Soccer", "Sunderland"): "logos/tsdb/PL/sunderland.png",
+    ("Soccer", "Tottenham Hotspur"): "logos/tsdb/PL/tottenham-hotspur.png",
+
+    # La Liga
+
+    ("Soccer", "Athletic Club"): "logos/tsdb/laliga/athletic-club.png",
+    ("Soccer", "Atletico Madrid"): "logos/tsdb/laliga/atletico-madrid.png",
+    ("Soccer", "Osasuna"): "logos/tsdb/laliga/osasuna.png",
+    ("Soccer", "Celta Vigo"): "logos/tsdb/laliga/celta-vigo.png",
+    ("Soccer", "Deportivo Alaves"): "logos/tsdb/laliga/alaves.png",
+    ("Soccer", "Elche CF"): "logos/tsdb/laliga/elche.png",
+    ("Soccer", "FC Barcelona"): "logos/tsdb/laliga/barcelona.png",
+    ("Soccer", "Getafe CF"): "logos/tsdb/laliga/getafe.png",
+    ("Soccer", "Levante"): "logos/tsdb/laliga/levante.png",
+    ("Soccer", "Málaga"): "logos/tsdb/laliga/malaga.png",
+    ("Soccer", "Racing Santander"): "logos/tsdb/laliga/racing-santander.png",
+    ("Soccer", "Rayo Vallecano"): "logos/tsdb/laliga/rayo-vallecano.png",
+    ("Soccer", "Deportivo"): "logos/tsdb/laliga/deportivo.png",
+    ("Soccer", "Espanyol"): "logos/tsdb/laliga/espanyol.png",
+    ("Soccer", "Real Betis"): "logos/tsdb/laliga/real-betis.png",
+    ("Soccer", "Real Madrid"): "logos/tsdb/laliga/real-madrid.png",
+    ("Soccer", "Real Sociedad"): "logos/tsdb/laliga/real-sociedad.png",
+    ("Soccer", "Sevilla"): "logos/tsdb/laliga/sevilla.png",
+    ("Soccer", "Valencia"): "logos/tsdb/laliga/valencia.png",
+    ("Soccer", "Villarreal CF"): "logos/tsdb/laliga/villarreal.png",
+
 }
 

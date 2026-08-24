@@ -164,12 +164,67 @@ TEAMS = {
         "Washington Capitals": "washington-capitals",
         "Winnipeg Jets": "winnipeg-jets",
     },
+
+    "PL": {
+        "Arsenal": "arsenal",
+        "AFC Bournemouth": "bournemouth",
+        "Aston Villa": "aston-villa",
+        "Brentford": "brentford",
+        "Brighton & Hove Albion": "brighton",
+        "Chelsea": "chelsea",
+        "Coventry City": "coventry-city",
+        "Crystal Palace": "crystal-palace",
+        "Everton": "everton",
+        "Fulham": "fulham",
+        "Hull City": "hull-city",
+        "Ipswich Town": "ipswich-town",
+        "Leeds United": "leeds-united",
+        "Liverpool": "liverpool",
+        "Manchester City": "manchester-city",
+        "Manchester United": "manchester-united",
+        "Newcastle United": "newcastle-united",
+        "Nottingham Forest": "nottingham-forest",
+        "Sunderland": "sunderland",
+        "Tottenham Hotspur": "tottenham-hotspur",
+    },
+
+    "laliga": {
+        "Athletic Club": "athletic-club",
+        "Atletico Madrid": "atletico-madrid",
+        "CA Osasuna": "osasuna",
+        "Celta Vigo": "celta-vigo",
+        "Deportivo Alaves": "alaves",
+        "Elche CF": "elche",
+        "FC Barcelona": "barcelona",
+        "Getafe CF": "getafe",
+        "Levante UD": "levante",
+        "Malaga CF": "malaga",
+        "Racing Santander": "racing-santander",
+        "Rayo Vallecano": "rayo-vallecano",
+        "Deportivo La Coruna": "deportivo",
+        "Espanyol": "espanyol",
+        "Real Betis": "real-betis",
+        "Real Madrid": "real-madrid",
+        "Real Sociedad": "real-sociedad",
+        "Sevilla FC": "sevilla",
+        "Valencia CF": "valencia",
+        "Villarreal CF": "villarreal",
+    },
 }
 
 
 # ==========================================================
 # HELPERS
 # ==========================================================
+
+LEAGUE_SEARCH_NAMES = {
+    "mlb": "MLB",
+    "nba": "NBA",
+    "nfl": "NFL",
+    "nhl": "NHL",
+    "PL": "English Premier League",
+    "laliga": "La Liga",
+}
 
 def search_team(team_name, expected_league):
     """Find a team and make sure it belongs to the expected league."""
@@ -187,11 +242,27 @@ def search_team(team_name, expected_league):
     data = response.json()
     teams = data.get("teams") or []
 
+    expected_name = LEAGUE_SEARCH_NAMES.get(
+        expected_league,
+        expected_league,
+    ).lower()
+
     for team in teams:
         league = (team.get("strLeague") or "").lower()
 
-        if expected_league.lower() in league:
+        if expected_name in league:
             return team
+
+        # Some former Premier League clubs are currently listed
+        # in the Championship but still need their club badge.
+    if expected_league == "PL":
+        for team in teams:
+            if team.get("strTeam") in {
+                "Burnley",
+                "West Ham United",
+                "Wolverhampton Wanderers",
+            }:
+                return team
 
     return None
 
@@ -261,6 +332,9 @@ if __name__ == "__main__":
 
     for league, teams in TEAMS.items():
 
+        if league not in ["PL", "laliga"]:
+            continue
+
         print(f"\n===== {league.upper()} =====")
 
         for team_name, filename in teams.items():
@@ -283,7 +357,7 @@ if __name__ == "__main__":
                 failed += 1
 
             # Stay comfortably below the API rate limit.
-            time.sleep(0.15)
+            time.sleep(3)
 
     print("\n================================")
     print("Download complete.")
