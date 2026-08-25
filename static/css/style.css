@@ -2460,6 +2460,38 @@ button:hover {
     }
 }
 
+.sportsdb-credit {
+    margin: 6px 0 0;
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+}
+
+.sportsdb-credit a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.sportsdb-credit a:hover {
+    text-decoration: underline;
+}
+
+.home-page .sportsdb-credit,
+.sportsdb-credit {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    color: #555 !important;
+}
+
+.home-page .sportsdb-credit a,
+.sportsdb-credit a {
+    color: #555 !important;
+    text-decoration: none !important;
+}
+
 
 
 
