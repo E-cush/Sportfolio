@@ -468,7 +468,123 @@ def nfl_games(request):
     })
 
 def ncaaf_games(request):
-    return render(request, "ncaaf_games.html")
+    team = request.GET.get("team", "")
+    opponent = request.GET.get("opponent", "")
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    season_type = request.GET.get("season_type", "")
+    sort = request.GET.get("sort", "newest")
+    include_upcoming = request.GET.get("include_upcoming") == "1"
+
+    games = Game.objects.filter(
+        league="NCAA",
+        competition="College Football"
+    )
+
+    if not include_upcoming:
+        games = games.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+    # Team search
+    if team:
+        games = games.filter(
+            Q(home_team__icontains=team) |
+            Q(away_team__icontains=team)
+        )
+
+    # Opponent search
+    if opponent:
+        games = games.filter(
+            Q(home_team__icontains=opponent) |
+            Q(away_team__icontains=opponent)
+        )
+
+    # Date From
+    if date_from:
+        try:
+            games = games.filter(
+                game_date__gte=date.fromisoformat(date_from)
+            )
+        except ValueError:
+            date_from = ""
+
+    # Date To
+    if date_to:
+        try:
+            games = games.filter(
+                game_date__lte=date.fromisoformat(date_to)
+            )
+        except ValueError:
+            date_to = ""
+
+    # Game Type
+    if season_type:
+        games = games.filter(
+            game_type=season_type
+        )
+
+    # Sorting
+    if sort == "newest":
+        games = games.order_by("-game_date")
+
+    elif sort == "oldest":
+        games = games.order_by("game_date")
+
+    elif sort == "highest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by(
+            "-avg_rating",
+            "-game_date"
+        )
+
+    elif sort == "lowest":
+        games = games.annotate(
+            avg_rating=Avg("gamelog__quality_rating")
+        ).order_by(
+            "avg_rating",
+            "-game_date"
+        )
+
+    elif sort == "watched":
+        games = games.annotate(
+            watch_count=Count("gamelog")
+        ).order_by(
+            "-watch_count",
+            "-game_date"
+        )
+
+    else:
+        games = games.order_by("-game_date")
+
+    # Don't show results until the user searches
+    if not any([
+        team,
+        opponent,
+        date_from,
+        date_to,
+        season_type,
+    ]):
+        games = Game.objects.none()
+
+    # Pagination
+    paginator = Paginator(games, 100)
+    page_number = request.GET.get("page")
+    games = paginator.get_page(page_number)
+
+    return render(request, "ncaaf_games.html", {
+        "games": games,
+        "team": team,
+        "opponent": opponent,
+        "date_from": date_from,
+        "date_to": date_to,
+        "season_type": season_type,
+        "sort": sort,
+        "include_upcoming": include_upcoming,
+    })
 
 def nhl_games(request):
     team = request.GET.get("team", "")

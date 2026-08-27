@@ -30,6 +30,9 @@
         <a href="{% url 'nfl_games' %}">🏈 NFL</a>
         <a href="{% url 'nhl_games' %}">🏒 NHL</a>
         <a href="{% url 'soccer' %}">⚽ Soccer</a>
+        <a href="{% url 'ncaaf_games' %}">
+    🏈 NCAAF
+</a>
 
     </div>
 </li>
@@ -112,6 +115,24 @@ document.addEventListener("DOMContentLoaded", function () {
             event.stopPropagation();
         });
     }
+
+    const ncaaButton = document.getElementById("ncaaButton");
+const ncaaMenu = document.getElementById("ncaaMenu");
+
+if (ncaaButton && ncaaMenu) {
+    ncaaButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+        ncaaMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", function () {
+        ncaaMenu.classList.remove("show");
+    });
+
+    ncaaMenu.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+}
 
 
     /* Mobile Games dropdown:

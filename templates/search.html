@@ -31,9 +31,33 @@
 </a>
 
         <a href="{% url 'soccer' %}" class="league-card">
-        <h2>⚽ Soccer</h2>
-        <p>UEFA Champions League • Premier League • La Liga</p>
-    </a>
+    <h2>⚽ Soccer</h2>
+    <p>UEFA Champions League • Premier League • La Liga</p>
+</a>
+
+<div class="league-card soccer-card">
+
+    <div class="league-icon">🏈</div>
+
+    <h2>NCAA</h2>
+
+    <button id="ncaaButton" class="dropdown-btn">
+        ▼ Select League
+    </button>
+
+    <div id="ncaaMenu" class="soccer-menu">
+
+        <a href="{% url 'ncaaf_games' %}">
+            NCAAF
+        </a>
+
+        <a href="{% url 'coming_soon' %}">
+            NCAAB
+        </a>
+
+    </div>
+
+</div>
 
 </div>
 

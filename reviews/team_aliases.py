@@ -418,3 +418,285 @@ NHL_ALIASES = {
     "wpg": "Winnipeg Jets",
     "jets": "Winnipeg Jets",
 }
+
+# ============================================================
+# NCAA FOOTBALL ALIASES
+# Automatically builds aliases for every NCAA team in TEAM_LOGOS
+# ============================================================
+
+from collections import defaultdict
+from .team_logos import TEAM_LOGOS
+
+
+def _build_ncaaf_aliases():
+    """
+    Build search aliases for every NCAA team in TEAM_LOGOS.
+
+    Examples:
+        Michigan Wolverines
+            -> michigan
+            -> michigan wolverines
+            -> wolverines
+
+        Central Michigan Chippewas
+            -> central michigan
+            -> central michigan chippewas
+            -> chippewas
+
+    Ambiguous aliases such as "wildcats" or "tigers" are removed
+    if they belong to multiple schools.
+    """
+
+    # Group team names by their logo.
+    # This lets alternate names that use the same logo resolve
+    # to the same team.
+    groups = defaultdict(set)
+
+    for (league, team_name), logo_path in TEAM_LOGOS.items():
+        if league == "NCAA":
+            groups[logo_path].add(team_name)
+
+    aliases = defaultdict(set)
+
+    def add_alias(alias, team_names):
+        alias = alias.strip().lower()
+
+        if alias:
+            aliases[alias].update(team_names)
+
+    for team_names in groups.values():
+
+        team_names = tuple(sorted(team_names))
+
+        for team_name in team_names:
+
+            # Full team name
+            add_alias(team_name, team_names)
+
+            words = team_name.split()
+
+            if len(words) < 2:
+                continue
+
+            # ------------------------------------------------
+            # School name
+            #
+            # "Michigan Wolverines"
+            # -> "Michigan"
+            #
+            # "Central Michigan Chippewas"
+            # -> "Central Michigan"
+            #
+            # This is what prevents "Michigan" from returning
+            # Central Michigan.
+            # ------------------------------------------------
+
+            school_name = " ".join(words[:-1])
+
+            add_alias(school_name, team_names)
+
+            # ------------------------------------------------
+            # Mascot
+            #
+            # Only keep mascot aliases when they uniquely
+            # identify one NCAA team.
+            # ------------------------------------------------
+
+            mascot = words[-1]
+
+            add_alias(mascot, team_names)
+
+    # --------------------------------------------------------
+    # Remove ambiguous aliases.
+    #
+    # Example:
+    # "Tigers" could mean LSU, Auburn, Missouri, Clemson, etc.
+    #
+    # "Wildcats" could mean Kentucky, Arizona, Kansas State, etc.
+    #
+    # Those should NOT produce broad results.
+    # --------------------------------------------------------
+
+    unique_aliases = {}
+
+    for alias, team_names in aliases.items():
+
+        matching_groups = 0
+
+        for group_names in groups.values():
+
+            if set(team_names).intersection(group_names):
+                matching_groups += 1
+
+        if matching_groups == 1:
+            unique_aliases[alias] = tuple(sorted(team_names))
+
+    # ========================================================
+    # Common college football abbreviations / nicknames
+    # ========================================================
+
+    common_aliases = {
+
+        # Michigan
+        "umich": "Michigan Wolverines",
+        "u michigan": "Michigan Wolverines",
+        "mich": "Michigan Wolverines",
+
+        # Michigan State
+        "msu": "Michigan State Spartans",
+        "mich st": "Michigan State Spartans",
+
+        # Ohio State
+        "osu": "Ohio State Buckeyes",
+        "ohio st": "Ohio State Buckeyes",
+
+        # Penn State
+        "psu": "Penn State Nittany Lions",
+        "penn st": "Penn State Nittany Lions",
+
+        # Alabama
+        "bama": "Alabama Crimson Tide",
+        "ua": "Alabama Crimson Tide",
+
+        # Georgia
+        "uga": "Georgia Bulldogs",
+
+        # Oklahoma
+        "ou": "Oklahoma Sooners",
+
+        # Texas
+        "ut": "Texas Longhorns",
+
+        # Texas A&M
+        "tamu": "Texas A&M Aggies",
+        "texas am": "Texas A&M Aggies",
+        "a&m": "Texas A&M Aggies",
+
+        # LSU
+        "lsu": "LSU Tigers",
+
+        # Florida
+        "uf": "Florida Gators",
+
+        # Florida State
+        "fsu": "Florida State Seminoles",
+
+        # Clemson
+        "cu": "Clemson Tigers",
+
+        # USC
+        "usc": "USC Trojans",
+
+        # UCLA
+        "ucla": "UCLA Bruins",
+
+        # Notre Dame
+        "nd": "Notre Dame Fighting Irish",
+
+        # Oregon
+        "uo": "Oregon Ducks",
+
+        # Tennessee
+        "utk": "Tennessee Volunteers",
+        "vols": "Tennessee Volunteers",
+
+        # BYU
+        "byu": "BYU Cougars",
+
+        # Arizona State
+        "asu": "Arizona State Sun Devils",
+
+        # Arizona
+        "uofa": "Arizona Wildcats",
+
+        # Colorado
+        "cu boulder": "Colorado Buffaloes",
+
+        # Washington
+        "uw": "Washington Huskies",
+
+        # Washington State
+        "wsu": "Washington State Cougars",
+
+        # UConn
+        "uconn": "UConn Huskies",
+
+        # UCF
+        "ucf": "UCF Knights",
+
+        # UTSA
+        "utsa": "UTSA Roadrunners",
+
+        # SMU
+        "smu": "SMU Mustangs",
+
+        # TCU
+        "tcu": "TCU Horned Frogs",
+
+        # NC State
+        "ncsu": "NC State Wolfpack",
+
+        # North Carolina
+        "unc": "North Carolina Tar Heels",
+
+        # James Madison
+        "jmu": "James Madison Dukes",
+
+        # Old Dominion
+        "odu": "Old Dominion Monarchs",
+
+        # UNLV
+        "unlv": "UNLV Rebels",
+
+        # Florida Atlantic
+        "fau": "Florida Atlantic Owls",
+
+        # Florida International
+        "fiu": "Florida International Panthers",
+
+        # Georgia Tech
+        "gt": "Georgia Tech Yellow Jackets",
+
+        # Texas Tech
+        "ttu": "Texas Tech Red Raiders",
+
+        # Virginia Tech
+        "vt": "Virginia Tech Hokies",
+
+        # West Virginia
+        "wvu": "West Virginia Mountaineers",
+
+        # Hawaii
+        "hawaii": "Hawaii Warriors",
+
+        # Appalachian State
+        "app state": "App State Mountaineers",
+
+        # Air Force
+        "af": "Air Force Falcons",
+
+        # Army
+        "army": "Army Black Knights",
+
+        # Navy
+        "navy": "Navy Midshipmen",
+    }
+
+    # Add common aliases only if the target team actually
+    # exists in the NCAA logo database.
+    for alias, target in common_aliases.items():
+
+        matching_names = set()
+
+        for team_names in groups.values():
+
+            if target in team_names:
+                matching_names.update(team_names)
+
+        if matching_names:
+            unique_aliases[alias] = tuple(sorted(matching_names))
+
+    return unique_aliases
+
+
+NCAAF_ALIASES = _build_ncaaf_aliases()

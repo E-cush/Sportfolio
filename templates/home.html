@@ -131,43 +131,78 @@
             <h3>NHL</h3>
         </a>
 
+                <div class="league-card soccer-card">
+
+            <div class="league-icon">⚽</div>
+
+            <h3>Soccer</h3>
+
+            <button id="soccerButton" class="dropdown-btn">
+                ▼ Select League
+            </button>
+
+            <div id="soccerMenu" class="soccer-menu">
+
+                <a href="{% url 'champions_league' %}">
+                    UEFA Champions League
+                </a>
+
+                <a href="{% url 'premier_league' %}">
+                    Premier League
+                </a>
+
+                <a href="{% url 'laliga' %}">
+                    La Liga
+                </a>
+
+                <a href="{% url 'coming_soon' %}">
+                    Bundesliga
+                </a>
+
+                <a href="{% url 'coming_soon' %}">
+                    Serie A
+                </a>
+
+                <a href="{% url 'coming_soon' %}">
+                    MLS
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- NCAA -->
+
         <div class="league-card soccer-card">
 
-    <div class="league-icon">⚽</div>
+            <div class="league-icon">
+    <img
+        src="{% static 'logos/tsdb/league_logos/NCAA.png' %}"
+        alt="NCAA logo"
+        style="height: 65px; width: auto; max-width: 200px; object-fit: contain;"
+    >
+</div>
 
-    <h3>Soccer</h3>
+            <h3>NCAA</h3>
 
-    <button id="soccerButton" class="dropdown-btn">
-        ▼ Select League
-    </button>
+            <button id="ncaaButton" class="dropdown-btn">
+                ▼ Select League
+            </button>
 
+            <div id="ncaaMenu" class="soccer-menu">
 
+                <a href="{% url 'ncaaf_games' %}">
+                    NCAAF
+                </a>
 
-<div id="soccerMenu" class="soccer-menu">
+                <a href="{% url 'coming_soon' %}">
+                    NCAAB
+                </a>
 
-    <a href="{% url 'champions_league' %}">
-        UEFA Champions League
-    </a>
+            </div>
 
-    <a href="{% url 'premier_league' %}">
-        Premier League
-    </a>
-
-    <a href="{% url 'laliga' %}">
-        La Liga
-    </a>
-
-    <a href="{% url 'coming_soon' %}">
-        Bundesliga
-    </a>
-
-    <a href="{% url 'coming_soon' %}">
-        Serie A
-    </a>
-
-    <a href="{% url 'coming_soon' %}">
-        MLS
-    </a>
+        </div>
 
 </div>
 
