@@ -134,7 +134,7 @@
 
         {% for log in logs %}
 
-            <a class="game-card" href="{% url 'game_detail' log.game.id %}">
+            <a class="game-card" href="{% url 'review_detail' log.id %}">
 
                 <div class="game-card-header">
                     <h2>{{ log.game.away_team }}</h2>

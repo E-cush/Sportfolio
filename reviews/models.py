@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.models import User
 from .team_logos import TEAM_LOGOS
@@ -26,6 +27,16 @@ class Game(models.Model):
 
     game_date = models.DateField()
 
+    game_start = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    game_finished_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     home_score = models.IntegerField()
     away_score = models.IntegerField()
 
@@ -42,6 +53,84 @@ class Game(models.Model):
     @property
     def away_logo(self):
         return TEAM_LOGOS.get((self.league, self.away_team), "")
+
+    @property
+    def live_chat_available(self):
+        if not self.game_start:
+            return False
+
+        now = timezone.now()
+
+        chat_opens = self.game_start - timedelta(minutes=30)
+
+        # Too early for the chat
+        if now < chat_opens:
+            return False
+
+        closed_statuses = {
+            "cancelled",
+            "canceled",
+            "postponed",
+            "abandoned",
+        }
+
+        if self.status.lower() in closed_statuses:
+            return False
+
+        final_statuses = {
+            "final",
+            "completed",
+            "finished",
+        }
+
+        # If the game is already finished but we don't have
+        # a recorded finish time, keep the chat closed.
+        if self.status.lower() in final_statuses:
+            if not self.game_finished_at:
+                return False
+
+            chat_closes = self.game_finished_at + timedelta(minutes=30)
+
+            return now <= chat_closes
+
+        # Game is currently in progress
+        return True
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            existing = (
+                type(self)
+                .objects
+                .filter(pk=self.pk)
+                .values("status", "game_finished_at")
+                .first()
+            )
+
+            if existing:
+                old_status = (existing["status"] or "").lower()
+                new_status = (self.status or "").lower()
+
+                final_statuses = {
+                    "final",
+                    "completed",
+                    "finished",
+                }
+
+                if (
+                        new_status in final_statuses
+                        and old_status not in final_statuses
+                        and existing["game_finished_at"] is None
+                ):
+                    self.game_finished_at = timezone.now()
+
+                    update_fields = kwargs.get("update_fields")
+
+                    if update_fields is not None:
+                        kwargs["update_fields"] = set(update_fields) | {
+                            "game_finished_at"
+                        }
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.away_team} @ {self.home_team} ({self.game_date})"
@@ -103,6 +192,61 @@ class GameLog(models.Model):
                 name="unique_user_game_log",
             )
         ]
+
+class ReviewLike(models.Model):
+    review = models.ForeignKey(
+        GameLog,
+        on_delete=models.CASCADE,
+        related_name="likes",
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="review_likes",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["review", "user"],
+                name="unique_review_like",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} liked review {self.review.id}"
+
+class GameChatMessage(models.Model):
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        related_name="chat_messages",
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+
+    message = models.TextField(
+        max_length=500,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.user.username}: {self.message[:40]}"
+
 class Comment(models.Model):
     game = models.ForeignKey(
         Game,

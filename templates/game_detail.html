@@ -12,172 +12,278 @@
 
     <div class="game-main">
 
-{% if boxscore %}
+        {% if boxscore %}
 
-<div class="linescore-container">
+        <div class="linescore-container">
 
-    <table class="linescore-table">
-        <tr>
-            <th></th>
-            <th>R</th>
-            <th>H</th>
-            <th>E</th>
-        </tr>
+            <table class="linescore-table">
 
-        <tr>
-            <td>{{ game.away_team }}</td>
-            <td>{{ boxscore.away.runs }}</td>
-            <td>{{ boxscore.away.hits }}</td>
-            <td>{{ boxscore.away.errors }}</td>
-        </tr>
+                <tr>
+                    <th></th>
+                    <th>R</th>
+                    <th>H</th>
+                    <th>E</th>
+                </tr>
 
-        <tr>
-            <td>{{ game.home_team }}</td>
-            <td>{{ boxscore.home.runs }}</td>
-            <td>{{ boxscore.home.hits }}</td>
-            <td>{{ boxscore.home.errors }}</td>
-        </tr>
+                <tr>
+                    <td>{{ game.away_team }}</td>
+                    <td>{{ boxscore.away.runs }}</td>
+                    <td>{{ boxscore.away.hits }}</td>
+                    <td>{{ boxscore.away.errors }}</td>
+                </tr>
 
-    </table>
+                <tr>
+                    <td>{{ game.home_team }}</td>
+                    <td>{{ boxscore.home.runs }}</td>
+                    <td>{{ boxscore.home.hits }}</td>
+                    <td>{{ boxscore.home.errors }}</td>
+                </tr>
 
-</div>
+            </table>
 
-{% endif %}
+        </div>
 
-<div class="game-card-header">
+        {% endif %}
 
-    <h1 class="team-name">
 
-        {% if game.away_logo %}
-            <img src="{% static game.away_logo %}"
-                 class="team-logo"
-                 alt="{{ game.away_team }} logo">
+        <div class="game-card-header">
+
+            <h1 class="team-name">
+
+                {% if game.away_logo %}
+                    <img
+                        src="{% static game.away_logo %}"
+                        class="team-logo"
+                        alt="{{ game.away_team }} logo"
+                    >
+                {% else %}
+                    <span class="team-logo-fallback">⚾</span>
+                {% endif %}
+
+                {{ game.away_team }}
+
+            </h1>
+
+
+            <span class="vs">@</span>
+
+
+            <h1 class="team-name">
+
+                {% if game.home_logo %}
+                    <img
+                        src="{% static game.home_logo %}"
+                        class="team-logo"
+                        alt="{{ game.home_team }} logo"
+                    >
+                {% else %}
+                    <span class="team-logo-fallback">⚾</span>
+                {% endif %}
+
+                {{ game.home_team }}
+
+            </h1>
+
+        </div>
+
+
+        <p>
+            <strong>Date:</strong> {{ game.game_date }}
+        </p>
+
+        <p>
+            <strong>Venue:</strong> {{ game.venue }}
+        </p>
+
+        <p>
+            <strong>Status:</strong> {{ game.status }}
+        </p>
+
+
+        {% if game.home_score is not None and game.away_score is not None %}
+
+        <h2 class="score">
+            {{ game.away_score }} - {{ game.home_score }}
+        </h2>
+
+        {% endif %}
+
+
+        {% if average_quality_rating is not None %}
+
+        <h2>Community Rating</h2>
+
+        <p>
+            ⭐ {{ average_quality_rating }}/5
+        </p>
+
+        <p>
+            {{ rating_count }} rating{{ rating_count|pluralize }}
+        </p>
+
         {% else %}
-            <span class="team-logo-fallback">⚾</span>
+
+        <h2>Community Rating</h2>
+
+        <p>
+            No ratings yet.
+        </p>
+
         {% endif %}
 
-        {{ game.away_team }}
 
-    </h1>
+        <hr>
 
-    <span class="vs">@</span>
 
-    <h1 class="team-name">
+        {% if user.is_authenticated %}
 
-        {% if game.home_logo %}
-            <img src="{% static game.home_logo %}"
-                 class="team-logo"
-                 alt="{{ game.home_team }} logo">
+            {% if game_log %}
+
+                <h2>Your Log</h2>
+
+                <p>
+                    <strong>Watch Type:</strong>
+                    {{ game_log.get_watch_type_display }}
+                </p>
+
+
+                {% if game_log.watch_type != "HIGHLIGHTS" %}
+
+                    {% if game_log.quality_rating %}
+
+                        <p>
+                            <strong>Game Quality:</strong>
+                            {{ game_log.quality_rating }}/5
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if game_log.experience_rating %}
+
+                        <p>
+                            <strong>Experience:</strong>
+                            {{ game_log.experience_rating }}/5
+                        </p>
+
+
+                        {% if game_log.watched_with.exists %}
+
+                            <p>
+                                <strong>Watched with:</strong>
+
+                                {% for person in game_log.watched_with.all %}
+
+                                    {{ person.username }}{% if not forloop.last %}, {% endif %}
+
+                                {% endfor %}
+
+                            </p>
+
+                        {% endif %}
+
+
+                    {% endif %}
+
+
+                    {% if game_log.review %}
+
+                        <p>
+                            <strong>Your Review:</strong>
+                        </p>
+
+                        <p>
+                            {{ game_log.review }}
+                        </p>
+
+                    {% endif %}
+
+                {% endif %}
+
+
+                <a href="{% url 'edit_log' game.id %}">
+                    <button>
+                        Edit Log
+                    </button>
+                </a>
+
+
+                <form
+                    method="post"
+                    action="{% url 'remove_log' game.id %}"
+                    onsubmit="return confirm('Are you sure you want to remove this log?');"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="remove-log-button"
+                    >
+                        Remove Log
+                    </button>
+
+                </form>
+
+
+            {% else %}
+
+                <form
+                    method="post"
+                    action="{% url 'log_game' game.id %}"
+                >
+
+                    {% csrf_token %}
+
+                    <button type="submit">
+                        Log Game
+                    </button>
+
+                </form>
+
+            {% endif %}
+
         {% else %}
-            <span class="team-logo-fallback">⚾</span>
-        {% endif %}
 
-        {{ game.home_team }}
+            <p>
 
-    </h1>
+                <a href="{% url 'login' %}">
+                    Log in
+                </a>
 
-</div>
+                to log this game.
 
-<p><strong>Date:</strong> {{ game.game_date }}</p>
-<p><strong>Venue:</strong> {{ game.venue }}</p>
-<p><strong>Status:</strong> {{ game.status }}</p>
-
-{% if game.home_score is not None and game.away_score is not None %}
-<h2 class="score">
-    {{ game.away_score }} - {{ game.home_score }}
-</h2>
-{% endif %}
-{% if average_quality_rating is not None %}
-
-<h2>Community Rating</h2>
-
-<p>
-    ⭐ {{ average_quality_rating }}/5
-</p>
-
-<p>
-    {{ rating_count }} rating{{ rating_count|pluralize }}
-</p>
-
-{% else %}
-
-<h2>Community Rating</h2>
-
-<p>No ratings yet.</p>
-
-{% endif %}
-<hr>
-
-{% if user.is_authenticated %}
-
-    {% if game_log %}
-
-        <h2>Your Log</h2>
-
-        <p><strong>Watch Type:</strong> {{ game_log.get_watch_type_display }}</p>
-
-        {% if game_log.watch_type != "HIGHLIGHTS" %}
-
-            {% if game_log.quality_rating %}
-                <p><strong>Game Quality:</strong> {{ game_log.quality_rating }}/5</p>
-            {% endif %}
-
-            {% if game_log.experience_rating %}
-                <p><strong>Experience:</strong> {{ game_log.experience_rating }}/5</p>
-
-        {% if game_log.watched_with.exists %}
-    <p>
-        <strong>Watched with:</strong>
-        {% for person in game_log.watched_with.all %}
-            {{ person.username }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    </p>
-{% endif %}
-
-            {% endif %}
-
-            {% if game_log.review %}
-                <p><strong>Your Review:</strong></p>
-                <p>{{ game_log.review }}</p>
-            {% endif %}
+            </p>
 
         {% endif %}
-
-        <a href="{% url 'edit_log' game.id %}">
-    <button>Edit Log</button>
-</a>
-
-<form method="post"
-      action="{% url 'remove_log' game.id %}"
-      onsubmit="return confirm('Are you sure you want to remove this log?');">
-    {% csrf_token %}
-    <button type="submit" class="remove-log-button">
-        Remove Log
-    </button>
-</form>
-
-    {% else %}
-
-        <form method="post" action="{% url 'log_game' game.id %}">
-            {% csrf_token %}
-            <button type="submit">Log Game</button>
-        </form>
-
-    {% endif %}
-
-{% else %}
-
-    <p>
-        <a href="{% url 'login' %}">Log in</a> to log this game.
-    </p>
-
-{% endif %}
 
     </div>
 
+
     <div class="discussion-sidebar">
 
-        <h2>💬 Discussion</h2>
+
+        <!-- Live Chat Button -->
+
+        {% if game.live_chat_available %}
+
+        <button
+            type="button"
+            id="open-live-chat"
+            class="live-chat-open-button"
+        >
+            💬 Open Live Chat
+        </button>
+
+        {% endif %}
+
+
+        <!-- Discussion -->
+
+        <h2>
+            💬 Discussion
+        </h2>
+
 
         {% if user.is_authenticated %}
 
@@ -192,7 +298,8 @@
                 placeholder="Join the discussion..."
             ></textarea>
 
-            <br><br>
+            <br>
+            <br>
 
             <button type="submit">
                 Post Comment
@@ -203,47 +310,573 @@
         {% else %}
 
         <p>
-            <a href="{% url 'login' %}">Log in</a>
+
+            <a href="{% url 'login' %}">
+                Log in
+            </a>
+
             to join the discussion.
+
         </p>
 
         {% endif %}
 
+
         <hr>
+
+
+        <!-- Existing Comments -->
 
         {% for comment in comments %}
 
-<div class="comment">
+        <div class="comment">
 
-    <strong>{{ comment.user.username }}</strong>
+            <strong>
+                {{ comment.user.username }}
+            </strong>
 
-    <br>
+            <br>
 
-    <small>
-        {{ comment.created_at|date:"M j, Y g:i A" }}
-    </small>
+            <small>
+                {{ comment.created_at|date:"M j, Y g:i A" }}
+            </small>
 
-    <p>{{ comment.text|linebreaks }}</p>
+            <p>
+                {{ comment.text|linebreaks }}
+            </p>
 
-    {% if user.is_authenticated and comment.user == user %}
-        <form method="post" action="{% url 'delete_comment' comment.id %}">
-            {% csrf_token %}
-            <button type="submit">Delete</button>
-        </form>
-    {% endif %}
 
-</div>
+            {% if user.is_authenticated and comment.user == user %}
 
-<hr>
+            <form
+                method="post"
+                action="{% url 'delete_comment' comment.id %}"
+            >
 
-{% empty %}
+                {% csrf_token %}
 
-<p>No comments yet.</p>
+                <button type="submit">
+                    Delete
+                </button>
 
-{% endfor %}
+            </form>
+
+            {% endif %}
+
+        </div>
+
+
+        <hr>
+
+
+        {% empty %}
+
+        <p>
+            No comments yet.
+        </p>
+
+        {% endfor %}
+
 
     </div>
 
 </div>
+
+
+<!-- Floating Live Chat -->
+
+<div
+    id="live-chat-panel"
+    style="
+        display:none;
+        position:fixed;
+        right:24px;
+        bottom:24px;
+        width:380px;
+        height:560px;
+        z-index:99999;
+        background:#181818;
+        border:1px solid #3a3a3a;
+        border-radius:12px;
+        overflow:hidden;
+        box-shadow:0 12px 40px rgba(0,0,0,0.55);
+    "
+>
+
+    <div
+        style="
+            width:100%;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+        "
+    >
+
+        <!-- Header -->
+
+        <div
+            style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                padding:14px 16px;
+                background:#202020;
+                border-bottom:1px solid #333;
+                flex-shrink:0;
+            "
+        >
+
+            <div>
+
+                <div
+                    style="
+                        color:white;
+                        font-size:17px;
+                        font-weight:800;
+                    "
+                >
+                    💬 Live Chat
+                </div>
+
+                <div
+                    style="
+                        margin-top:3px;
+                        color:#999;
+                        font-size:12px;
+                    "
+                >
+                    {{ game.away_team }} @ {{ game.home_team }}
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="close-live-chat"
+                style="
+                    width:32px;
+                    height:32px;
+                    padding:0;
+                    border:none;
+                    border-radius:50%;
+                    background:transparent;
+                    color:#aaa;
+                    font-size:24px;
+                    cursor:pointer;
+                "
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- Scrollable Messages -->
+
+        <div
+            id="live-chat-messages"
+            style="
+                flex:1;
+                min-height:0;
+                overflow-y:auto;
+                padding:16px;
+                background:#121212;
+            "
+        >
+        </div>
+
+
+        <!-- Message Input -->
+
+        <form
+            id="live-chat-form"
+            style="
+                display:flex;
+                gap:8px;
+                padding:12px;
+                background:#1c1c1c;
+                border-top:1px solid #333;
+                flex-shrink:0;
+            "
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                id="live-chat-input"
+                maxlength="500"
+                placeholder="Type a message..."
+                autocomplete="off"
+                style="
+                    flex:1;
+                    min-width:0;
+                    padding:10px 12px;
+                    border:1px solid #3b3b3b;
+                    border-radius:7px;
+                    background:#252525;
+                    color:white;
+                    font-size:14px;
+                    outline:none;
+                "
+            >
+
+
+            <button
+                type="submit"
+                style="
+                    padding:10px 15px;
+                    border:none;
+                    border-radius:7px;
+                    background:#00d447;
+                    color:white;
+                    font-size:14px;
+                    font-weight:700;
+                    cursor:pointer;
+                "
+            >
+                Send
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Live Chat JavaScript -->
+
+<script>
+
+const openChatButton = document.getElementById(
+    "open-live-chat"
+);
+
+const closeChatButton = document.getElementById(
+    "close-live-chat"
+);
+
+const chatPanel = document.getElementById(
+    "live-chat-panel"
+);
+
+const chatMessages = document.getElementById(
+    "live-chat-messages"
+);
+
+const chatForm = document.getElementById(
+    "live-chat-form"
+);
+
+const chatInput = document.getElementById(
+    "live-chat-input"
+);
+
+const messagesUrl =
+    "{% url 'game_chat_messages' game.id %}";
+
+const sendMessageUrl =
+    "{% url 'send_game_chat_message' game.id %}";
+
+
+/*
+    OPEN CHAT
+*/
+
+openChatButton.addEventListener(
+    "click",
+    function () {
+
+        chatPanel.style.display = "flex";
+
+        loadChatMessages();
+
+        chatInput.focus();
+
+    }
+);
+
+
+/*
+    CLOSE CHAT
+*/
+
+closeChatButton.addEventListener(
+    "click",
+    function () {
+
+        chatPanel.style.display = "none";
+
+    }
+);
+
+
+/*
+    ESCAPE KEY CLOSES CHAT
+*/
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            chatPanel.style.display !== "none"
+        ) {
+
+            chatPanel.style.display = "none";
+
+        }
+
+    }
+);
+
+
+/*
+    ESCAPE HTML
+*/
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/*
+    DISPLAY MESSAGES
+*/
+
+function renderMessages(messages) {
+
+    chatMessages.innerHTML = "";
+
+    messages.forEach(
+        function (message) {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "live-chat-message";
+
+
+            if (message.is_me) {
+
+                wrapper.classList.add(
+                    "live-chat-message-me"
+                );
+
+            }
+
+
+            wrapper.innerHTML = `
+
+                <div
+                    style="
+                        margin-bottom:2px;
+                        color:#00d447;
+                        font-size:13px;
+                        font-weight:700;
+                    "
+                >
+                    ${escapeHtml(message.username)}
+                </div>
+
+                <div
+                    style="
+                        color:#f1f1f1;
+                        font-size:14px;
+                        line-height:1.45;
+                        overflow-wrap:anywhere;
+                    "
+                >
+                    ${escapeHtml(message.message)}
+                </div>
+
+                <div
+                    style="
+                        margin-top:4px;
+                        color:#666;
+                        font-size:10px;
+                    "
+                >
+                    ${escapeHtml(message.created_at)}
+                </div>
+
+            `;
+
+
+            chatMessages.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+/*
+    LOAD MESSAGES
+*/
+
+function loadChatMessages() {
+
+    fetch(messagesUrl)
+
+        .then(
+            response =>
+                response.json()
+        )
+
+        .then(
+            data => {
+
+                renderMessages(
+                    data.messages
+                );
+
+            }
+        )
+
+        .catch(
+            error => {
+
+                console.error(
+                    "Chat loading error:",
+                    error
+                );
+
+            }
+        );
+
+}
+
+
+/*
+    SEND MESSAGE
+*/
+
+chatForm.addEventListener(
+    "submit",
+    function (event) {
+
+        event.preventDefault();
+
+
+        const message =
+            chatInput.value.trim();
+
+
+        if (!message) {
+
+            return;
+
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "message",
+            message
+        );
+
+
+        formData.append(
+            "csrfmiddlewaretoken",
+            document.querySelector(
+                "[name=csrfmiddlewaretoken]"
+            ).value
+        );
+
+
+        fetch(
+            sendMessageUrl,
+            {
+                method: "POST",
+                body: formData,
+            }
+        )
+
+        .then(
+            response =>
+                response.json()
+        )
+
+        .then(
+            data => {
+
+                if (data.error) {
+
+                    alert(
+                        data.error
+                    );
+
+                    return;
+
+                }
+
+
+                chatInput.value =
+                    "";
+
+                loadChatMessages();
+
+                chatInput.focus();
+
+            }
+        )
+
+        .catch(
+            error => {
+
+                console.error(
+                    "Chat send error:",
+                    error
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/*
+    REFRESH CHAT EVERY 3 SECONDS
+*/
+
+setInterval(
+    function () {
+
+        if (
+            chatPanel.style.display !== "none"
+        ) {
+
+            loadChatMessages();
+
+        }
+
+    },
+    3000
+);
+
+</script>
 
 {% endblock %}

@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+{{ log.user.username }}'s Review
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.review-page {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 0 20px 70px;
+}
+
+.review-container {
+    background: #1b1b1b;
+    border: 1px solid #292929;
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.review-author {
+    color: #00c853;
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.review-author:hover {
+    text-decoration: underline;
+}
+
+.review-date {
+    color: #999;
+    font-size: 14px;
+}
+
+.review-game {
+    text-align: center;
+    padding: 25px 0;
+    border-top: 1px solid #292929;
+    border-bottom: 1px solid #292929;
+    margin-bottom: 25px;
+}
+
+.review-teams {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.review-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+}
+
+.review-team img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.review-team-name {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.review-vs {
+    color: #999;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.review-game-date {
+    color: #aaa;
+    margin-top: 15px;
+}
+
+.review-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.review-info-box {
+    background: #242424;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.review-info-label {
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.review-info-value {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.review-text-title {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.review-text {
+    color: #ddd;
+    font-size: 17px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    margin-bottom: 30px;
+}
+
+.watched-with {
+    margin-bottom: 30px;
+}
+
+.watched-with-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.watched-with-list {
+    color: #ccc;
+    line-height: 1.7;
+}
+
+.game-button {
+    display: inline-block;
+    background: #00c853;
+    color: white;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.game-button:hover {
+    opacity: 0.9;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #999;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: white;
+}
+
+@media (max-width: 600px) {
+
+    .review-page {
+        margin-top: 30px;
+        padding: 0 12px 40px;
+    }
+
+    .review-container {
+        padding: 20px;
+    }
+
+    .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .review-info {
+        grid-template-columns: 1fr;
+    }
+
+    .review-team {
+        min-width: 130px;
+    }
+
+    .review-team img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .review-team-name {
+        font-size: 17px;
+    }
+
+}
+
+</style>
+
+
+<div class="review-page">
+
+    <div class="review-container">
+
+        <div class="review-header">
+
+            <a
+                href="{% url 'public_profile' log.user.username %}"
+                class="review-author"
+            >
+                {{ log.user.username }}
+            </a>
+
+            <div class="review-date">
+                {{ log.logged_at|date:"M j, Y g:i A" }}
+            </div>
+
+        </div>
+
+
+        <div class="review-game">
+
+            <div class="review-teams">
+
+                <div class="review-team">
+
+                    {% if game.away_logo %}
+
+                        <img
+                            src="{% static game.away_logo %}"
+                            alt="{{ game.away_team }} logo"
+                        >
+
+                    {% else %}
+
+                        <div style="font-size:50px;">🏟️</div>
+
+                    {% endif %}
+
+                    <div class="review-team-name">
+                        {{ game.away_team }}
+                    </div>
+
+                </div>
+
+
+                <div class="review-vs">
+                    @
+                </div>
+
+
+                <div class="review-team">
+
+                    {% if game.home_logo %}
+
+                        <img
+                            src="{% static game.home_logo %}"
+                            alt="{{ game.home_team }} logo"
+                        >
+
+                    {% else %}
+
+                        <div style="font-size:50px;">🏟️</div>
+
+                    {% endif %}
+
+                    <div class="review-team-name">
+                        {{ game.home_team }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="review-game-date">
+                {{ game.game_date }}
+            </div>
+
+        </div>
+
+
+        <div class="review-info">
+
+            {% if log.quality_rating %}
+
+            <div class="review-info-box">
+
+                <div class="review-info-label">
+                    Game Rating
+                </div>
+
+                <div class="review-info-value">
+                    ⭐ {{ log.quality_rating }}/5
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if log.experience_rating %}
+
+            <div class="review-info-box">
+
+                <div class="review-info-label">
+                    Experience Rating
+                </div>
+
+                <div class="review-info-value">
+                    ⭐ {{ log.experience_rating }}/5
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if log.watch_type %}
+
+            <div class="review-info-box">
+
+                <div class="review-info-label">
+                    Watched
+                </div>
+
+                <div class="review-info-value">
+                    {{ log.get_watch_type_display }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if game.venue %}
+
+            <div class="review-info-box">
+
+                <div class="review-info-label">
+                    Venue
+                </div>
+
+                <div class="review-info-value">
+                    {{ game.venue }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if log.review %}
+
+        <h2 class="review-text-title">
+            Review
+        </h2>
+
+        <div class="review-text">
+            {{ log.review }}
+        </div>
+
+        {% endif %}
+
+
+        {% if watched_with_users %}
+
+        <div class="watched-with">
+
+            <div class="watched-with-title">
+                Watched With
+            </div>
+
+            <div class="watched-with-list">
+
+                {% for person in watched_with_users %}
+
+                    <a
+                        href="{% url 'public_profile' person.username %}"
+                        style="color:#00c853; text-decoration:none;"
+                    >
+                        {{ person.username }}
+                    </a>{% if not forloop.last %}, {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    margin-top:10px;
+">
+
+    <form
+        action="{% url 'like_review' log.id %}"
+        method="post"
+        style="margin:0;"
+    >
+
+        {% csrf_token %}
+
+        {% if user in log.likes.all %}
+
+            <button
+                type="submit"
+                style="
+                    background:#2a2a2a;
+                    color:#ff4d67;
+                    border:1px solid #444;
+                    border-radius:8px;
+                    padding:11px 18px;
+                    font-size:15px;
+                    font-weight:700;
+                    cursor:pointer;
+                "
+            >
+                ❤️ Unlike
+            </button>
+
+        {% else %}
+
+            <button
+                type="submit"
+                style="
+                    background:#2a2a2a;
+                    color:white;
+                    border:1px solid #444;
+                    border-radius:8px;
+                    padding:11px 18px;
+                    font-size:15px;
+                    font-weight:700;
+                    cursor:pointer;
+                "
+            >
+                ♡ Like
+            </button>
+
+        {% endif %}
+
+    </form>
+
+
+    <span style="
+        color:#aaa;
+        font-size:15px;
+        font-weight:600;
+    ">
+        {{ log.likes.count }} Likes
+    </span>
+
+
+    <a
+        href="{% url 'game_detail' game.id %}"
+        class="game-button"
+    >
+        View Game
+    </a>
+
+</div>
+
+    </div>
+
+
+    <a
+        href="{% url 'social' %}"
+        class="back-link"
+    >
+        ← Back to Social
+    </a>
+
+</div>
+
+{% endblock %}

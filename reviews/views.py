@@ -1,6 +1,7 @@
 from .services.mlb import get_linescore
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .team_aliases import (
     NFL_ALIASES,
@@ -9,7 +10,15 @@ from .team_aliases import (
     NHL_ALIASES,
 )
 from django.contrib.auth.models import User
-from .models import Game, GameLog, Follow, Profile, Comment
+from .models import (
+    Game,
+    GameLog,
+    ReviewLike,
+    GameChatMessage,
+    Follow,
+    Profile,
+    Comment,
+)
 from .forms import GameLogForm, ProfileForm
 from django.db.models import Avg, Count
 from django.core.paginator import Paginator
@@ -30,8 +39,17 @@ def home(request):
         game_date=today
     ).order_by("id")[:3]
 
+    recent_reviews = (
+        GameLog.objects
+        .filter(review__isnull=False)
+        .exclude(review="")
+        .select_related("user", "game")
+        .order_by("-logged_at")[:5]
+    )
+
     return render(request, "home.html", {
         "today_games": today_games,
+        "recent_reviews": recent_reviews,
     })
 
 def todays_games(request):
@@ -1140,6 +1158,91 @@ def game_detail(request, game_id):
     )
 
 @login_required
+def game_chat_messages(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+
+    if not game.live_chat_available:
+        return JsonResponse(
+            {"error": "Live chat is closed."},
+            status=403,
+        )
+
+    messages = (
+        GameChatMessage.objects
+        .filter(game=game)
+        .select_related("user")
+        .order_by("created_at")
+    )
+
+    data = [
+        {
+            "id": message.id,
+            "username": message.user.username,
+            "message": message.message,
+            "created_at": message.created_at.strftime("%I:%M %p"),
+            "is_me": message.user_id == request.user.id,
+        }
+        for message in messages
+    ]
+
+    return JsonResponse({
+        "messages": data,
+    })
+
+
+@login_required
+def send_game_chat_message(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+
+    if not game.live_chat_available:
+        return JsonResponse(
+            {"error": "Live chat is closed."},
+            status=403,
+        )
+
+    if request.method != "POST":
+        return JsonResponse(
+            {"error": "POST required."},
+            status=405,
+        )
+
+    message_text = request.POST.get(
+        "message",
+        "",
+    ).strip()
+
+    if not message_text:
+        return JsonResponse(
+            {"error": "Message cannot be empty."},
+            status=400,
+        )
+
+    if len(message_text) > 500:
+        return JsonResponse(
+            {"error": "Message is too long."},
+            status=400,
+        )
+
+    message = GameChatMessage.objects.create(
+        game=game,
+        user=request.user,
+        message=message_text,
+    )
+
+    return JsonResponse({
+        "success": True,
+        "message": {
+            "id": message.id,
+            "username": message.user.username,
+            "message": message.message,
+            "created_at": message.created_at.strftime(
+                "%I:%M %p"
+            ),
+            "is_me": True,
+        },
+    })
+
+@login_required
 def delete_comment(request, comment_id):
     comment = get_object_or_404(
         Comment,
@@ -1285,6 +1388,52 @@ def social(request):
         "new_followers": new_followers,
         "watched_with": watched_with,
     })
+
+@login_required
+def review_detail(request, log_id):
+    log = get_object_or_404(
+        GameLog.objects.select_related("user", "game"),
+        id=log_id,
+    )
+
+    # Only allow the author or someone who follows the author
+    # to view the review through this social page.
+    if log.user != request.user:
+        is_following = Follow.objects.filter(
+            follower=request.user,
+            following=log.user,
+        ).exists()
+
+        if not is_following:
+            return redirect("social")
+
+    watched_with_users = log.watched_with.all()
+
+    return render(request, "review_detail.html", {
+        "log": log,
+        "game": log.game,
+        "watched_with_users": watched_with_users,
+    })
+
+@login_required
+def like_review(request, log_id):
+    review = get_object_or_404(
+        GameLog,
+        id=log_id,
+        review__isnull=False,
+    )
+
+    if request.method == "POST":
+
+        like, created = ReviewLike.objects.get_or_create(
+            review=review,
+            user=request.user,
+        )
+
+        if not created:
+            like.delete()
+
+    return redirect("review_detail", log_id=review.id)
 
 @login_required
 def diary(request):

@@ -34,6 +34,29 @@ path(
 
     # Game pages
     path("game/<int:game_id>/", views.game_detail, name="game_detail"),
+path(
+    "game/<int:game_id>/chat/messages/",
+    views.game_chat_messages,
+    name="game_chat_messages",
+),
+
+path(
+    "game/<int:game_id>/chat/send/",
+    views.send_game_chat_message,
+    name="send_game_chat_message",
+),
+path(
+    "review/<int:log_id>/",
+    views.review_detail,
+    name="review_detail",
+),
+
+path(
+    "review/<int:log_id>/like/",
+    views.like_review,
+    name="like_review",
+),
+
     path("game/<int:game_id>/log/", views.log_game, name="log_game"),
     path("game/<int:game_id>/edit/", views.edit_log, name="edit_log"),
 
