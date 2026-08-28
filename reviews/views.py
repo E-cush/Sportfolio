@@ -43,10 +43,14 @@ def home(request):
         GameLog.objects
         .filter(review__isnull=False)
         .exclude(review="")
-        .exclude(user=request.user)
         .select_related("user", "game")
-        .order_by("-logged_at")[:5]
+        .order_by("-logged_at")
     )
+
+    if request.user.is_authenticated:
+        recent_reviews = recent_reviews.exclude(user=request.user)
+
+    recent_reviews = recent_reviews[:5]
 
     return render(request, "home.html", {
         "today_games": today_games,
