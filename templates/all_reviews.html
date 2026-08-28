@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}All Reviews - Sportfolio{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .all-reviews-page {
+        max-width: 1000px;
+        margin: 45px auto;
+        padding: 0 20px 60px;
+        box-sizing: border-box;
+    }
+
+    .all-reviews-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+
+    .all-reviews-header h1 {
+        margin: 0;
+        color: white;
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .all-reviews-count {
+        color: #888;
+        font-size: 14px;
+    }
+
+
+    /* REVIEW CARD */
+
+    .all-review-card {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+
+        margin-bottom: 14px;
+        padding: 20px;
+
+        background: #1c1c1c;
+        border: 1px solid #303030;
+        border-radius: 12px;
+
+        color: white;
+        text-decoration: none;
+
+        transition:
+            transform .18s ease,
+            border-color .18s ease,
+            background .18s ease,
+            box-shadow .18s ease;
+    }
+
+
+    .all-review-card:hover {
+        transform: translateY(-2px);
+        border-color: #00d447;
+        background: #202020;
+        box-shadow: 0 6px 20px rgba(0, 212, 71, .10);
+    }
+
+
+    /* USER */
+
+    .all-review-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        margin-bottom: 18px;
+    }
+
+    .all-review-user {
+        color: #00d447;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .all-review-time {
+        color: #777;
+        font-size: 12px;
+    }
+
+
+    /* MATCHUP */
+
+    .all-review-matchup {
+        display: grid;
+        grid-template-columns: 1fr 55px 1fr;
+        align-items: center;
+
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+
+    .all-review-team {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        min-width: 0;
+
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+
+    .all-review-away {
+        justify-content: flex-end;
+        text-align: right;
+    }
+
+
+    .all-review-home {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+
+    /* THIS IS THE IMPORTANT PART */
+
+    .all-review-team img {
+        display: block;
+
+        width: 50px !important;
+        height: 50px !important;
+
+        min-width: 50px !important;
+        min-height: 50px !important;
+
+        max-width: 50px !important;
+        max-height: 50px !important;
+
+        object-fit: contain !important;
+
+        flex-shrink: 0;
+    }
+
+
+    .all-review-at {
+        text-align: center;
+
+        color: #00d447;
+        font-size: 18px;
+        font-weight: 900;
+    }
+
+
+    /* DATE */
+
+    .all-review-date {
+        text-align: center;
+
+        margin-bottom: 10px;
+
+        color: #888;
+        font-size: 12px;
+    }
+
+
+    /* RATING */
+
+    .all-review-rating {
+        text-align: center;
+
+        margin-bottom: 10px;
+
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+
+    /* REVIEW */
+
+    .all-review-text {
+        max-width: 750px;
+        margin: 0 auto;
+
+        color: #d5d5d5;
+        font-size: 14px;
+        line-height: 1.5;
+
+        text-align: center;
+    }
+
+
+    .all-review-read {
+        margin-top: 12px;
+
+        color: #00d447;
+        font-size: 13px;
+        font-weight: 800;
+
+        text-align: center;
+    }
+
+
+    /* PAGINATION */
+
+    .all-review-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 25px;
+
+        margin-top: 30px;
+    }
+
+
+    .all-review-pagination a {
+        padding: 9px 16px;
+
+        border: 1px solid #303030;
+        border-radius: 8px;
+
+        color: #00d447;
+        background: #1c1c1c;
+
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+
+        transition:
+            background .18s ease,
+            border-color .18s ease;
+    }
+
+
+    .all-review-pagination a:hover {
+        background: #202020;
+        border-color: #00d447;
+    }
+
+
+    .all-review-pagination span {
+        color: #888;
+        font-size: 13px;
+    }
+
+
+    /* MOBILE */
+
+    @media (max-width: 650px) {
+
+        .all-reviews-page {
+            margin-top: 25px;
+            padding: 0 12px 40px;
+        }
+
+        .all-reviews-header h1 {
+            font-size: 26px;
+        }
+
+        .all-review-card {
+            padding: 16px;
+        }
+
+        .all-review-matchup {
+            grid-template-columns: 1fr 35px 1fr;
+        }
+
+        .all-review-team {
+            gap: 7px;
+            font-size: 13px;
+        }
+
+        .all-review-team img {
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            min-height: 38px !important;
+            max-width: 38px !important;
+            max-height: 38px !important;
+        }
+
+    }
+
+</style>
+
+
+<div class="all-reviews-page">
+
+    <div class="all-reviews-header">
+
+        <h1>
+            All Reviews
+        </h1>
+
+        <span class="all-reviews-count">
+            {{ reviews.paginator.count }} reviews
+        </span>
+
+    </div>
+
+  {% if reviews.has_other_pages %}
+
+<div class="all-review-pagination">
+
+    {% if reviews.has_previous %}
+        <a href="?page={{ reviews.previous_page_number }}">
+            ← Previous
+        </a>
+    {% endif %}
+
+    <span>
+        Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}
+    </span>
+
+    {% if reviews.has_next %}
+        <a href="?page={{ reviews.next_page_number }}">
+            Next →
+        </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+    {% for log in reviews %}
+
+    <a
+        href="{% url 'review_detail' log.id %}"
+        class="all-review-card"
+    >
+
+        <!-- USER -->
+
+        <div class="all-review-top">
+
+            <span class="all-review-user">
+                {{ log.user.username }}
+            </span>
+
+            <span class="all-review-time">
+                {{ log.logged_at|timesince }} ago
+            </span>
+
+        </div>
+
+
+        <!-- MATCHUP -->
+
+        <div class="all-review-matchup">
+
+
+            <!-- AWAY -->
+
+            <div class="all-review-team all-review-away">
+
+                <span>
+                    {{ log.game.away_team }}
+                </span>
+
+                {% if log.game.away_logo %}
+
+                    <img
+                        src="{% static log.game.away_logo %}"
+                        alt="{{ log.game.away_team }} logo"
+                    >
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- @ -->
+
+            <div class="all-review-at">
+                @
+            </div>
+
+
+            <!-- HOME -->
+
+            <div class="all-review-team all-review-home">
+
+                {% if log.game.home_logo %}
+
+                    <img
+                        src="{% static log.game.home_logo %}"
+                        alt="{{ log.game.home_team }} logo"
+                    >
+
+                {% endif %}
+
+                <span>
+                    {{ log.game.home_team }}
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- DATE -->
+
+        <div class="all-review-date">
+            {{ log.game.game_date|date:"M j, Y" }}
+        </div>
+
+
+        <!-- RATING -->
+
+        {% if log.quality_rating %}
+
+        <div class="all-review-rating">
+            ⭐ {{ log.quality_rating }}/5
+        </div>
+
+        {% endif %}
+
+
+        <!-- REVIEW -->
+
+        {% if log.review %}
+
+        <div class="all-review-text">
+
+            {% if log.review|length > 220 %}
+                {{ log.review|slice:":220" }}...
+            {% else %}
+                {{ log.review }}
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="all-review-read">
+            Read Review →
+        </div>
+
+    </a>
+
+    {% empty %}
+
+        <div
+            style="
+                padding:40px;
+                background:#1c1c1c;
+                border:1px solid #303030;
+                border-radius:12px;
+                color:#888;
+                text-align:center;
+            "
+        >
+            No reviews yet.
+        </div>
+
+    {% endfor %}
+
+
+    <!-- PAGINATION -->
+
+    {% if reviews.has_other_pages %}
+
+    <div class="all-review-pagination">
+
+        {% if reviews.has_previous %}
+
+            <a href="?page={{ reviews.previous_page_number }}">
+                ← Previous
+            </a>
+
+        {% endif %}
+
+
+        <span>
+            Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}
+        </span>
+
+
+        {% if reviews.has_next %}
+
+            <a href="?page={{ reviews.next_page_number }}">
+                Next →
+            </a>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

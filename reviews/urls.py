@@ -68,6 +68,7 @@ path(
 
     # User pages
     path("social/", views.social, name="social"),
+    path("reviews/", views.all_reviews, name="all_reviews"),
     path("diary/", views.diary, name="diary"),
     path("profile/", views.profile, name="profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),

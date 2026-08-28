@@ -43,6 +43,7 @@ def home(request):
         GameLog.objects
         .filter(review__isnull=False)
         .exclude(review="")
+        .exclude(user=request.user)
         .select_related("user", "game")
         .order_by("-logged_at")[:5]
     )
@@ -50,6 +51,23 @@ def home(request):
     return render(request, "home.html", {
         "today_games": today_games,
         "recent_reviews": recent_reviews,
+    })
+
+def all_reviews(request):
+    reviews = (
+        GameLog.objects
+        .filter(review__isnull=False)
+        .exclude(review="")
+        .select_related("user", "game")
+        .order_by("-logged_at")
+    )
+
+    paginator = Paginator(reviews, 100)
+    page_number = request.GET.get("page")
+    reviews = paginator.get_page(page_number)
+
+    return render(request, "all_reviews.html", {
+        "reviews": reviews,
     })
 
 def todays_games(request):
@@ -1395,17 +1413,6 @@ def review_detail(request, log_id):
         GameLog.objects.select_related("user", "game"),
         id=log_id,
     )
-
-    # Only allow the author or someone who follows the author
-    # to view the review through this social page.
-    if log.user != request.user:
-        is_following = Follow.objects.filter(
-            follower=request.user,
-            following=log.user,
-        ).exists()
-
-        if not is_following:
-            return redirect("social")
 
     watched_with_users = log.watched_with.all()
 

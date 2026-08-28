@@ -3064,860 +3064,218 @@ button:hover {
 
 }
 
-/* =========================================================
-   SPORTFOLIO GAME PAGE REDESIGN
-========================================================= */
+/* =========================================
+   REVIEW CARDS
+========================================= */
 
-.sportfolio-game-page {
-    width: 100%;
-    max-width: 1250px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-    box-sizing: border-box;
-}
-
-
-/* HERO */
-
-.game-hero-card {
-    background: #1b1b1b;
+.review-card {
+    display: block;
+    background: #1d1d1d;
     border: 1px solid #303030;
-    border-radius: 18px;
-
-    padding: 34px 36px 28px;
-    margin-bottom: 28px;
-
-    box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.28);
-}
-
-
-.game-status-pill {
-    width: fit-content;
-
-    margin: 0 auto 28px;
-
-    padding: 7px 14px;
-
-    border-radius: 999px;
-
-    background: #252525;
-    border: 1px solid #3b3b3b;
-
-    color: #00d447;
-
-    font-size: 12px;
-    font-weight: 800;
-
-    letter-spacing: 0.08em;
-}
-
-
-.game-matchup {
-    display: grid;
-
-    grid-template-columns:
-        1fr
-        100px
-        1fr;
-
-    align-items: center;
-
-    gap: 20px;
-}
-
-
-.game-team {
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-
-    text-align: center;
-}
-
-
-.game-team-away {
-    justify-self: end;
-}
-
-
-.game-team-home {
-    justify-self: start;
-}
-
-
-.game-team h1 {
-    margin: 12px 0 0;
-
-    font-size: 29px;
-    line-height: 1.15;
-}
-
-
-.game-hero-logo {
-    width: 76px;
-    height: 76px;
-
-    object-fit: contain;
-}
-
-
-.game-hero-logo-fallback {
-    width: 76px;
-    height: 76px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 48px;
-}
-
-
-.game-hero-score {
-    margin-top: 8px;
-
-    color: #00d447;
-
-    font-size: 32px;
-    font-weight: 900;
-}
-
-
-.game-matchup-center {
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-}
-
-
-.game-at {
-    color: #00d447;
-
-    font-size: 28px;
-    font-weight: 900;
-}
-
-
-.game-hero-scoreline {
-    margin-top: 8px;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
 
     color: white;
-
-    font-size: 26px;
-    font-weight: 900;
-}
-
-
-.game-hero-details {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 12px;
-
-    margin-top: 34px;
-}
-
-
-.game-hero-details > div {
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-
-    padding: 14px 12px;
-
-    background: #222;
-
-    border: 1px solid #2f2f2f;
-    border-radius: 10px;
-
-    text-align: center;
-}
-
-
-.game-hero-details span {
-    margin-bottom: 5px;
-
-    color: #888;
-
-    font-size: 10px;
-    font-weight: 800;
-
-    letter-spacing: 0.08em;
-}
-
-
-.game-hero-details strong {
-    color: white;
-
-    font-size: 14px;
-}
-
-
-.game-hero-chat-status {
-    width: fit-content;
-
-    margin: 18px auto 0;
-
-    color: #00d447;
-
-    font-size: 13px;
-    font-weight: 700;
-}
-
-
-.game-hero-chat-closed {
-    color: #888;
-}
-
-
-/* MAIN LAYOUT */
-
-.game-page-grid {
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        360px;
-
-    gap: 28px;
-
-    align-items: start;
-}
-
-
-.game-page-main,
-.game-page-sidebar {
-    min-width: 0;
-}
-
-
-/* SECTION CARDS */
-
-.game-section-card {
-    margin-bottom: 22px;
-
-    padding: 25px;
-
-    background: #1b1b1b;
-
-    border: 1px solid #303030;
-    border-radius: 14px;
-}
-
-
-.game-section-title {
-    margin-bottom: 20px;
-
-    padding-bottom: 13px;
-
-    border-bottom: 1px solid #303030;
-}
-
-
-.game-section-title h2 {
-    margin: 0;
-
-    font-size: 21px;
-}
-
-
-/* BOX SCORE */
-
-.game-linescore-wrapper {
-    overflow-x: auto;
-}
-
-
-.game-linescore-table {
-    width: 100%;
-
-    min-width: 450px;
-
-    border-collapse: collapse;
-}
-
-
-.game-linescore-table th,
-.game-linescore-table td {
-    padding: 13px 14px;
-
-    text-align: center;
-
-    border: 1px solid #3a3a3a;
-}
-
-
-.game-linescore-table th {
-    background: #232323;
-
-    color: #999;
-
-    font-size: 12px;
-}
-
-
-.game-linescore-table td {
-    color: #e8e8e8;
-}
-
-
-.game-linescore-table td:first-child {
-    text-align: left;
-
-    color: white;
-
-    font-weight: 700;
-}
-
-
-/* COMMUNITY RATING */
-
-.game-rating-content {
-    padding: 10px 0 5px;
-
-    text-align: center;
-}
-
-
-.game-rating-number {
-    color: #00d447;
-
-    font-size: 52px;
-    font-weight: 900;
-
-    line-height: 1;
-}
-
-
-.game-rating-stars {
-    margin-top: 10px;
-
-    font-size: 18px;
-
-    letter-spacing: 2px;
-}
-
-
-.game-rating-out-of {
-    margin-top: 6px;
-
-    color: #888;
-
-    font-size: 13px;
-}
-
-
-.game-rating-count {
-    margin-top: 12px;
-
-    color: #ccc;
-
-    font-size: 14px;
-}
-
-
-.game-rating-empty {
-    color: #ddd;
-
-    font-size: 18px;
-    font-weight: 700;
-}
-
-
-.game-rating-empty-sub {
-    margin-top: 6px;
-
-    color: #777;
-
-    font-size: 13px;
-}
-
-
-/* YOUR LOG */
-
-.your-log-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 12px;
-}
-
-
-.your-log-item {
-    display: flex;
-    flex-direction: column;
-
-    padding: 15px;
-
-    background: #232323;
-
-    border: 1px solid #303030;
-    border-radius: 10px;
-}
-
-
-.your-log-item span {
-    margin-bottom: 5px;
-
-    color: #888;
-
-    font-size: 11px;
-    font-weight: 800;
-}
-
-
-.your-log-item strong {
-    color: white;
-
-    font-size: 14px;
-}
-
-
-.your-review-box {
-    margin-top: 16px;
-
-    padding: 18px;
-
-    background: #222;
-
-    border-left: 3px solid #00d447;
-
-    border-radius: 8px;
-}
-
-
-.your-review-label {
-    margin-bottom: 7px;
-
-    color: #00d447;
-
-    font-size: 12px;
-    font-weight: 800;
-
-    letter-spacing: 0.06em;
-
-    text-transform: uppercase;
-}
-
-
-.your-review-text {
-    color: #eee;
-
-    font-size: 15px;
-
-    line-height: 1.65;
-}
-
-
-.your-log-actions {
-    display: flex;
-
-    gap: 10px;
-
-    align-items: center;
-
-    margin-top: 20px;
-}
-
-
-.game-action-button {
-    display: inline-block;
-
-    padding: 11px 17px;
-
-    border-radius: 8px;
-
-    background: #00d447;
-
-    color: white;
-
     text-decoration: none;
 
-    font-size: 14px;
-    font-weight: 700;
+    box-sizing: border-box;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+    border-color: #00d447;
+    background: #202020;
+    box-shadow: 0 8px 24px rgba(0, 212, 71, 0.12);
 }
 
 
-.game-action-button:hover {
-    opacity: 0.9;
+/* HEADER */
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 12px;
 }
 
-
-.game-remove-button {
-    padding: 10px 16px;
-
-    border: 1px solid #e53935;
-    border-radius: 8px;
-
-    background: transparent;
-
-    color: #ff5b57;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-
-.game-remove-button:hover {
-    background: #351515;
-}
-
-
-.no-log-content {
-    color: #aaa;
-
-    text-align: center;
-}
-
-
-.no-log-content p {
-    margin-top: 0;
-    margin-bottom: 18px;
-}
-
-
-.login-game-message {
-    color: #aaa;
-
-    text-align: center;
-}
-
-
-.login-game-message a {
+.review-card-user {
     color: #00d447;
-
-    font-weight: 700;
-}
-
-
-/* CHAT UNAVAILABLE */
-
-.live-chat-unavailable {
-    margin-bottom: 22px;
-
-    padding: 20px;
-
-    background: #1b1b1b;
-
-    border: 1px solid #303030;
-    border-radius: 14px;
-
-    text-align: center;
-}
-
-
-.live-chat-unavailable-title {
-    color: white;
-
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 800;
 }
 
-
-.live-chat-unavailable-text {
-    margin-top: 8px;
-
+.review-card-time {
     color: #888;
+    font-size: 12px;
+}
 
+
+/* TEAMS */
+
+.review-card-teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.review-card-team {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    flex: 1;
+    min-width: 0;
+
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.review-card-away {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.review-card-home {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.review-card-team img {
+    width: 32px;
+    height: 32px;
+
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.review-card-at {
+    color: #00d447;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+
+/* DATE */
+
+.review-card-date {
+    text-align: center;
+
+    color: #999;
     font-size: 13px;
 
-    line-height: 1.5;
+    margin-bottom: 7px;
 }
 
 
-/* DISCUSSION */
+/* RATING */
 
-.discussion-card {
-    padding: 22px;
+.review-card-rating {
+    text-align: center;
 
-    background: #1b1b1b;
+    font-size: 15px;
+    font-weight: 700;
 
+    margin-bottom: 7px;
+}
+
+
+/* REVIEW TEXT */
+
+.review-card-text {
+    max-width: 850px;
+
+    margin: 0 auto;
+
+    text-align: center;
+
+    color: #d5d5d5;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+
+/* READ REVIEW */
+
+.review-card-link {
+    text-align: center;
+
+    color: #00d447;
+    font-size: 13px;
+    font-weight: 800;
+
+    margin-top: 9px;
+}
+
+
+/* =========================================
+   PAGINATION
+========================================= */
+
+.review-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 25px;
+
+    margin-top: 30px;
+    padding-bottom: 30px;
+
+    color: #999;
+    font-size: 14px;
+}
+
+.review-pagination a {
+    color: #00d447;
+    text-decoration: none;
+    font-weight: 800;
+
+    transition: opacity 0.18s ease;
+}
+
+.review-pagination a:hover {
+    opacity: 0.75;
+}
+
+/* =========================================
+   RECENT REVIEW CARDS
+========================================= */
+
+.recent-review-card {
+    display: block;
+    background: #1d1d1d;
     border: 1px solid #303030;
-    border-radius: 14px;
-}
-
-
-.discussion-card-header {
-    margin-bottom: 16px;
-
-    padding-bottom: 14px;
-
-    border-bottom: 1px solid #303030;
-}
-
-
-.discussion-card-header h2 {
-    margin: 0;
-
-    font-size: 21px;
-}
-
-
-.discussion-card .comment-box {
-    width: 100%;
-
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    color: white;
+    text-decoration: none;
     box-sizing: border-box;
 
-    padding: 13px 14px;
-
-    border: 1px solid #3b3b3b;
-    border-radius: 9px;
-
-    background: #121212;
-
-    color: white;
-
-    font-size: 14px;
-
-    resize: vertical;
-
-    outline: none;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-
-.discussion-card .comment-box:focus {
+.recent-review-card:hover {
+    transform: translateY(-4px);
     border-color: #00d447;
-}
-
-
-.discussion-post-button {
-    width: 100%;
-
-    margin-top: 10px;
-
-    padding: 11px 16px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: #00d447;
-
-    color: white;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-
-.discussion-post-button:hover {
-    opacity: 0.9;
-}
-
-
-.discussion-login {
-    color: #aaa;
-
-    text-align: center;
-
-    line-height: 1.5;
-}
-
-
-.discussion-login a {
-    color: #00d447;
-
-    font-weight: 700;
-}
-
-
-.game-comment {
-    padding: 16px 0;
-
-    border-top: 1px solid #303030;
-}
-
-
-.game-comment-header {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 10px;
-}
-
-
-.game-comment-header strong {
-    color: #00d447;
-
-    font-size: 14px;
-}
-
-
-.game-comment-header small {
-    color: #777;
-
-    font-size: 11px;
-}
-
-
-.game-comment p {
-    margin: 10px 0 12px;
-
-    color: #ddd;
-
-    font-size: 14px;
-
-    line-height: 1.55;
-}
-
-
-.comment-delete-button {
-    padding: 7px 11px;
-
-    border: 1px solid #444;
-    border-radius: 7px;
-
-    background: transparent;
-
-    color: #aaa;
-
-    font-size: 11px;
-
-    cursor: pointer;
-}
-
-
-.comment-delete-button:hover {
-    color: white;
-
-    border-color: #666;
-}
-
-
-.no-comments {
-    padding: 24px 0;
-
-    color: #777;
-
-    text-align: center;
-
-    font-size: 14px;
-}
-
-
-/* MOBILE */
-
-@media (max-width: 900px) {
-
-    .sportfolio-game-page {
-        padding: 25px 16px 60px;
-    }
-
-
-    .game-page-grid {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-
-@media (max-width: 650px) {
-
-    .game-hero-card {
-        padding: 25px 16px 20px;
-    }
-
-
-    .game-matchup {
-        grid-template-columns:
-            1fr
-            55px
-            1fr;
-
-        gap: 8px;
-    }
-
-
-    .game-team h1 {
-        font-size: 18px;
-    }
-
-
-    .game-hero-logo {
-        width: 58px;
-        height: 58px;
-    }
-
-
-    .game-hero-logo-fallback {
-        width: 58px;
-        height: 58px;
-
-        font-size: 38px;
-    }
-
-
-    .game-hero-score {
-        font-size: 26px;
-    }
-
-
-    .game-at {
-        font-size: 21px;
-    }
-
-
-    .game-hero-scoreline {
-        font-size: 20px;
-    }
-
-
-    .game-hero-details {
-        grid-template-columns: 1fr;
-    }
-
-
-    .your-log-grid {
-        grid-template-columns: 1fr;
-    }
-
-
-    .your-log-actions {
-        flex-direction: column;
-
-        align-items: stretch;
-    }
-
-
-    .game-action-button {
-        text-align: center;
-    }
-
-
-    .game-remove-button {
-        width: 100%;
-    }
-
-}
-
-
-/* FLOATING CHAT MOBILE */
-
-@media (max-width: 600px) {
-
-    #live-chat-panel {
-        right: 12px !important;
-        bottom: 12px !important;
-        left: 12px !important;
-
-        width: auto !important;
-        height: 500px !important;
-    }
-
+    box-shadow: 0 8px 20px rgba(0, 212, 71, 0.12);
 }
 
 
