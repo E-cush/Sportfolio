@@ -25,7 +25,10 @@ class Command(BaseCommand):
         end_date = options.get("end_date")
 
         if start_date and end_date:
-            date_range = f"{start_date}-{end_date}"
+            date_range = (
+                f"{start_date.replace('-', '')}-"
+                f"{end_date.replace('-', '')}"
+            )
         else:
             today = datetime.now().strftime("%Y%m%d")
             end_of_season = f"{datetime.now().year}1231"

@@ -53,6 +53,7 @@ class Command(BaseCommand):
                         "home_team": game["home_name"],
                         "away_team": game["away_name"],
                         "game_date": game["game_date"],
+                        "game_start": game["game_datetime"],
                         "home_score": game["home_score"],
                         "away_score": game["away_score"],
                         "venue": game.get("venue_name") or "Unknown Venue",

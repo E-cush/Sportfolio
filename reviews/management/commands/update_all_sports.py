@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
 
 from reviews.updates.mlb import update_mlb
 from reviews.updates.nba import update_nba
@@ -50,6 +51,12 @@ class Command(BaseCommand):
         update_nhl(start_date, end_date)
         update_PL(start_date, end_date)
         update_laliga(start_date, end_date)
+
+        call_command(
+            "import_college_football",
+            start_date=start_date,
+            end_date=end_date,
+        )
 
         self.stdout.write("")
         self.stdout.write(
