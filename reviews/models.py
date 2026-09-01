@@ -20,6 +20,19 @@ class Game(models.Model):
         blank=True,
         default="",
     )
+
+    event_name = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+    )
+
+    racing_series = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
+
     season = models.IntegerField()
     game_type = models.CharField(max_length=30, null=True, blank=True)
     home_team = models.CharField(max_length=100)
@@ -133,6 +146,9 @@ class Game(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        if self.league == "Racing" and self.event_name:
+            return f"{self.event_name} ({self.game_date})"
+
         return f"{self.away_team} @ {self.home_team} ({self.game_date})"
 
 

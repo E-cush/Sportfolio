@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Racing - Sportfolio{% endblock %}
+
+{% block content %}
+
+<style>
+
+.racing-page {
+    max-width: 1000px;
+    margin: 45px auto;
+    padding: 0 20px;
+}
+
+.racing-page h1 {
+    color: white;
+    font-size: 38px;
+    margin-bottom: 8px;
+}
+
+.racing-subtitle {
+    color: #999;
+    margin-bottom: 30px;
+}
+
+.racing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.racing-card {
+    display: block;
+    padding: 35px 25px;
+
+    background: #1d1d1d;
+    border: 1px solid #303030;
+    border-radius: 14px;
+
+    color: white;
+    text-decoration: none;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.racing-card:hover {
+    transform: translateY(-5px);
+    border-color: #00d447;
+    box-shadow: 0 8px 25px rgba(0, 212, 71, .12);
+}
+
+.racing-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.racing-card h2 {
+    font-size: 25px;
+    margin: 0 0 8px;
+}
+
+.racing-card p {
+    color: #999;
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+
+    .racing-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+
+<div class="racing-page">
+
+    <h1>🏁 Racing</h1>
+
+    <div class="racing-subtitle">
+        Browse and log races from across motorsports.
+    </div>
+
+
+    <div class="racing-grid">
+
+        <a
+            href="{% url 'f1_races' %}"
+            class="racing-card"
+        >
+
+            <div class="racing-icon">
+                🏎️
+            </div>
+
+            <h2>Formula 1</h2>
+
+            <p>
+                Grand Prix racing from 1950 to today.
+            </p>
+
+        </a>
+
+
+        <a
+            href="{% url 'nascar_races' %}"
+            class="racing-card"
+        >
+
+            <div class="racing-icon">
+                🏁
+            </div>
+
+            <h2>NASCAR</h2>
+
+            <p>
+                NASCAR Cup Series racing.
+            </p>
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

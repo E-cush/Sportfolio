@@ -3,26 +3,34 @@
 {% load static %}
 
 {% block title %}
-{{ game.away_team }} @ {{ game.home_team }}
+{% if game.league == "Racing" %}
+    {{ game.event_name }}
+{% else %}
+    {{ game.away_team }} @ {{ game.home_team }}
+{% endif %}
 {% endblock %}
+
 
 {% block content %}
 
 <div class="sp-game-page">
 
 
-    <!-- =========================================
-         GAME HERO
-    ========================================== -->
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
 
     <section class="sp-game-hero">
 
+
+        <!-- STATUS -->
+
         <div class="sp-game-status">
 
-            {% if game.status|lower == "final" %}
+            {% if game.status|lower == "final" or game.status|lower == "completed" %}
 
                 <span class="sp-status sp-status-final">
-                    FINAL
+                    {{ game.status|upper }}
                 </span>
 
             {% elif game.status|lower == "live" %}
@@ -48,77 +56,51 @@
         </div>
 
 
-        <div class="sp-matchup">
+
+        <!-- =================================================
+             RACING HERO
+        ================================================== -->
+
+        {% if game.league == "Racing" %}
+
+            <div class="sp-race-hero">
+
+                <div class="sp-race-icon">
+
+                    {% if game.racing_series == "Formula 1" %}
+                        🏎️
+                    {% else %}
+                        🏁
+                    {% endif %}
+
+                </div>
 
 
-            <!-- AWAY TEAM -->
-
-            <div class="sp-team">
-
-                {% if game.away_logo %}
-
-                    <img
-                        src="{% static game.away_logo %}"
-                        class="sp-team-logo"
-                        alt="{{ game.away_team }} logo"
-                    >
-
-                {% else %}
-
-                    <div class="sp-team-logo-fallback">
-                        🏟️
-                    </div>
-
-                {% endif %}
+                <div class="sp-race-series">
+                    {{ game.racing_series }}
+                </div>
 
 
-                <h1>
-                    {{ game.away_team }}
+                <h1 class="sp-race-name">
+                    {{ game.event_name }}
                 </h1>
-
-            </div>
-
-
-            <!-- SCORE -->
-
-            <div class="sp-score-area">
-
-                {% if game.home_score is not None and game.away_score is not None %}
-
-                    <div class="sp-score">
-                        {{ game.away_score }}
-                        <span>-</span>
-                        {{ game.home_score }}
-                    </div>
-
-                {% else %}
-
-                    <div class="sp-score-vs">
-                        @
-                    </div>
-
-                {% endif %}
 
 
                 {% if game.game_start %}
 
-                    <div class="sp-start-time">
+                    <div class="sp-race-start">
 
                         {% if game.is_upcoming %}
-
                             {{ game.game_start|date:"M j, Y • g:i A" }}
-
                         {% else %}
-
                             {{ game.game_date|date:"M j, Y" }}
-
                         {% endif %}
 
                     </div>
 
                 {% else %}
 
-                    <div class="sp-start-time">
+                    <div class="sp-race-start">
                         {{ game.game_date }}
                     </div>
 
@@ -127,37 +109,126 @@
             </div>
 
 
-            <!-- HOME TEAM -->
 
-            <div class="sp-team">
+        <!-- =================================================
+             NORMAL GAME HERO
+        ================================================== -->
 
-                {% if game.home_logo %}
+        {% else %}
 
-                    <img
-                        src="{% static game.home_logo %}"
-                        class="sp-team-logo"
-                        alt="{{ game.home_team }} logo"
-                    >
-
-                {% else %}
-
-                    <div class="sp-team-logo-fallback">
-                        🏟️
-                    </div>
-
-                {% endif %}
+            <div class="sp-matchup">
 
 
-                <h1>
-                    {{ game.home_team }}
-                </h1>
+                <!-- AWAY TEAM -->
+
+                <div class="sp-team">
+
+                    {% if game.away_logo %}
+
+                        <img
+                            src="{% static game.away_logo %}"
+                            class="sp-team-logo"
+                            alt="{{ game.away_team }} logo"
+                        >
+
+                    {% else %}
+
+                        <div class="sp-team-logo-fallback">
+                            🏟️
+                        </div>
+
+                    {% endif %}
+
+
+                    <h1>
+                        {{ game.away_team }}
+                    </h1>
+
+                </div>
+
+
+
+                <!-- SCORE -->
+
+                <div class="sp-score-area">
+
+                    {% if game.home_score is not None and game.away_score is not None %}
+
+                        <div class="sp-score">
+                            {{ game.away_score }}
+                            <span>-</span>
+                            {{ game.home_score }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="sp-score-vs">
+                            @
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if game.game_start %}
+
+                        <div class="sp-start-time">
+
+                            {% if game.is_upcoming %}
+                                {{ game.game_start|date:"M j, Y • g:i A" }}
+                            {% else %}
+                                {{ game.game_date|date:"M j, Y" }}
+                            {% endif %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="sp-start-time">
+                            {{ game.game_date }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- HOME TEAM -->
+
+                <div class="sp-team">
+
+                    {% if game.home_logo %}
+
+                        <img
+                            src="{% static game.home_logo %}"
+                            class="sp-team-logo"
+                            alt="{{ game.home_team }} logo"
+                        >
+
+                    {% else %}
+
+                        <div class="sp-team-logo-fallback">
+                            🏟️
+                        </div>
+
+                    {% endif %}
+
+
+                    <h1>
+                        {{ game.home_team }}
+                    </h1>
+
+                </div>
 
             </div>
 
-        </div>
+        {% endif %}
 
 
-        <!-- GAME INFO -->
+
+        <!-- =================================================
+             GAME / RACE INFO
+        ================================================== -->
 
         <div class="sp-game-info">
 
@@ -177,7 +248,11 @@
             <div class="sp-info-item">
 
                 <span>
-                    VENUE
+                    {% if game.league == "Racing" %}
+                        TRACK / VENUE
+                    {% else %}
+                        VENUE
+                    {% endif %}
                 </span>
 
                 <strong>
@@ -202,142 +277,148 @@
         </div>
 
 
+
         <!-- CHAT STATUS -->
 
         {% if user.is_authenticated %}
 
-    {% if game.live_chat_available %}
+            {% if game.live_chat_available %}
 
-        <div class="sp-chat-status sp-chat-open">
-            🟢 Live Chat is Open
-        </div>
+                <div class="sp-chat-status sp-chat-open">
+                    🟢 Live Chat is Open
+                </div>
 
-    {% elif game.status|lower == "scheduled" or game.status|lower == "upcoming" %}
+            {% elif game.status|lower == "scheduled" or game.status|lower == "upcoming" %}
 
-        <div class="sp-chat-status">
-            💬 Live Chat opens 30 minutes before the game
-        </div>
+                <div class="sp-chat-status">
 
-    {% endif %}
+                    {% if game.league == "Racing" %}
+                        💬 Live Chat opens 30 minutes before the race
+                    {% else %}
+                        💬 Live Chat opens 30 minutes before the game
+                    {% endif %}
 
-{% endif %}
+                </div>
+
+            {% endif %}
+
+        {% endif %}
 
     </section>
 
 
 
-    <!-- =========================================
-         CONTENT
-    ========================================== -->
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
     <div class="sp-game-content">
 
 
-        <!-- =====================================
+        <!-- =================================================
              MAIN COLUMN
-        ====================================== -->
+        ================================================== -->
 
         <main class="sp-main-column">
 
 
             <!-- BOX SCORE -->
 
-            {% if boxscore %}
+            {% if boxscore and game.league != "Racing" %}
 
-            <section class="sp-card">
+                <section class="sp-card">
 
-                <div class="sp-card-heading">
+                    <div class="sp-card-heading">
 
-                    <div>
-                        <span class="sp-card-kicker">
-                            GAME DATA
-                        </span>
+                        <div>
 
-                        <h2>
-                            Box Score
-                        </h2>
+                            <span class="sp-card-kicker">
+                                GAME DATA
+                            </span>
+
+                            <h2>
+                                Box Score
+                            </h2>
+
+                        </div>
+
                     </div>
 
-                </div>
+
+                    <div class="sp-table-wrap">
+
+                        <table class="sp-linescore">
+
+                            <thead>
+
+                                <tr>
+                                    <th></th>
+                                    <th>R</th>
+                                    <th>H</th>
+                                    <th>E</th>
+                                </tr>
+
+                            </thead>
 
 
-                <div class="sp-table-wrap">
+                            <tbody>
 
-                    <table class="sp-linescore">
+                                <tr>
 
-                        <thead>
+                                    <td>
+                                        {{ game.away_team }}
+                                    </td>
 
-                            <tr>
+                                    <td>
+                                        {{ boxscore.away.runs }}
+                                    </td>
 
-                                <th></th>
+                                    <td>
+                                        {{ boxscore.away.hits }}
+                                    </td>
 
-                                <th>R</th>
+                                    <td>
+                                        {{ boxscore.away.errors }}
+                                    </td>
 
-                                <th>H</th>
-
-                                <th>E</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            <tr>
-
-                                <td>
-                                    {{ game.away_team }}
-                                </td>
-
-                                <td>
-                                    {{ boxscore.away.runs }}
-                                </td>
-
-                                <td>
-                                    {{ boxscore.away.hits }}
-                                </td>
-
-                                <td>
-                                    {{ boxscore.away.errors }}
-                                </td>
-
-                            </tr>
+                                </tr>
 
 
-                            <tr>
+                                <tr>
 
-                                <td>
-                                    {{ game.home_team }}
-                                </td>
+                                    <td>
+                                        {{ game.home_team }}
+                                    </td>
 
-                                <td>
-                                    {{ boxscore.home.runs }}
-                                </td>
+                                    <td>
+                                        {{ boxscore.home.runs }}
+                                    </td>
 
-                                <td>
-                                    {{ boxscore.home.hits }}
-                                </td>
+                                    <td>
+                                        {{ boxscore.home.hits }}
+                                    </td>
 
-                                <td>
-                                    {{ boxscore.home.errors }}
-                                </td>
+                                    <td>
+                                        {{ boxscore.home.errors }}
+                                    </td>
 
-                            </tr>
+                                </tr>
 
-                        </tbody>
+                            </tbody>
 
-                    </table>
+                        </table>
 
-                </div>
+                    </div>
 
-            </section>
+                </section>
 
             {% endif %}
 
 
 
-            <!-- COMMUNITY RATING -->
+            <!-- =================================================
+                 COMMUNITY RATING
+            ================================================== -->
 
             <section class="sp-card">
 
@@ -390,7 +471,13 @@
                         </div>
 
                         <span>
-                            Be the first to rate this game.
+
+                            {% if game.league == "Racing" %}
+                                Be the first to rate this race.
+                            {% else %}
+                                Be the first to rate this game.
+                            {% endif %}
+
                         </span>
 
                     </div>
@@ -401,210 +488,236 @@
 
 
 
-            <!-- YOUR LOG -->
+            <!-- =================================================
+                 YOUR LOG
+            ================================================== -->
 
             {% if user.is_authenticated %}
 
-            <section class="sp-card">
+                <section class="sp-card">
 
-                <div class="sp-card-heading">
+                    <div class="sp-card-heading">
 
-                    <div>
+                        <div>
 
-                        <span class="sp-card-kicker">
-                            PERSONAL
-                        </span>
+                            <span class="sp-card-kicker">
+                                PERSONAL
+                            </span>
 
-                        <h2>
-                            📝 Your Log
-                        </h2>
+                            <h2>
+                                📝 Your Log
+                            </h2>
+
+                        </div>
 
                     </div>
 
-                </div>
+
+                    {% if game_log %}
+
+                        <div class="sp-log-grid">
 
 
-                {% if game_log %}
+                            <div class="sp-log-item">
+
+                                <span>
+                                    Watch Type
+                                </span>
+
+                                <strong>
+                                    {{ game_log.get_watch_type_display }}
+                                </strong>
+
+                            </div>
 
 
-                    <div class="sp-log-grid">
+                            {% if game_log.watch_type != "HIGHLIGHTS" %}
 
 
-                        <div class="sp-log-item">
+                                {% if game_log.quality_rating %}
 
-                            <span>
-                                Watch Type
-                            </span>
+                                    <div class="sp-log-item">
 
-                            <strong>
-                                {{ game_log.get_watch_type_display }}
-                            </strong>
+                                        <span>
+                                            {% if game.league == "Racing" %}
+                                                Race Quality
+                                            {% else %}
+                                                Game Quality
+                                            {% endif %}
+                                        </span>
+
+                                        <strong>
+                                            ⭐ {{ game_log.quality_rating }}/5
+                                        </strong>
+
+                                    </div>
+
+                                {% endif %}
+
+
+
+                                {% if game_log.experience_rating %}
+
+                                    <div class="sp-log-item">
+
+                                        <span>
+                                            Experience
+                                        </span>
+
+                                        <strong>
+                                            ⭐ {{ game_log.experience_rating }}/5
+                                        </strong>
+
+                                    </div>
+
+                                {% endif %}
+
+
+
+                                {% if game_log.watched_with.exists %}
+
+                                    <div class="sp-log-item">
+
+                                        <span>
+                                            Watched With
+                                        </span>
+
+                                        <strong>
+
+                                            {% for person in game_log.watched_with.all %}
+
+                                                {{ person.username }}{% if not forloop.last %}, {% endif %}
+
+                                            {% endfor %}
+
+                                        </strong>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                            {% endif %}
 
                         </div>
 
 
-                        {% if game_log.watch_type != "HIGHLIGHTS" %}
 
+                        {% if game_log.review %}
 
-                            {% if game_log.quality_rating %}
+                            <div class="sp-review">
 
-                            <div class="sp-log-item">
+                                <div class="sp-review-label">
+                                    YOUR REVIEW
+                                </div>
 
-                                <span>
-                                    Game Quality
-                                </span>
-
-                                <strong>
-                                    ⭐ {{ game_log.quality_rating }}/5
-                                </strong>
+                                <p>
+                                    {{ game_log.review }}
+                                </p>
 
                             </div>
-
-                            {% endif %}
-
-
-                            {% if game_log.experience_rating %}
-
-                            <div class="sp-log-item">
-
-                                <span>
-                                    Experience
-                                </span>
-
-                                <strong>
-                                    ⭐ {{ game_log.experience_rating }}/5
-                                </strong>
-
-                            </div>
-
-                            {% endif %}
-
-
-                            {% if game_log.watched_with.exists %}
-
-                            <div class="sp-log-item">
-
-                                <span>
-                                    Watched With
-                                </span>
-
-                                <strong>
-
-                                    {% for person in game_log.watched_with.all %}
-
-                                        {{ person.username }}{% if not forloop.last %}, {% endif %}
-
-                                    {% endfor %}
-
-                                </strong>
-
-                            </div>
-
-                            {% endif %}
-
 
                         {% endif %}
 
-                    </div>
 
 
-                    {% if game_log.review %}
+                        <div class="sp-log-actions">
 
-                    <div class="sp-review">
+                            <a
+                                href="{% url 'edit_log' game.id %}"
+                                class="sp-primary-button"
+                            >
+                                Edit Log
+                            </a>
 
-                        <div class="sp-review-label">
-                            YOUR REVIEW
+
+                            <form
+                                method="post"
+                                action="{% url 'remove_log' game.id %}"
+                                onsubmit="return confirm('Are you sure you want to remove this log?');"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="sp-danger-button"
+                                >
+                                    Remove Log
+                                </button>
+
+                            </form>
+
                         </div>
 
-                        <p>
-                            {{ game_log.review }}
-                        </p>
 
-                    </div>
+                    {% else %}
+
+                        <div class="sp-empty-log">
+
+                            <p>
+
+                                {% if game.league == "Racing" %}
+                                    You haven't logged this race yet.
+                                {% else %}
+                                    You haven't logged this game yet.
+                                {% endif %}
+
+                            </p>
+
+
+                            <form
+                                method="post"
+                                action="{% url 'log_game' game.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="sp-primary-button"
+                                >
+
+                                    {% if game.league == "Racing" %}
+                                        Log Race
+                                    {% else %}
+                                        Log Game
+                                    {% endif %}
+
+                                </button>
+
+                            </form>
+
+                        </div>
 
                     {% endif %}
 
+                </section>
 
-                    <div class="sp-log-actions">
-
-                        <a
-                            href="{% url 'edit_log' game.id %}"
-                            class="sp-primary-button"
-                        >
-                            Edit Log
-                        </a>
-
-
-                        <form
-                            method="post"
-                            action="{% url 'remove_log' game.id %}"
-                            onsubmit="return confirm('Are you sure you want to remove this log?');"
-                        >
-
-                            {% csrf_token %}
-
-                            <button
-                                type="submit"
-                                class="sp-danger-button"
-                            >
-                                Remove Log
-                            </button>
-
-                        </form>
-
-                    </div>
-
-
-                {% else %}
-
-                    <div class="sp-empty-log">
-
-                        <p>
-                            You haven't logged this game yet.
-                        </p>
-
-
-                        <form
-                            method="post"
-                            action="{% url 'log_game' game.id %}"
-                        >
-
-                            {% csrf_token %}
-
-                            <button
-                                type="submit"
-                                class="sp-primary-button"
-                            >
-                                Log Game
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                {% endif %}
-
-            </section>
 
             {% else %}
 
-            <section class="sp-card">
+                <section class="sp-card">
 
-                <div class="sp-login-message">
+                    <div class="sp-login-message">
 
-                    <p>
+                        <p>
 
-                        <a href="{% url 'login' %}">
-                            Log in
-                        </a>
+                            <a href="{% url 'login' %}">
+                                Log in
+                            </a>
 
-                        to log this game and write a review.
+                            {% if game.league == "Racing" %}
+                                to log this race and write a review.
+                            {% else %}
+                                to log this game and write a review.
+                            {% endif %}
 
-                    </p>
+                        </p>
 
-                </div>
+                    </div>
 
-            </section>
+                </section>
 
             {% endif %}
 
@@ -612,9 +725,9 @@
 
 
 
-        <!-- =====================================
+        <!-- =================================================
              SIDEBAR
-        ====================================== -->
+        ================================================== -->
 
         <aside class="sp-sidebar">
 
@@ -623,44 +736,59 @@
 
             {% if user.is_authenticated %}
 
-    {% if game.live_chat_available %}
+                {% if game.live_chat_available %}
 
-        <button
-            type="button"
-            id="open-live-chat"
-            class="sp-live-chat-button"
-        >
-            💬 Open Live Chat
-        </button>
-
-    {% elif game.status|lower == "scheduled" or game.status|lower == "upcoming" %}
-
-        <div class="sp-chat-closed-card">
-
-            <div class="sp-chat-closed-title">
-                💬 Live Chat Not Available Yet
-            </div>
-
-            <div class="sp-chat-closed-text">
-                Live chat opens 30 minutes before the game.
-            </div>
-
-        </div>
-
-    {% endif %}
-
-{% endif %}
+                    <button
+                        type="button"
+                        id="open-live-chat"
+                        class="sp-live-chat-button"
+                    >
+                        💬 Open Live Chat
+                    </button>
 
 
+                {% elif game.status|lower == "scheduled" or game.status|lower == "upcoming" %}
 
-            <!-- DISCUSSION -->
+                    <div class="sp-chat-closed-card">
+
+                        <div class="sp-chat-closed-title">
+                            💬 Live Chat Not Available Yet
+                        </div>
+
+                        <div class="sp-chat-closed-text">
+
+                            {% if game.league == "Racing" %}
+                                Live chat opens 30 minutes before the race.
+                            {% else %}
+                                Live chat opens 30 minutes before the game.
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 DISCUSSION
+            ================================================== -->
 
             <section class="sp-discussion-card">
 
                 <div class="sp-discussion-header">
 
                     <span class="sp-card-kicker">
-                        GAME COMMUNITY
+
+                        {% if game.league == "Racing" %}
+                            RACE COMMUNITY
+                        {% else %}
+                            GAME COMMUNITY
+                        {% endif %}
+
                     </span>
 
                     <h2>
@@ -670,95 +798,99 @@
                 </div>
 
 
+
                 {% if user.is_authenticated %}
 
-                <form method="post">
+                    <form method="post">
 
-                    {% csrf_token %}
+                        {% csrf_token %}
 
-                    <textarea
-                        name="text"
-                        rows="5"
-                        class="sp-comment-box"
-                        placeholder="Join the discussion..."
-                    ></textarea>
+                        <textarea
+                            name="text"
+                            rows="5"
+                            class="sp-comment-box"
+                            placeholder="Join the discussion..."
+                        ></textarea>
 
 
-                    <button
-                        type="submit"
-                        class="sp-post-button"
-                    >
-                        Post Comment
-                    </button>
+                        <button
+                            type="submit"
+                            class="sp-post-button"
+                        >
+                            Post Comment
+                        </button>
 
-                </form>
+                    </form>
+
 
                 {% else %}
 
-                <div class="sp-discussion-login">
+                    <div class="sp-discussion-login">
 
-                    <a href="{% url 'login' %}">
-                        Log in
-                    </a>
+                        <a href="{% url 'login' %}">
+                            Log in
+                        </a>
 
-                    to join the discussion.
+                        to join the discussion.
 
-                </div>
+                    </div>
 
                 {% endif %}
+
 
 
                 <div class="sp-comments">
 
                     {% for comment in comments %}
 
-                    <div class="sp-comment">
+                        <div class="sp-comment">
 
-                        <div class="sp-comment-top">
+                            <div class="sp-comment-top">
 
-                            <strong>
-                                {{ comment.user.username }}
-                            </strong>
+                                <strong>
+                                    {{ comment.user.username }}
+                                </strong>
 
-                            <small>
-                                {{ comment.created_at|date:"M j, Y g:i A" }}
-                            </small>
+                                <small>
+                                    {{ comment.created_at|date:"M j, Y g:i A" }}
+                                </small>
+
+                            </div>
+
+
+                            <p>
+                                {{ comment.text|linebreaks }}
+                            </p>
+
+
+                            {% if user.is_authenticated and comment.user == user %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'delete_comment' comment.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="sp-delete-button"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
 
                         </div>
 
 
-                        <p>
-                            {{ comment.text|linebreaks }}
-                        </p>
-
-
-                        {% if user.is_authenticated and comment.user == user %}
-
-                        <form
-                            method="post"
-                            action="{% url 'delete_comment' comment.id %}"
-                        >
-
-                            {% csrf_token %}
-
-                            <button
-                                type="submit"
-                                class="sp-delete-button"
-                            >
-                                Delete
-                            </button>
-
-                        </form>
-
-                        {% endif %}
-
-                    </div>
-
                     {% empty %}
 
-                    <div class="sp-no-comments">
-                        No comments yet.
-                    </div>
+                        <div class="sp-no-comments">
+                            No comments yet.
+                        </div>
 
                     {% endfor %}
 
@@ -774,9 +906,9 @@
 
 
 
-<!-- =========================================
+<!-- =========================================================
      FLOATING LIVE CHAT
-========================================= -->
+========================================================== -->
 
 {% if game.live_chat_available and user.is_authenticated %}
 
@@ -807,6 +939,7 @@
         "
     >
 
+
         <!-- CHAT HEADER -->
 
         <div
@@ -833,6 +966,7 @@
                     💬 Live Chat
                 </div>
 
+
                 <div
                     style="
                         margin-top:3px;
@@ -840,10 +974,17 @@
                         font-size:12px;
                     "
                 >
-                    {{ game.away_team }} @ {{ game.home_team }}
+
+                    {% if game.league == "Racing" %}
+                        {{ game.event_name }}
+                    {% else %}
+                        {{ game.away_team }} @ {{ game.home_team }}
+                    {% endif %}
+
                 </div>
 
             </div>
+
 
 
             <button
@@ -867,6 +1008,7 @@
         </div>
 
 
+
         <!-- CHAT MESSAGES -->
 
         <div
@@ -880,6 +1022,7 @@
             "
         >
         </div>
+
 
 
         <!-- CHAT INPUT -->
@@ -942,39 +1085,30 @@
 </div>
 
 
-<!-- LIVE CHAT JAVASCRIPT -->
+
+<!-- =========================================================
+     LIVE CHAT JAVASCRIPT
+========================================================== -->
 
 <script>
 
 const openChatButton =
-    document.getElementById(
-        "open-live-chat"
-    );
+    document.getElementById("open-live-chat");
 
 const closeChatButton =
-    document.getElementById(
-        "close-live-chat"
-    );
+    document.getElementById("close-live-chat");
 
 const chatPanel =
-    document.getElementById(
-        "live-chat-panel"
-    );
+    document.getElementById("live-chat-panel");
 
 const chatMessages =
-    document.getElementById(
-        "live-chat-messages"
-    );
+    document.getElementById("live-chat-messages");
 
 const chatForm =
-    document.getElementById(
-        "live-chat-form"
-    );
+    document.getElementById("live-chat-form");
 
 const chatInput =
-    document.getElementById(
-        "live-chat-input"
-    );
+    document.getElementById("live-chat-input");
 
 
 const messagesUrl =
@@ -984,12 +1118,12 @@ const sendMessageUrl =
     "{% url 'send_game_chat_message' game.id %}";
 
 
+
 openChatButton.addEventListener(
     "click",
     function () {
 
-        chatPanel.style.display =
-            "flex";
+        chatPanel.style.display = "flex";
 
         loadChatMessages();
 
@@ -999,15 +1133,16 @@ openChatButton.addEventListener(
 );
 
 
+
 closeChatButton.addEventListener(
     "click",
     function () {
 
-        chatPanel.style.display =
-            "none";
+        chatPanel.style.display = "none";
 
     }
 );
+
 
 
 document.addEventListener(
@@ -1019,8 +1154,7 @@ document.addEventListener(
             chatPanel.style.display !== "none"
         ) {
 
-            chatPanel.style.display =
-                "none";
+            chatPanel.style.display = "none";
 
         }
 
@@ -1028,17 +1162,18 @@ document.addEventListener(
 );
 
 
+
 function escapeHtml(text) {
 
     const div =
         document.createElement("div");
 
-    div.textContent =
-        text;
+    div.textContent = text;
 
     return div.innerHTML;
 
 }
+
 
 
 function renderMessages(messages) {
@@ -1108,6 +1243,7 @@ function renderMessages(messages) {
 }
 
 
+
 function loadChatMessages() {
 
     fetch(messagesUrl)
@@ -1149,6 +1285,7 @@ function loadChatMessages() {
         );
 
 }
+
 
 
 chatForm.addEventListener(
@@ -1212,8 +1349,7 @@ chatForm.addEventListener(
                 }
 
 
-                chatInput.value =
-                    "";
+                chatInput.value = "";
 
                 loadChatMessages();
 
@@ -1237,6 +1373,7 @@ chatForm.addEventListener(
 );
 
 
+
 setInterval(
     function () {
 
@@ -1256,53 +1393,73 @@ setInterval(
 
 {% endif %}
 
+
+
+<!-- =========================================================
+     PAGE CSS
+========================================================== -->
+
 <style>
 
+
 /* =========================================================
-   SPORTFOLIO GAME PAGE REDESIGN
-   PAGE-SPECIFIC STYLES
+   PAGE
 ========================================================= */
 
 .sp-game-page {
     width: 100% !important;
     max-width: 1250px !important;
+
     margin: 0 auto !important;
+
     padding: 35px 24px 80px !important;
+
     box-sizing: border-box !important;
+
     text-align: left !important;
 }
 
 
-/* HERO */
+
+/* =========================================================
+   HERO
+========================================================= */
 
 .sp-game-hero {
     width: 100% !important;
+
     box-sizing: border-box !important;
 
     padding: 34px !important;
 
-    background: linear-gradient(
-        145deg,
-        #1d1d1d,
-        #171717
-    ) !important;
+    background:
+        linear-gradient(
+            145deg,
+            #1d1d1d,
+            #171717
+        ) !important;
 
     border: 1px solid #303030 !important;
+
     border-radius: 18px !important;
 
     margin-bottom: 28px !important;
 
     box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.28) !important;
+        0 15px 40px
+        rgba(0, 0, 0, 0.28) !important;
 }
+
 
 
 .sp-game-status {
     display: flex !important;
+
     justify-content: center !important;
 
     margin-bottom: 28px !important;
 }
+
 
 
 .sp-status {
@@ -1319,10 +1476,12 @@ setInterval(
     color: #aaa !important;
 
     font-size: 11px !important;
+
     font-weight: 800 !important;
 
     letter-spacing: .08em !important;
 }
+
 
 
 .sp-status-final {
@@ -1330,9 +1489,11 @@ setInterval(
 }
 
 
+
 .sp-status-live {
     color: #ff5555 !important;
 }
+
 
 
 .sp-status-upcoming {
@@ -1340,7 +1501,88 @@ setInterval(
 }
 
 
-/* MATCHUP */
+
+/* =========================================================
+   RACING HERO
+========================================================= */
+
+.sp-race-hero {
+    width: 100% !important;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    padding: 4px 20px 10px !important;
+
+    box-sizing: border-box !important;
+
+    text-align: center !important;
+}
+
+
+
+.sp-race-icon {
+    margin-bottom: 12px !important;
+
+    font-size: 58px !important;
+
+    line-height: 1 !important;
+}
+
+
+
+.sp-race-series {
+    margin-bottom: 9px !important;
+
+    color: #00d447 !important;
+
+    font-size: 11px !important;
+
+    font-weight: 800 !important;
+
+    letter-spacing: .12em !important;
+
+    text-transform: uppercase !important;
+}
+
+
+
+.sp-race-name {
+    max-width: 850px !important;
+
+    margin: 0 !important;
+
+    color: white !important;
+
+    font-size: 38px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1.15 !important;
+
+    text-align: center !important;
+}
+
+
+
+.sp-race-start {
+    margin-top: 13px !important;
+
+    color: #888 !important;
+
+    font-size: 13px !important;
+}
+
+
+
+/* =========================================================
+   NORMAL MATCHUP
+========================================================= */
 
 .sp-matchup {
     width: 100% !important;
@@ -1358,8 +1600,10 @@ setInterval(
 }
 
 
+
 .sp-team {
     display: flex !important;
+
     flex-direction: column !important;
 
     align-items: center !important;
@@ -1370,11 +1614,14 @@ setInterval(
 }
 
 
+
 .sp-team-logo {
     width: 90px !important;
+
     height: 90px !important;
 
     max-width: 90px !important;
+
     max-height: 90px !important;
 
     object-fit: contain !important;
@@ -1383,16 +1630,21 @@ setInterval(
 }
 
 
+
 .sp-team-logo-fallback {
     width: 90px !important;
+
     height: 90px !important;
 
     display: flex !important;
+
     align-items: center !important;
+
     justify-content: center !important;
 
     font-size: 50px !important;
 }
+
 
 
 .sp-team h1 {
@@ -1401,31 +1653,38 @@ setInterval(
     color: white !important;
 
     font-size: 27px !important;
+
     font-weight: 800 !important;
 
     line-height: 1.15 !important;
 }
 
 
+
 .sp-score-area {
     display: flex !important;
+
     flex-direction: column !important;
 
     align-items: center !important;
+
     justify-content: center !important;
 
     text-align: center !important;
 }
 
 
+
 .sp-score {
     color: white !important;
 
     font-size: 44px !important;
+
     font-weight: 900 !important;
 
     line-height: 1 !important;
 }
+
 
 
 .sp-score span {
@@ -1435,12 +1694,15 @@ setInterval(
 }
 
 
+
 .sp-score-vs {
     color: #00d447 !important;
 
     font-size: 30px !important;
+
     font-weight: 900 !important;
 }
+
 
 
 .sp-start-time {
@@ -1452,7 +1714,10 @@ setInterval(
 }
 
 
-/* GAME INFO */
+
+/* =========================================================
+   INFO
+========================================================= */
 
 .sp-game-info {
     width: 100% !important;
@@ -1468,8 +1733,10 @@ setInterval(
 }
 
 
+
 .sp-info-item {
     display: flex !important;
+
     flex-direction: column !important;
 
     align-items: center !important;
@@ -1486,16 +1753,19 @@ setInterval(
 }
 
 
+
 .sp-info-item span {
     margin-bottom: 5px !important;
 
     color: #777 !important;
 
     font-size: 10px !important;
+
     font-weight: 800 !important;
 
     letter-spacing: .08em !important;
 }
+
 
 
 .sp-info-item strong {
@@ -1503,6 +1773,7 @@ setInterval(
 
     font-size: 14px !important;
 }
+
 
 
 .sp-chat-status {
@@ -1513,8 +1784,10 @@ setInterval(
     text-align: center !important;
 
     font-size: 13px !important;
+
     font-weight: 700 !important;
 }
+
 
 
 .sp-chat-open {
@@ -1522,7 +1795,10 @@ setInterval(
 }
 
 
-/* CONTENT */
+
+/* =========================================================
+   CONTENT
+========================================================= */
 
 .sp-game-content {
     width: 100% !important;
@@ -1539,23 +1815,31 @@ setInterval(
 }
 
 
+
 .sp-main-column {
     width: 100% !important;
+
     min-width: 0 !important;
 }
+
 
 
 .sp-sidebar {
     width: 100% !important;
+
     min-width: 0 !important;
 }
 
 
-/* CARDS */
+
+/* =========================================================
+   CARDS
+========================================================= */
 
 .sp-card,
 .sp-discussion-card {
     width: 100% !important;
+
     box-sizing: border-box !important;
 
     margin-bottom: 22px !important;
@@ -1570,6 +1854,7 @@ setInterval(
 }
 
 
+
 .sp-card-heading {
     display: flex !important;
 
@@ -1579,8 +1864,10 @@ setInterval(
 
     margin-bottom: 20px !important;
 
-    border-bottom: 1px solid #303030 !important;
+    border-bottom:
+        1px solid #303030 !important;
 }
+
 
 
 .sp-card-heading h2,
@@ -1593,23 +1880,29 @@ setInterval(
 }
 
 
+
 .sp-card-kicker {
     color: #00d447 !important;
 
     font-size: 10px !important;
+
     font-weight: 800 !important;
 
     letter-spacing: .09em !important;
 }
 
 
-/* BOX SCORE */
+
+/* =========================================================
+   BOX SCORE
+========================================================= */
 
 .sp-table-wrap {
     width: 100% !important;
 
     overflow-x: auto !important;
 }
+
 
 
 .sp-linescore {
@@ -1621,14 +1914,17 @@ setInterval(
 }
 
 
+
 .sp-linescore th,
 .sp-linescore td {
     padding: 13px 14px !important;
 
-    border: 1px solid #3a3a3a !important;
+    border:
+        1px solid #3a3a3a !important;
 
     text-align: center !important;
 }
+
 
 
 .sp-linescore th {
@@ -1637,8 +1933,10 @@ setInterval(
     color: #999 !important;
 
     font-size: 11px !important;
+
     font-weight: 800 !important;
 }
+
 
 
 .sp-linescore td {
@@ -1646,6 +1944,7 @@ setInterval(
 
     font-size: 14px !important;
 }
+
 
 
 .sp-linescore td:first-child {
@@ -1657,7 +1956,10 @@ setInterval(
 }
 
 
-/* RATING */
+
+/* =========================================================
+   RATING
+========================================================= */
 
 .sp-rating {
     text-align: center !important;
@@ -1666,14 +1968,17 @@ setInterval(
 }
 
 
+
 .sp-rating-number {
     color: #00d447 !important;
 
     font-size: 56px !important;
+
     font-weight: 900 !important;
 
     line-height: 1 !important;
 }
+
 
 
 .sp-rating-stars {
@@ -1685,6 +1990,7 @@ setInterval(
 }
 
 
+
 .sp-rating-label {
     margin-top: 7px !important;
 
@@ -1692,6 +1998,7 @@ setInterval(
 
     font-size: 13px !important;
 }
+
 
 
 .sp-rating-count {
@@ -1703,6 +2010,7 @@ setInterval(
 }
 
 
+
 .sp-rating-empty {
     padding: 10px 0 !important;
 
@@ -1711,8 +2019,10 @@ setInterval(
     text-align: center !important;
 
     font-size: 18px !important;
+
     font-weight: 700 !important;
 }
+
 
 
 .sp-rating-empty span {
@@ -1723,11 +2033,15 @@ setInterval(
     color: #777 !important;
 
     font-size: 13px !important;
+
     font-weight: 400 !important;
 }
 
 
-/* LOG */
+
+/* =========================================================
+   LOG
+========================================================= */
 
 .sp-log-grid {
     display: grid !important;
@@ -1739,18 +2053,22 @@ setInterval(
 }
 
 
+
 .sp-log-item {
     display: flex !important;
+
     flex-direction: column !important;
 
     padding: 15px !important;
 
     background: #232323 !important;
 
-    border: 1px solid #303030 !important;
+    border:
+        1px solid #303030 !important;
 
     border-radius: 10px !important;
 }
+
 
 
 .sp-log-item span {
@@ -1759,8 +2077,10 @@ setInterval(
     color: #777 !important;
 
     font-size: 11px !important;
+
     font-weight: 800 !important;
 }
+
 
 
 .sp-log-item strong {
@@ -1770,6 +2090,7 @@ setInterval(
 }
 
 
+
 .sp-review {
     margin-top: 16px !important;
 
@@ -1777,10 +2098,12 @@ setInterval(
 
     background: #222 !important;
 
-    border-left: 3px solid #00d447 !important;
+    border-left:
+        3px solid #00d447 !important;
 
     border-radius: 8px !important;
 }
+
 
 
 .sp-review-label {
@@ -1789,10 +2112,12 @@ setInterval(
     color: #00d447 !important;
 
     font-size: 11px !important;
+
     font-weight: 800 !important;
 
     letter-spacing: .07em !important;
 }
+
 
 
 .sp-review p {
@@ -1806,6 +2131,7 @@ setInterval(
 }
 
 
+
 .sp-log-actions {
     display: flex !important;
 
@@ -1815,10 +2141,18 @@ setInterval(
 }
 
 
+
+.sp-empty-log {
+    color: #ddd !important;
+}
+
+
+
 .sp-primary-button {
     display: inline-flex !important;
 
     align-items: center !important;
+
     justify-content: center !important;
 
     padding: 11px 17px !important;
@@ -1834,16 +2168,19 @@ setInterval(
     text-decoration: none !important;
 
     font-size: 14px !important;
+
     font-weight: 700 !important;
 
     cursor: pointer !important;
 }
 
 
+
 .sp-danger-button {
     padding: 10px 16px !important;
 
-    border: 1px solid #e53935 !important;
+    border:
+        1px solid #e53935 !important;
 
     border-radius: 8px !important;
 
@@ -1852,13 +2189,17 @@ setInterval(
     color: #ff6662 !important;
 
     font-size: 14px !important;
+
     font-weight: 700 !important;
 
     cursor: pointer !important;
 }
 
 
-/* LIVE CHAT BUTTON */
+
+/* =========================================================
+   LIVE CHAT
+========================================================= */
 
 .sp-live-chat-button {
     width: 100% !important;
@@ -1876,10 +2217,12 @@ setInterval(
     color: white !important;
 
     font-size: 16px !important;
+
     font-weight: 800 !important;
 
     cursor: pointer !important;
 }
+
 
 
 .sp-chat-closed-card {
@@ -1889,7 +2232,8 @@ setInterval(
 
     background: #1b1b1b !important;
 
-    border: 1px solid #303030 !important;
+    border:
+        1px solid #303030 !important;
 
     border-radius: 14px !important;
 
@@ -1897,12 +2241,15 @@ setInterval(
 }
 
 
+
 .sp-chat-closed-title {
     color: white !important;
 
     font-size: 17px !important;
+
     font-weight: 800 !important;
 }
+
 
 
 .sp-chat-closed-text {
@@ -1916,11 +2263,15 @@ setInterval(
 }
 
 
-/* DISCUSSION */
+
+/* =========================================================
+   DISCUSSION
+========================================================= */
 
 .sp-discussion-card {
     margin-bottom: 0 !important;
 }
+
 
 
 .sp-discussion-header {
@@ -1928,8 +2279,10 @@ setInterval(
 
     margin-bottom: 17px !important;
 
-    border-bottom: 1px solid #303030 !important;
+    border-bottom:
+        1px solid #303030 !important;
 }
+
 
 
 .sp-comment-box {
@@ -1941,7 +2294,8 @@ setInterval(
 
     padding: 13px 14px !important;
 
-    border: 1px solid #3b3b3b !important;
+    border:
+        1px solid #3b3b3b !important;
 
     border-radius: 9px !important;
 
@@ -1957,6 +2311,7 @@ setInterval(
 
     outline: none !important;
 }
+
 
 
 .sp-post-button {
@@ -1975,10 +2330,12 @@ setInterval(
     color: white !important;
 
     font-size: 14px !important;
+
     font-weight: 700 !important;
 
     cursor: pointer !important;
 }
+
 
 
 .sp-comments {
@@ -1986,11 +2343,14 @@ setInterval(
 }
 
 
+
 .sp-comment {
     padding: 16px 0 !important;
 
-    border-top: 1px solid #303030 !important;
+    border-top:
+        1px solid #303030 !important;
 }
+
 
 
 .sp-comment-top {
@@ -2004,6 +2364,7 @@ setInterval(
 }
 
 
+
 .sp-comment-top strong {
     color: #00d447 !important;
 
@@ -2011,11 +2372,13 @@ setInterval(
 }
 
 
+
 .sp-comment-top small {
     color: #666 !important;
 
     font-size: 10px !important;
 }
+
 
 
 .sp-comment p {
@@ -2029,6 +2392,7 @@ setInterval(
 }
 
 
+
 .sp-no-comments {
     padding: 25px 0 !important;
 
@@ -2038,26 +2402,76 @@ setInterval(
 }
 
 
-/* MOBILE */
+
+.sp-delete-button {
+    padding: 6px 10px !important;
+
+    border:
+        1px solid #555 !important;
+
+    border-radius: 6px !important;
+
+    background: transparent !important;
+
+    color: #aaa !important;
+
+    cursor: pointer !important;
+}
+
+
+
+.sp-login-message,
+.sp-discussion-login {
+    color: #aaa !important;
+}
+
+
+
+.sp-login-message a,
+.sp-discussion-login a {
+    color: #00d447 !important;
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 900px) {
 
     .sp-game-content {
-        grid-template-columns: 1fr !important;
+        grid-template-columns:
+            1fr !important;
     }
 
 }
 
 
+
 @media (max-width: 650px) {
 
     .sp-game-page {
-        padding: 22px 14px 55px !important;
+        padding:
+            22px 14px 55px !important;
     }
 
 
     .sp-game-hero {
-        padding: 24px 16px !important;
+        padding:
+            24px 16px !important;
+    }
+
+
+    .sp-race-icon {
+        font-size:
+            44px !important;
+    }
+
+
+    .sp-race-name {
+        font-size:
+            27px !important;
     }
 
 
@@ -2073,77 +2487,99 @@ setInterval(
 
     .sp-team-logo {
         width: 60px !important;
+
         height: 60px !important;
 
         max-width: 60px !important;
+
         max-height: 60px !important;
     }
 
 
     .sp-team-logo-fallback {
         width: 60px !important;
+
         height: 60px !important;
     }
 
 
     .sp-team h1 {
-        font-size: 17px !important;
+        font-size:
+            17px !important;
     }
 
 
     .sp-score {
-        font-size: 30px !important;
+        font-size:
+            30px !important;
     }
 
 
     .sp-score span {
-        margin: 0 3px !important;
+        margin:
+            0 3px !important;
     }
 
 
     .sp-score-vs {
-        font-size: 22px !important;
+        font-size:
+            22px !important;
     }
 
 
     .sp-game-info {
-        grid-template-columns: 1fr !important;
+        grid-template-columns:
+            1fr !important;
     }
 
 
     .sp-card,
     .sp-discussion-card {
-        padding: 19px !important;
+        padding:
+            19px !important;
     }
 
 
     .sp-log-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns:
+            1fr !important;
     }
 
 
     .sp-log-actions {
-        flex-direction: column !important;
+        flex-direction:
+            column !important;
     }
 
 
     .sp-primary-button,
     .sp-danger-button {
-        width: 100% !important;
+        width:
+            100% !important;
 
-        box-sizing: border-box !important;
+        box-sizing:
+            border-box !important;
 
-        text-align: center !important;
+        text-align:
+            center !important;
     }
 
 
     #live-chat-panel {
-        right: 12px !important;
-        bottom: 12px !important;
-        left: 12px !important;
+        right:
+            12px !important;
 
-        width: auto !important;
-        height: 500px !important;
+        bottom:
+            12px !important;
+
+        left:
+            12px !important;
+
+        width:
+            auto !important;
+
+        height:
+            500px !important;
     }
 
 }

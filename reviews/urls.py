@@ -31,6 +31,25 @@ path(
     name="laliga",
 ),
 
+# Racing
+path(
+    "racing/",
+    views.racing,
+    name="racing",
+),
+
+path(
+    "racing/f1/",
+    views.f1_races,
+    name="f1_races",
+),
+
+path(
+    "racing/nascar/",
+    views.nascar_races,
+    name="nascar_races",
+),
+
 
     # Game pages
     path("game/<int:game_id>/", views.game_detail, name="game_detail"),

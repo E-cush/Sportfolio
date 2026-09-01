@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Formula 1 Races{% endblock %}
+
+{% block content %}
+
+<h1>🏎️ Formula 1</h1>
+
+<p>Search every Formula 1 race in the Sportfolio database.</p>
+
+<div class="game-search-panel">
+
+    <div class="game-search-title">
+        <h2>Search Formula 1 Races</h2>
+        <p>Find any Formula 1 race in the Sportfolio database.</p>
+    </div>
+
+    <form method="get" class="game-search-form">
+
+        <!-- Race / Track -->
+
+        <div class="search-row">
+
+            <div class="search-field">
+                <label for="race_name">Race Name</label>
+
+                <input
+                    type="text"
+                    id="race_name"
+                    name="race_name"
+                    value="{{ race_name }}"
+                    placeholder="e.g. Monaco Grand Prix"
+                >
+            </div>
+
+            <div class="search-field">
+                <label for="track">Circuit / Track</label>
+
+                <input
+                    type="text"
+                    id="track"
+                    name="track"
+                    value="{{ track }}"
+                    placeholder="e.g. Monza"
+                >
+            </div>
+
+        </div>
+
+
+        <!-- Date Range -->
+
+        <div class="search-section-label">
+            Date Range
+        </div>
+
+        <div class="search-row date-row">
+
+            <div class="search-field">
+                <label for="date_from">From</label>
+
+                <input
+                    type="date"
+                    id="date_from"
+                    name="date_from"
+                    value="{{ date_from }}"
+                >
+            </div>
+
+            <div class="search-field">
+                <label for="date_to">To</label>
+
+                <input
+                    type="date"
+                    id="date_to"
+                    name="date_to"
+                    value="{{ date_to }}"
+                >
+            </div>
+
+        </div>
+
+
+        <!-- Sort -->
+
+        <div class="search-row">
+
+            <div class="search-field">
+
+                <label for="sort">
+                    Sort By
+                </label>
+
+                <select id="sort" name="sort">
+
+                    <option value="newest"
+                        {% if sort == "newest" %}selected{% endif %}>
+                        Newest
+                    </option>
+
+                    <option value="oldest"
+                        {% if sort == "oldest" %}selected{% endif %}>
+                        Oldest
+                    </option>
+
+                    <option value="highest"
+                        {% if sort == "highest" %}selected{% endif %}>
+                        Highest Rated
+                    </option>
+
+                    <option value="lowest"
+                        {% if sort == "lowest" %}selected{% endif %}>
+                        Lowest Rated
+                    </option>
+
+                    <option value="watched"
+                        {% if sort == "watched" %}selected{% endif %}>
+                        Most Watched
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- Upcoming Races -->
+
+        <label class="upcoming-checkbox">
+
+            <input
+                type="checkbox"
+                name="include_upcoming"
+                value="1"
+                {% if include_upcoming %}checked{% endif %}
+            >
+
+            <span class="custom-checkbox"></span>
+
+            <span>Include upcoming races</span>
+
+        </label>
+
+
+        <!-- Search -->
+
+        <button type="submit" class="search-submit">
+            Search Races
+        </button>
+
+    </form>
+
+</div>
+
+
+{% if searched %}
+
+<h2>Search Results</h2>
+
+
+{% if races.has_other_pages %}
+
+<div style="text-align:center; margin:25px 0;">
+
+    {% if races.has_previous %}
+        <a href="?race_name={{ race_name }}&track={{ track }}&date_from={{ date_from }}&date_to={{ date_to }}&sort={{ sort }}{% if include_upcoming %}&include_upcoming=1{% endif %}&page={{ races.previous_page_number }}">
+            ← Previous
+        </a>
+    {% endif %}
+
+    <span style="margin:0 20px;">
+        Page {{ races.number }} of {{ races.paginator.num_pages }}
+    </span>
+
+    {% if races.has_next %}
+        <a href="?race_name={{ race_name }}&track={{ track }}&date_from={{ date_from }}&date_to={{ date_to }}&sort={{ sort }}{% if include_upcoming %}&include_upcoming=1{% endif %}&page={{ races.next_page_number }}">
+            Next →
+        </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+{% for race in races %}
+
+<a href="{% url 'game_detail' race.id %}" class="game-card">
+
+    <div class="game-card-header">
+
+        <h2 class="team-name">
+            🏎️ {{ race.event_name }}
+        </h2>
+
+    </div>
+
+    <div class="game-meta">
+        {{ race.venue }}
+    </div>
+
+    <div class="game-meta">
+        {{ race.game_date }}
+    </div>
+
+    <p>
+        {% if race.is_upcoming %}
+            Upcoming
+        {% else %}
+            {{ race.status }}
+        {% endif %}
+    </p>
+
+</a>
+
+{% empty %}
+
+<p>No races matched your search.</p>
+
+{% endfor %}
+
+
+{% if races.has_other_pages %}
+
+<div style="text-align:center; margin:40px 0;">
+
+    {% if races.has_previous %}
+        <a href="?race_name={{ race_name }}&track={{ track }}&date_from={{ date_from }}&date_to={{ date_to }}&sort={{ sort }}{% if include_upcoming %}&include_upcoming=1{% endif %}&page={{ races.previous_page_number }}">
+            ← Previous
+        </a>
+    {% endif %}
+
+    <span style="margin:0 20px;">
+        Page {{ races.number }} of {{ races.paginator.num_pages }}
+    </span>
+
+    {% if races.has_next %}
+        <a href="?race_name={{ race_name }}&track={{ track }}&date_from={{ date_from }}&date_to={{ date_to }}&sort={{ sort }}{% if include_upcoming %}&include_upcoming=1{% endif %}&page={{ races.next_page_number }}">
+            Next →
+        </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

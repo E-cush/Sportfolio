@@ -1115,7 +1115,324 @@ def premier_league(request):
         "sort": sort,
         "include_upcoming": include_upcoming,
     })
+def racing(request):
+    return render(request, "racing.html")
 
+
+def f1_races(request):
+    race_name = request.GET.get("race_name", "").strip()
+    track = request.GET.get("track", "").strip()
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    sort = request.GET.get("sort", "newest")
+
+    include_upcoming = (
+        request.GET.get("include_upcoming") == "1"
+    )
+
+    searched = bool(request.GET)
+
+
+    races = Game.objects.filter(
+        league="Racing",
+        racing_series="Formula 1",
+    )
+
+
+    # -----------------------------------------
+    # UPCOMING
+    # -----------------------------------------
+
+    if not include_upcoming:
+        races = races.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+
+    # -----------------------------------------
+    # RACE NAME
+    # -----------------------------------------
+
+    if race_name:
+        races = races.filter(
+            event_name__icontains=race_name
+        )
+
+
+    # -----------------------------------------
+    # TRACK / VENUE
+    # -----------------------------------------
+
+    if track:
+        races = races.filter(
+            venue__icontains=track
+        )
+
+
+    # -----------------------------------------
+    # DATE RANGE
+    # -----------------------------------------
+
+    if date_from:
+        races = races.filter(
+            game_date__gte=date_from
+        )
+
+    if date_to:
+        races = races.filter(
+            game_date__lte=date_to
+        )
+
+
+    # -----------------------------------------
+    # SORT
+    # -----------------------------------------
+
+    if sort == "oldest":
+
+        races = races.order_by(
+            "game_date"
+        )
+
+    elif sort == "highest":
+
+        races = races.annotate(
+            avg_rating=Avg(
+                "gamelog__quality_rating"
+            )
+        ).order_by(
+            "-avg_rating",
+            "-game_date",
+        )
+
+    elif sort == "lowest":
+
+        races = races.annotate(
+            avg_rating=Avg(
+                "gamelog__quality_rating"
+            )
+        ).order_by(
+            "avg_rating",
+            "-game_date",
+        )
+
+    elif sort == "watched":
+
+        races = races.annotate(
+            watch_count=Count(
+                "gamelog"
+            )
+        ).order_by(
+            "-watch_count",
+            "-game_date",
+        )
+
+    else:
+
+        races = races.order_by(
+            "-game_date"
+        )
+
+
+    # -----------------------------------------
+    # PAGINATION
+    # -----------------------------------------
+
+    paginator = Paginator(
+        races,
+        100,
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    races = paginator.get_page(
+        page_number
+    )
+
+
+    return render(
+        request,
+        "f1_races.html",
+        {
+            "races": races,
+
+            "race_name": race_name,
+            "track": track,
+
+            "date_from": date_from,
+            "date_to": date_to,
+
+            "sort": sort,
+
+            "include_upcoming": (
+                include_upcoming
+            ),
+
+            "searched": searched,
+        },
+    )
+
+
+def nascar_races(request):
+    race_name = request.GET.get("race_name", "").strip()
+    track = request.GET.get("track", "").strip()
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    sort = request.GET.get("sort", "newest")
+
+    include_upcoming = (
+        request.GET.get("include_upcoming") == "1"
+    )
+
+    searched = bool(request.GET)
+
+
+    races = Game.objects.filter(
+        league="Racing",
+        racing_series="NASCAR Cup Series",
+    )
+
+
+    # -----------------------------------------
+    # UPCOMING
+    # -----------------------------------------
+
+    if not include_upcoming:
+        races = races.filter(
+            game_date__lte=timezone.localdate()
+        )
+
+
+    # -----------------------------------------
+    # RACE NAME
+    # -----------------------------------------
+
+    if race_name:
+        races = races.filter(
+            event_name__icontains=race_name
+        )
+
+
+    # -----------------------------------------
+    # TRACK
+    # -----------------------------------------
+
+    if track:
+        races = races.filter(
+            venue__icontains=track
+        )
+
+
+    # -----------------------------------------
+    # DATE RANGE
+    # -----------------------------------------
+
+    if date_from:
+        races = races.filter(
+            game_date__gte=date_from
+        )
+
+    if date_to:
+        races = races.filter(
+            game_date__lte=date_to
+        )
+
+
+    # -----------------------------------------
+    # SORT
+    # -----------------------------------------
+
+    if sort == "oldest":
+
+        races = races.order_by(
+            "game_date"
+        )
+
+    elif sort == "highest":
+
+        races = races.annotate(
+            avg_rating=Avg(
+                "gamelog__quality_rating"
+            )
+        ).order_by(
+            "-avg_rating",
+            "-game_date",
+        )
+
+    elif sort == "lowest":
+
+        races = races.annotate(
+            avg_rating=Avg(
+                "gamelog__quality_rating"
+            )
+        ).order_by(
+            "avg_rating",
+            "-game_date",
+        )
+
+    elif sort == "watched":
+
+        races = races.annotate(
+            watch_count=Count(
+                "gamelog"
+            )
+        ).order_by(
+            "-watch_count",
+            "-game_date",
+        )
+
+    else:
+
+        races = races.order_by(
+            "-game_date"
+        )
+
+
+    # -----------------------------------------
+    # PAGINATION
+    # -----------------------------------------
+
+    paginator = Paginator(
+        races,
+        100,
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    races = paginator.get_page(
+        page_number
+    )
+
+
+    return render(
+        request,
+        "nascar_races.html",
+        {
+            "races": races,
+
+            "race_name": race_name,
+            "track": track,
+
+            "date_from": date_from,
+            "date_to": date_to,
+
+            "sort": sort,
+
+            "include_upcoming": (
+                include_upcoming
+            ),
+
+            "searched": searched,
+        },
+    )
 def game_detail(request, game_id):
     game = get_object_or_404(Game, id=game_id)
 
