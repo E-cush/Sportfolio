@@ -82,29 +82,46 @@
 
 
                 <h1 class="sp-race-name">
-                    {{ game.event_name }}
-                </h1>
+    {{ game.event_name }}
+</h1>
 
 
-                {% if game.game_start %}
+{% if game.race_winner %}
 
-                    <div class="sp-race-start">
+    <div class="sp-race-winner">
 
-                        {% if game.is_upcoming %}
-                            {{ game.game_start|date:"M j, Y • g:i A" }}
-                        {% else %}
-                            {{ game.game_date|date:"M j, Y" }}
-                        {% endif %}
+        <span>
+            WINNER
+        </span>
 
-                    </div>
+        <strong>
+            🏆 {{ game.race_winner }}
+        </strong>
 
-                {% else %}
+    </div>
 
-                    <div class="sp-race-start">
-                        {{ game.game_date }}
-                    </div>
+{% endif %}
 
-                {% endif %}
+
+{% if game.game_start %}
+
+    <div class="sp-race-start">
+
+        {% if game.is_upcoming %}
+            {{ game.game_start|date:"M j, Y • g:i A" }}
+        {% else %}
+            {{ game.game_date|date:"M j, Y" }}
+        {% endif %}
+
+    </div>
+
+{% else %}
+
+    <div class="sp-race-start">
+        {{ game.game_date }}
+    </div>
+
+{% endif %}
 
             </div>
 
@@ -1566,6 +1583,42 @@ setInterval(
     line-height: 1.15 !important;
 
     text-align: center !important;
+}
+
+
+
+.sp-race-winner {
+    margin-top: 18px !important;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: center !important;
+
+    gap: 5px !important;
+}
+
+
+
+.sp-race-winner span {
+    color: #777 !important;
+
+    font-size: 10px !important;
+
+    font-weight: 800 !important;
+
+    letter-spacing: .12em !important;
+}
+
+
+
+.sp-race-winner strong {
+    color: white !important;
+
+    font-size: 19px !important;
+
+    font-weight: 800 !important;
 }
 
 

@@ -33,6 +33,12 @@ class Game(models.Model):
         default="",
     )
 
+    race_winner = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+    )
+
     season = models.IntegerField()
     game_type = models.CharField(max_length=30, null=True, blank=True)
     home_team = models.CharField(max_length=100)
