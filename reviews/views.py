@@ -35,27 +35,82 @@ def home(request):
     else:
         today = now.date()
 
-    today_games = Game.objects.filter(
-        game_date=today
-    ).order_by("id")[:3]
+    # Today's Games
+    today_games = (
+        Game.objects
+        .filter(game_date=today)
+        .order_by("id")[:4]
+    )
 
+    # Recent community reviews
     recent_reviews = (
         GameLog.objects
         .filter(review__isnull=False)
         .exclude(review="")
         .select_related("user", "game")
-        .order_by("-logged_at")
     )
 
     if request.user.is_authenticated:
-        recent_reviews = recent_reviews.exclude(user=request.user)
+        recent_reviews = recent_reviews.exclude(
+            user=request.user
+        )
 
-    recent_reviews = recent_reviews[:5]
+    recent_reviews = recent_reviews.order_by(
+        "-logged_at"
+    )[:4]
 
-    return render(request, "home.html", {
-        "today_games": today_games,
-        "recent_reviews": recent_reviews,
-    })
+    # Personal dashboard
+    dashboard = None
+
+    if request.user.is_authenticated:
+        user_logs = GameLog.objects.filter(
+            user=request.user
+        )
+
+        average_rating = (
+            user_logs
+            .filter(quality_rating__isnull=False)
+            .aggregate(avg=Avg("quality_rating"))
+            ["avg"]
+        )
+
+        stadium_count = (
+            user_logs
+            .filter(watch_type="LIVE")
+            .exclude(game__venue="")
+            .values("game__venue")
+            .distinct()
+            .count()
+        )
+
+        following_count = Follow.objects.filter(
+            follower=request.user
+        ).count()
+
+        dashboard = {
+            "games_logged": user_logs.count(),
+            "stadiums": stadium_count,
+            "average_rating": (
+                round(average_rating, 1)
+                if average_rating is not None
+                else None
+            ),
+            "following": following_count,
+            "favorites": user_logs.filter(
+                favorite=True
+            ).count(),
+        }
+
+    return render(
+        request,
+        "home.html",
+        {
+            "today_games": today_games,
+            "recent_reviews": recent_reviews,
+            "dashboard": dashboard,
+            "today": today,
+        },
+    )
 
 def all_reviews(request):
     reviews = (
