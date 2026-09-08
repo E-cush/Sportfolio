@@ -61,6 +61,21 @@ class Game(models.Model):
 
     venue = models.CharField(max_length=100)
 
+    class Meta:
+        indexes = [
+            models.Index(
+                fields=["game_date"],
+                name="game_date_idx",
+            ),
+            models.Index(
+                fields=["league", "game_date"],
+                name="league_date_idx",
+            ),
+            models.Index(
+                fields=["league", "competition", "game_date"],
+                name="league_comp_date_idx",
+            ),
+        ]
     @property
     def is_upcoming(self):
         return self.game_date > timezone.now().date()

@@ -1,5 +1,6 @@
 from .services.mlb import get_linescore
 from django.db.models import Q
+from django.db.models import Avg, Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -35,14 +36,20 @@ def home(request):
     else:
         today = now.date()
 
-    # Today's Games
+    # ---------------------------------------------------------
+    # TODAY'S GAMES
+    # ---------------------------------------------------------
+
     today_games = (
         Game.objects
         .filter(game_date=today)
-        .order_by("id")[:4]
+        .order_by("game_start", "id")[:4]
     )
 
-    # Recent community reviews
+    # ---------------------------------------------------------
+    # RECENT COMMUNITY REVIEWS
+    # ---------------------------------------------------------
+
     recent_reviews = (
         GameLog.objects
         .filter(review__isnull=False)
@@ -59,46 +66,63 @@ def home(request):
         "-logged_at"
     )[:4]
 
-    # Personal dashboard
+    # ---------------------------------------------------------
+    # PERSONAL DASHBOARD
+    # ---------------------------------------------------------
+
     dashboard = None
 
     if request.user.is_authenticated:
+
         user_logs = GameLog.objects.filter(
             user=request.user
         )
 
-        average_rating = (
-            user_logs
-            .filter(quality_rating__isnull=False)
-            .aggregate(avg=Avg("quality_rating"))
-            ["avg"]
-        )
+        stats = user_logs.aggregate(
 
-        stadium_count = (
-            user_logs
-            .filter(watch_type="LIVE")
-            .exclude(game__venue="")
-            .values("game__venue")
-            .distinct()
-            .count()
+            games_logged=Count("id"),
+
+            average_rating=Avg(
+                "quality_rating"
+            ),
+
+            favorites=Count(
+                "id",
+                filter=Q(favorite=True),
+            ),
+
+            stadiums=Count(
+                "game__venue",
+                filter=(
+                    Q(watch_type="LIVE")
+                    & ~Q(game__venue="")
+                ),
+                distinct=True,
+            ),
         )
 
         following_count = Follow.objects.filter(
             follower=request.user
         ).count()
 
+        average_rating = stats[
+            "average_rating"
+        ]
+
         dashboard = {
-            "games_logged": user_logs.count(),
-            "stadiums": stadium_count,
+            "games_logged": stats["games_logged"],
+
+            "stadiums": stats["stadiums"],
+
             "average_rating": (
                 round(average_rating, 1)
                 if average_rating is not None
                 else None
             ),
+
             "following": following_count,
-            "favorites": user_logs.filter(
-                favorite=True
-            ).count(),
+
+            "favorites": stats["favorites"],
         }
 
     return render(
@@ -150,63 +174,83 @@ def todays_games(request):
     previous_date = selected_date - timedelta(days=1)
     next_date = selected_date + timedelta(days=1)
 
-    mlb_games = Game.objects.filter(
-        league="MLB",
-        game_date=selected_date
-    ).order_by("id")
+    # ---------------------------------------------------------
+    # LOAD ALL GAMES FOR THIS DATE IN ONE DATABASE QUERY
+    # ---------------------------------------------------------
 
-    nba_games = Game.objects.filter(
-        league="NBA",
-        game_date=selected_date
-    ).order_by("id")
+    all_games = list(
+        Game.objects
+        .filter(game_date=selected_date)
+        .order_by("id")
+    )
 
-    nfl_games = Game.objects.filter(
-        league="NFL",
-        game_date=selected_date
-    ).order_by("id")
+    # ---------------------------------------------------------
+    # GROUP THEM IN PYTHON
+    # ---------------------------------------------------------
 
-    champions_league_games = Game.objects.filter(
-        league="Soccer",
-        competition="UEFA Champions League",
-        game_date=selected_date
-    ).order_by("id")
+    mlb_games = []
+    nba_games = []
+    nfl_games = []
+    nhl_games = []
 
-    premier_league_games = Game.objects.filter(
-        league="Soccer",
-        competition="English Premier League",
-        game_date=selected_date
-    ).order_by("id")
+    champions_league_games = []
+    premier_league_games = []
+    laliga_games = []
 
-    laliga_games = Game.objects.filter(
-        league="Soccer",
-        competition="Spanish La Liga",
-        game_date=selected_date
-    ).order_by("id")
+    college_football_games = []
 
-    college_football_games = Game.objects.filter(
-        league="NCAA",
-        competition="College Football",
-        game_date=selected_date
-    ).order_by("id")
+    for game in all_games:
 
-    nhl_games = Game.objects.filter(
-        league="NHL",
-        game_date=selected_date
-    ).order_by("id")
+        if game.league == "MLB":
+            mlb_games.append(game)
+
+        elif game.league == "NBA":
+            nba_games.append(game)
+
+        elif game.league == "NFL":
+            nfl_games.append(game)
+
+        elif game.league == "NHL":
+            nhl_games.append(game)
+
+        elif (
+            game.league == "Soccer"
+            and game.competition == "UEFA Champions League"
+        ):
+            champions_league_games.append(game)
+
+        elif (
+            game.league == "Soccer"
+            and game.competition == "English Premier League"
+        ):
+            premier_league_games.append(game)
+
+        elif (
+            game.league == "Soccer"
+            and game.competition == "Spanish La Liga"
+        ):
+            laliga_games.append(game)
+
+        elif (
+            game.league == "NCAA"
+            and game.competition == "College Football"
+        ):
+            college_football_games.append(game)
 
     return render(request, "todays_games.html", {
         "mlb_games": mlb_games,
         "nba_games": nba_games,
         "nfl_games": nfl_games,
+        "nhl_games": nhl_games,
         "champions_league_games": champions_league_games,
         "premier_league_games": premier_league_games,
         "laliga_games": laliga_games,
-        "nhl_games": nhl_games,
+        "college_football_games": college_football_games,
+
         "today": selected_date,
         "selected_date": selected_date,
         "previous_date": previous_date,
         "next_date": next_date,
-        "college_football_games": college_football_games,
     })
 
 def coming_soon(request):
@@ -1896,32 +1940,71 @@ def logged_games(request, username=None, watch_type=None):
     })
 
 def build_profile_context(profile_user):
-    logs = (
-        GameLog.objects.filter(user=profile_user)
-        .select_related("game")
-        .order_by("-logged_at")
+
+    base_logs = GameLog.objects.filter(
+        user=profile_user
     )
 
-    live_stadium_count = (
-        logs.filter(watch_type="LIVE")
-        .values("game__venue")
-        .exclude(game__venue="")
-        .distinct()
-        .count()
+    stats = base_logs.aggregate(
+
+        total_logs=Count("id"),
+
+        live_count=Count(
+            "id",
+            filter=Q(watch_type="LIVE"),
+        ),
+
+        tv_count=Count(
+            "id",
+            filter=Q(watch_type="TV"),
+        ),
+
+        replay_count=Count(
+            "id",
+            filter=Q(watch_type="REPLAY"),
+        ),
+
+        highlights_count=Count(
+            "id",
+            filter=Q(watch_type="HIGHLIGHTS"),
+        ),
+
+        favorite_count=Count(
+            "id",
+            filter=Q(favorite=True),
+        ),
+
+        stadium_count=Count(
+            "game__venue",
+            filter=(
+                Q(watch_type="LIVE")
+                & ~Q(game__venue="")
+            ),
+            distinct=True,
+        ),
+
+        average_game_rating=Avg(
+            "quality_rating"
+        ),
+
+        average_experience_rating=Avg(
+            "experience_rating"
+        ),
     )
 
-    average_game_rating = (
-        logs.filter(quality_rating__isnull=False)
-        .aggregate(Avg("quality_rating"))["quality_rating__avg"]
-    )
+    average_game_rating = stats[
+        "average_game_rating"
+    ]
 
-    average_experience_rating = (
-        logs.filter(experience_rating__isnull=False)
-        .aggregate(Avg("experience_rating"))["experience_rating__avg"]
-    )
+    average_experience_rating = stats[
+        "average_experience_rating"
+    ]
 
     if average_game_rating is not None:
-        average_game_rating = round(average_game_rating, 1)
+        average_game_rating = round(
+            average_game_rating,
+            1,
+        )
 
     if average_experience_rating is not None:
         average_experience_rating = round(
@@ -1929,16 +2012,25 @@ def build_profile_context(profile_user):
             1,
         )
 
+    # Only load the 10 most recent logs on the profile itself.
+    recent_logs = (
+        base_logs
+        .select_related("game")
+        .order_by("-logged_at")[:10]
+    )
+
     return {
         "profile_user": profile_user,
-        "logs": logs,
-        "total_logs": logs.count(),
-        "live_count": logs.filter(watch_type="LIVE").count(),
-        "tv_count": logs.filter(watch_type="TV").count(),
-        "replay_count": logs.filter(watch_type="REPLAY").count(),
-        "highlights_count": logs.filter(watch_type="HIGHLIGHTS").count(),
-        "stadium_count": live_stadium_count,
-        "favorite_count": logs.filter(favorite=True).count(),
+        "logs": recent_logs,
+
+        "total_logs": stats["total_logs"],
+        "live_count": stats["live_count"],
+        "tv_count": stats["tv_count"],
+        "replay_count": stats["replay_count"],
+        "highlights_count": stats["highlights_count"],
+        "stadium_count": stats["stadium_count"],
+        "favorite_count": stats["favorite_count"],
+
         "average_game_rating": average_game_rating,
         "average_experience_rating": average_experience_rating,
     }
