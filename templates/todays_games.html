@@ -30,15 +30,21 @@
 
             <form method="get" class="date-picker-form">
 
-                <input
-                    type="date"
-                    name="date"
-                    value="{{ selected_date|date:'Y-m-d' }}"
-                    onchange="this.form.submit()"
-                    aria-label="Select date"
-                >
+    <input
+        type="date"
+        name="date"
+        value="{{ selected_date|date:'Y-m-d' }}"
+        aria-label="Select date"
+    >
 
-            </form>
+    <button
+        type="submit"
+        class="date-submit-btn"
+    >
+        Go
+    </button>
+
+</form>
 
             <a
                 href="?date={{ next_date|date:'Y-m-d' }}"
