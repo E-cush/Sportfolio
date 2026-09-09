@@ -65,7 +65,9 @@
 
                         {% if game.away_logo %}
                             <img src="{% static game.away_logo %}"
-                                 alt="{{ game.away_team }} logo">
+     alt="{{ game.away_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.away_team }}</span>
@@ -78,7 +80,9 @@
 
                         {% if game.home_logo %}
                             <img src="{% static game.home_logo %}"
-                                 alt="{{ game.home_team }} logo">
+     alt="{{ game.home_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.home_team }}</span>
@@ -97,11 +101,19 @@
 
                 </div>
 
-                {% if game.home_score is not None and game.away_score is not None %}
-                    <div class="today-game-score">
-                        {{ game.away_score }} - {{ game.home_score }}
-                    </div>
-                {% endif %}
+                {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
             </a>
 
@@ -140,7 +152,9 @@
 
                         {% if game.away_logo %}
                             <img src="{% static game.away_logo %}"
-                                 alt="{{ game.away_team }} logo">
+     alt="{{ game.away_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.away_team }}</span>
@@ -153,7 +167,9 @@
 
                         {% if game.home_logo %}
                             <img src="{% static game.home_logo %}"
-                                 alt="{{ game.home_team }} logo">
+     alt="{{ game.home_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.home_team }}</span>
@@ -172,11 +188,19 @@
 
                 </div>
 
-                {% if game.home_score is not None and game.away_score is not None %}
-                    <div class="today-game-score">
-                        {{ game.away_score }} - {{ game.home_score }}
-                    </div>
-                {% endif %}
+                {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
             </a>
 
@@ -215,7 +239,9 @@
 
                         {% if game.away_logo %}
                             <img src="{% static game.away_logo %}"
-                                 alt="{{ game.away_team }} logo">
+     alt="{{ game.away_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.away_team }}</span>
@@ -228,7 +254,9 @@
 
                         {% if game.home_logo %}
                             <img src="{% static game.home_logo %}"
-                                 alt="{{ game.home_team }} logo">
+     alt="{{ game.home_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.home_team }}</span>
@@ -247,11 +275,19 @@
 
                 </div>
 
-                {% if game.home_score is not None and game.away_score is not None %}
-                    <div class="today-game-score">
-                        {{ game.away_score }} - {{ game.home_score }}
-                    </div>
-                {% endif %}
+                {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
             </a>
 
@@ -290,7 +326,9 @@
 
                         {% if game.away_logo %}
                             <img src="{% static game.away_logo %}"
-                                 alt="{{ game.away_team }} logo">
+     alt="{{ game.away_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.away_team }}</span>
@@ -303,7 +341,9 @@
 
                         {% if game.home_logo %}
                             <img src="{% static game.home_logo %}"
-                                 alt="{{ game.home_team }} logo">
+     alt="{{ game.home_team }} logo"
+     loading="lazy"
+     decoding="async">
                         {% endif %}
 
                         <span>{{ game.home_team }}</span>
@@ -322,11 +362,19 @@
 
                 </div>
 
-                {% if game.home_score is not None and game.away_score is not None %}
-                    <div class="today-game-score">
-                        {{ game.away_score }} - {{ game.home_score }}
-                    </div>
-                {% endif %}
+                {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
             </a>
 
@@ -400,11 +448,19 @@
 
                 </div>
 
-                {% if game.home_score is not None and game.away_score is not None %}
-                    <div class="today-game-score">
-                        {{ game.away_score }} - {{ game.home_score }}
-                    </div>
-                {% endif %}
+                {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
             </a>
 
@@ -477,11 +533,19 @@
 
                 </div>
 
-                {% if game.home_score is not None and game.away_score is not None %}
-                    <div class="today-game-score">
-                        {{ game.away_score }} - {{ game.home_score }}
-                    </div>
-                {% endif %}
+                {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
             </a>
 
@@ -557,11 +621,19 @@
 
             </div>
 
-            {% if game.home_score is not None and game.away_score is not None %}
-                <div class="today-game-score">
-                    {{ game.away_score }} - {{ game.home_score }}
-                </div>
-            {% endif %}
+            {% if game.status|lower == "scheduled" and game.game_start %}
+
+    <div class="today-game-score">
+        {{ game.game_start|date:"g:i A" }}
+    </div>
+
+{% elif game.home_score is not None and game.away_score is not None %}
+
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+
+{% endif %}
 
         </a>
 

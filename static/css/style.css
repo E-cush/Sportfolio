@@ -3278,6 +3278,1214 @@ button:hover {
     box-shadow: 0 8px 20px rgba(0, 212, 71, 0.12);
 }
 
+/* =========================================
+   HOMEPAGE UI POLISH
+   ========================================= */
+
+.today-games-section {
+    max-width: 1200px;
+    margin: 45px auto 35px;
+    padding: 0 20px;
+    text-align: left;
+}
+
+/* Remove the old boxed heading look */
+.today-games-heading {
+    display: block;
+    margin: 0 0 18px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.today-games-heading:hover {
+    transform: none;
+    border-color: transparent;
+}
+
+.today-games-heading h2 {
+    margin: 0;
+    font-size: 1.7rem;
+    font-weight: 800;
+}
+
+.today-games-heading h2:hover {
+    transform: none;
+}
+
+.today-games-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    max-width: none;
+    margin: 0;
+}
+
+.today-game-card {
+    min-height: 0;
+    padding: 18px 16px;
+
+    background: #1c1c1c;
+    border: 1px solid #303030;
+    border-radius: 14px;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.today-game-card:hover {
+    transform: translateY(-2px);
+    border-color: #00c853;
+    background: #202020;
+    box-shadow: none;
+}
+
+.today-game-league {
+    text-align: center;
+    color: #969696;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 14px;
+}
+
+.today-game-teams {
+    gap: 10px;
+}
+
+.today-team {
+    gap: 7px;
+}
+
+.today-team img {
+    width: 48px;
+    height: 48px;
+}
+
+.today-team span {
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.today-vs {
+    font-size: 16px;
+}
+
+.today-game-status {
+    margin-top: 14px;
+    font-size: 13px;
+}
+
+.today-game-score {
+    margin-top: 5px;
+    font-size: 18px;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    .today-games-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Phone */
+@media (max-width: 650px) {
+    .today-games-section {
+        margin: 30px auto;
+        padding: 0 12px;
+    }
+
+    .today-games-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .today-game-card {
+        padding: 16px;
+    }
+}
+
+/* =========================================
+   HOMEPAGE RECENT REVIEWS
+   ========================================= */
+
+.recent-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.recent-review-card {
+    display: block;
+
+    min-height: 0 !important;
+
+    padding: 18px 20px !important;
+
+    background: #1c1c1c !important;
+    border: 1px solid #303030 !important;
+    border-radius: 14px !important;
+
+    text-decoration: none;
+    color: white;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.recent-review-card:hover {
+    transform: translateY(-2px);
+    border-color: #00c853 !important;
+    background: #202020 !important;
+}
+
+/* Keep review text from making cards enormous */
+.recent-review-card p {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* Tablet / phone */
+@media (max-width: 800px) {
+    .recent-reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .recent-review-card {
+        padding: 16px !important;
+    }
+}
+
+/* =========================================
+   HOMEPAGE RECENT REVIEWS - GRID
+   ========================================= */
+
+.recent-reviews-section {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+/* Keep heading + "See More" across full width */
+.recent-reviews-section > div:first-child {
+    grid-column: 1 / -1;
+}
+
+/* Review cards */
+.recent-reviews-section > .recent-review-card {
+    width: auto !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+
+    padding: 18px 20px !important;
+
+    background: #1c1c1c !important;
+    border: 1px solid #303030 !important;
+    border-radius: 14px !important;
+
+    text-decoration: none;
+    color: white;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.recent-reviews-section > .recent-review-card:hover {
+    transform: translateY(-2px);
+    border-color: #00c853 !important;
+    background: #202020 !important;
+}
+
+/* Tighter spacing inside review cards */
+.recent-reviews-section > .recent-review-card p {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+    .recent-reviews-section {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .recent-reviews-section > div:first-child {
+        grid-column: 1;
+    }
+
+    .recent-reviews-section > .recent-review-card {
+        padding: 16px !important;
+    }
+}
+
+/* =========================================
+   HOMEPAGE REVIEW CARD POLISH
+   ========================================= */
+
+.review-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.review-card-user {
+    color: #00d447;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.review-card-time {
+    color: #777;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.review-card-event {
+    margin-bottom: 12px;
+}
+
+.review-matchup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.review-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.review-team-away {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.review-team-home {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.review-team img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.review-at {
+    color: #00d447;
+    font-size: 15px;
+    font-weight: 900;
+    flex-shrink: 0;
+}
+
+.review-race {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.review-race-icon {
+    font-size: 30px;
+}
+
+.review-race-name {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.review-race-series {
+    color: #888;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.review-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.review-meta-dot {
+    color: #555;
+}
+
+.review-card-rating {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.review-card-text {
+    color: #d4d4d4;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: left;
+    padding-top: 12px;
+    margin-top: 6px;
+    border-top: 1px solid #292929;
+}
+
+.review-card-link {
+    color: #00d447;
+    font-size: 12px;
+    font-weight: 800;
+    margin-top: 12px;
+}
+
+@media (max-width: 650px) {
+    .review-team {
+        font-size: 13px;
+    }
+
+    .review-team img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .review-card-text {
+        font-size: 13px;
+    }
+}
+
+/* =========================================
+   MOBILE HOMEPAGE POLISH
+   ========================================= */
+
+@media (max-width: 650px) {
+
+    /* HERO */
+
+    .hero {
+        padding: 42px 16px 30px;
+    }
+
+    .hero h1 {
+        font-size: 2.4rem;
+        line-height: 1.05;
+        margin-bottom: 10px;
+    }
+
+    .hero h2 {
+        font-size: 1.05rem;
+        margin-top: 0;
+    }
+
+    .hero-buttons {
+        margin-top: 22px;
+        gap: 9px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 11px 16px;
+        font-size: 14px;
+    }
+
+
+    /* TODAY'S GAMES */
+
+    .today-games-section {
+        margin: 28px auto 32px;
+        padding: 0 12px;
+    }
+
+    .today-games-heading {
+        margin-bottom: 12px;
+    }
+
+    .today-games-heading h2 {
+        font-size: 1.45rem;
+    }
+
+    .today-games-grid {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .today-game-card {
+        padding: 14px 12px;
+        border-radius: 12px;
+    }
+
+    .today-game-league {
+        font-size: 10px;
+        margin-bottom: 10px;
+    }
+
+    .today-team img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .today-team span {
+        font-size: 12px;
+    }
+
+    .today-vs {
+        font-size: 14px;
+    }
+
+    .today-game-status {
+        margin-top: 10px;
+        font-size: 11px;
+    }
+
+    .today-game-score {
+        font-size: 16px;
+        margin-top: 3px;
+    }
+
+
+    /* RECENT REVIEWS */
+
+    .recent-reviews-section {
+        grid-template-columns: 1fr;
+        gap: 9px;
+
+        margin: 30px auto !important;
+        padding: 0 12px !important;
+    }
+
+    .recent-reviews-section > div:first-child {
+        grid-column: 1;
+        margin-bottom: 4px !important;
+    }
+
+    .recent-reviews-section > div:first-child h2 {
+        font-size: 22px !important;
+    }
+
+    .recent-reviews-section > div:first-child a {
+        font-size: 11px !important;
+    }
+
+    .recent-reviews-section > .recent-review-card {
+        padding: 14px !important;
+        border-radius: 12px !important;
+    }
+
+    .review-card-top {
+        margin-bottom: 12px;
+    }
+
+    .review-card-user {
+        font-size: 13px;
+    }
+
+    .review-card-time {
+        font-size: 10px;
+    }
+
+    .review-matchup {
+        gap: 6px;
+    }
+
+    .review-team {
+        font-size: 12px;
+        gap: 5px;
+    }
+
+    .review-team img {
+        width: 26px;
+        height: 26px;
+    }
+
+    .review-at {
+        font-size: 13px;
+    }
+
+    .review-card-event {
+        margin-bottom: 8px;
+    }
+
+    .review-card-meta {
+        font-size: 10px;
+        gap: 4px;
+        margin-bottom: 6px;
+    }
+
+    .review-card-rating {
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+
+    .review-card-text {
+        font-size: 12px;
+        line-height: 1.4;
+        padding-top: 9px;
+        margin-top: 4px;
+    }
+
+    .review-card-link {
+        font-size: 11px;
+        margin-top: 9px;
+    }
+
+
+    /* RACING REVIEWS */
+
+    .review-race-icon {
+        font-size: 24px;
+    }
+
+    .review-race-name {
+        font-size: 13px;
+    }
+
+    .review-race-series {
+        font-size: 10px;
+    }
+}
+
+/* =========================================
+   HOMEPAGE BROWSE BY LEAGUE POLISH
+   ========================================= */
+
+.league-section {
+    max-width: 1200px;
+    margin: 42px auto;
+    padding: 0 20px;
+}
+
+.league-section h2 {
+    margin: 0 0 18px;
+    font-size: 1.7rem;
+    font-weight: 800;
+    text-align: left;
+}
+
+.league-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+
+/* Individual league cards */
+
+.league-card {
+    position: relative;
+
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 0 !important;
+    min-height: 155px !important;
+
+    padding: 20px 14px !important;
+
+    background: #1c1c1c !important;
+    border: 1px solid #303030 !important;
+    border-radius: 14px !important;
+
+    text-decoration: none !important;
+    color: white !important;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.league-card:hover {
+    transform: translateY(-2px);
+    border-color: #00c853 !important;
+    background: #202020 !important;
+    box-shadow: none !important;
+}
+
+
+/* Icons */
+
+.league-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 52px;
+    margin-bottom: 8px;
+
+    font-size: 40px !important;
+}
+
+.league-icon img {
+    max-height: 48px !important;
+    max-width: 110px !important;
+    width: auto !important;
+    object-fit: contain;
+}
+
+
+/* League title */
+
+.league-card h3 {
+    margin: 4px 0 0 !important;
+
+    font-size: 18px !important;
+    font-weight: 800 !important;
+
+    color: white !important;
+}
+
+
+/* Soccer + NCAA dropdown cards */
+
+.soccer-card {
+    cursor: default;
+}
+
+.dropdown-btn {
+    margin-top: 12px !important;
+    padding: 7px 12px !important;
+
+    background: transparent !important;
+    border: 1px solid #3a3a3a !important;
+    border-radius: 8px !important;
+
+    color: #aaa !important;
+
+    font-size: 11px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.15s ease,
+        color 0.15s ease,
+        background 0.15s ease;
+}
+
+.dropdown-btn:hover {
+    border-color: #00c853 !important;
+    color: #00d447 !important;
+    background: #202020 !important;
+}
+
+
+/* Dropdown menu */
+
+.soccer-menu {
+    border: 1px solid #303030 !important;
+    border-radius: 10px !important;
+
+    background: #202020 !important;
+
+    overflow: hidden;
+    z-index: 50;
+}
+
+.soccer-menu a {
+    display: block;
+
+    padding: 9px 12px !important;
+
+    color: #ddd !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+
+    text-decoration: none !important;
+}
+
+.soccer-menu a:hover {
+    background: #292929 !important;
+    color: #00d447 !important;
+}
+
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+
+    .league-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+    .league-section {
+        margin: 30px auto;
+        padding: 0 12px;
+    }
+
+    .league-section h2 {
+        font-size: 22px;
+        margin-bottom: 12px;
+    }
+
+    .league-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+    }
+
+    .league-card {
+        min-height: 130px !important;
+        padding: 14px 8px !important;
+        border-radius: 12px !important;
+    }
+
+    .league-icon {
+        min-height: 40px;
+        margin-bottom: 5px;
+
+        font-size: 30px !important;
+    }
+
+    .league-icon img {
+        max-height: 38px !important;
+        max-width: 90px !important;
+    }
+
+    .league-card h3 {
+        font-size: 15px !important;
+    }
+
+    .dropdown-btn {
+        margin-top: 8px !important;
+        padding: 6px 8px !important;
+        font-size: 9px !important;
+    }
+
+}
+
+/* =========================================
+   HOMEPAGE HERO POLISH
+   ========================================= */
+
+.hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 82px 20px 66px;
+
+    text-align: center;
+}
+
+.hero h1 {
+    margin: 0;
+
+    font-size: 4.6rem;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -3px;
+
+    color: #fff;
+}
+
+.hero h2 {
+    margin: 22px 0 0;
+
+    font-size: 1.75rem;
+    line-height: 1.25;
+    font-weight: 500;
+
+    color: #a7a7a7;
+}
+
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 34px;
+}
+
+
+/* Primary action */
+
+.hero .primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 175px;
+
+    padding: 13px 24px;
+
+    background: #00c853;
+    border: 1px solid #00c853;
+    border-radius: 10px;
+
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.hero .primary-btn:hover {
+    transform: translateY(-2px);
+    background: #00d95a;
+    border-color: #00d95a;
+}
+
+
+/* Secondary actions */
+
+.hero .secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 175px;
+
+    padding: 13px 24px;
+
+    background: transparent;
+    border: 1px solid #00c853;
+    border-radius: 10px;
+
+    color: #00d447;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.hero .secondary-btn:hover {
+    transform: translateY(-2px);
+    background: #00c853;
+    color: #fff;
+}
+
+
+/* Tablet */
+
+@media (max-width: 900px) {
+
+    .hero {
+        padding: 65px 20px 50px;
+    }
+
+    .hero h1 {
+        font-size: 3.8rem;
+        letter-spacing: -2px;
+    }
+
+    .hero h2 {
+        font-size: 1.45rem;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE HERO
+   ========================================= */
+
+@media (max-width: 650px) {
+
+    .hero {
+        padding: 44px 14px 34px;
+    }
+
+    .hero h1 {
+        font-size: 2.65rem;
+        line-height: 1;
+        letter-spacing: -1.5px;
+    }
+
+    .hero h2 {
+        margin-top: 12px;
+
+        font-size: 1.05rem;
+        line-height: 1.3;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+
+        gap: 9px;
+
+        margin-top: 24px;
+    }
+
+    .hero .primary-btn,
+    .hero .secondary-btn {
+        width: 100%;
+        max-width: 285px;
+        min-width: 0;
+
+        padding: 11px 16px;
+
+        border-radius: 9px;
+
+        font-size: 13px;
+    }
+
+    /* No hover movement on touch layout */
+    .hero .primary-btn:hover,
+    .hero .secondary-btn:hover {
+        transform: none;
+    }
+
+}
+
+/* =========================================
+   CENTER TODAY'S GAMES HEADING
+   ========================================= */
+
+.today-games-heading {
+    width: 100%;
+    text-align: center !important;
+}
+
+.today-games-heading h2 {
+    width: 100%;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.today-games-heading h2 a {
+    display: inline-block;
+}
+
+
+/* Dedicated mobile version */
+
+@media (max-width: 650px) {
+
+    .today-games-heading {
+        text-align: center !important;
+        margin-bottom: 12px;
+    }
+
+    .today-games-heading h2 {
+        text-align: center !important;
+        font-size: 22px !important;
+    }
+
+}
+
+/* =========================================
+   FORCE CENTER TODAY'S GAMES TITLE
+   ========================================= */
+
+.today-games-heading {
+    width: 100% !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    text-align: center !important;
+}
+
+.today-games-heading h2 {
+    width: 100% !important;
+    margin: 0 0 18px 0 !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    text-align: center !important;
+}
+
+.today-games-heading h2 a {
+    display: inline-block !important;
+    text-align: center !important;
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+    .today-games-heading {
+        justify-content: center !important;
+    }
+
+    .today-games-heading h2 {
+        justify-content: center !important;
+        font-size: 22px !important;
+        margin-bottom: 12px !important;
+    }
+
+}
+
+/* =========================================
+   TODAY'S GAMES CLICKABLE HEADING
+   ========================================= */
+
+.today-games-heading h2 a {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 18px;
+
+    background: #1c1c1c;
+    border: 1px solid #353535;
+    border-radius: 10px;
+
+    color: white !important;
+    text-decoration: none !important;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.today-games-heading h2 a::after {
+    content: "→";
+    margin-left: 8px;
+
+    color: #00d447;
+    font-size: 18px;
+}
+
+.today-games-heading h2 a:hover {
+    background: #202020;
+    border-color: #00c853;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   MOBILE TODAY'S GAMES BUTTON
+   ========================================= */
+
+@media (max-width: 650px) {
+
+    .today-games-heading h2 a {
+        padding: 9px 14px;
+
+        border-radius: 9px;
+
+        font-size: 20px;
+    }
+
+    .today-games-heading h2 a::after {
+        font-size: 16px;
+        margin-left: 6px;
+    }
+
+    /* Don't rely on hover movement on touch screens */
+    .today-games-heading h2 a:hover {
+        transform: none;
+    }
+
+}
+
+/* =========================================
+   MOBILE TODAY'S GAMES - 2x2 GRID
+   ========================================= */
+
+@media (max-width: 650px) {
+
+    .today-games-section {
+        padding: 0 10px;
+    }
+
+    .today-games-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    .today-game-card {
+        min-height: 0 !important;
+        padding: 12px 8px !important;
+        border-radius: 11px !important;
+    }
+
+    .today-game-league {
+        font-size: 9px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .today-game-teams {
+        gap: 4px !important;
+    }
+
+    .today-team {
+        gap: 4px !important;
+        min-width: 0;
+    }
+
+    .today-team img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .today-team span {
+        font-size: 9px !important;
+        line-height: 1.15 !important;
+        font-weight: 700 !important;
+
+        overflow-wrap: anywhere;
+    }
+
+    .today-vs {
+        font-size: 11px !important;
+    }
+
+    .today-game-status {
+        margin-top: 8px !important;
+        font-size: 9px !important;
+    }
+
+    .today-game-score {
+        margin-top: 2px !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+    }
+
+}
+
 
 
 

@@ -85,11 +85,17 @@
 
             </div>
 
-            {% if game.home_score is not None and game.away_score is not None %}
-                <div class="today-game-score">
-                    {{ game.away_score }} - {{ game.home_score }}
-                </div>
-            {% endif %}
+            {% if game.status|lower == "scheduled" %}
+    {% if game.game_start %}
+        <div class="today-game-score">
+            {{ game.game_start|date:"g:i A" }}
+        </div>
+    {% endif %}
+{% elif game.home_score is not None and game.away_score is not None %}
+    <div class="today-game-score">
+        {{ game.away_score }} - {{ game.home_score }}
+    </div>
+{% endif %}
 
         </a>
 
@@ -109,8 +115,9 @@
 <!-- Recent Reviews -->
 
 <div
+    class="recent-reviews-section"
     style="
-        max-width:1100px;
+        max-width:1200px;
         margin:45px auto;
         padding:0 20px;
     "
@@ -151,227 +158,148 @@
     </div>
 
 
+
     {% for log in recent_reviews %}
 
-    <a
+<a
     href="{% url 'review_detail' log.id %}"
     class="recent-review-card"
 >
 
-        <!-- User -->
+    <!-- Top row -->
+    <div class="review-card-top">
 
-        <div
-            style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:8px;
-            "
-        >
-
-            <span
-                style="
-                    color:#00d447;
-                    font-size:15px;
-                    font-weight:800;
-                "
-            >
-                {{ log.user.username }}
-            </span>
-
-            <span
-                style="
-                    color:#888;
-                    font-size:12px;
-                "
-            >
-                {{ log.logged_at|timesince }} ago
-            </span>
-
+        <div class="review-card-user">
+            {{ log.user.username }}
         </div>
 
+        <div class="review-card-time">
+            {{ log.logged_at|timesince }} ago
+        </div>
 
-        <!-- Teams -->
+    </div>
 
-        <div
-            style="
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-                margin-bottom:6px;
-            "
-        >
 
-            <!-- Away -->
+    <!-- Event -->
+    <div class="review-card-event">
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    justify-content:flex-end;
-                    gap:8px;
-                    flex:1;
-                    min-width:0;
-                    text-align:right;
-                "
-            >
+        {% if log.game.league == "Racing" %}
 
-                {% if log.game.away_logo %}
+            <div class="review-race">
 
-                <img
-                    src="{% static log.game.away_logo %}"
-                    alt="{{ log.game.away_team }} logo"
-                    style="
-                        width:32px;
-                        height:32px;
-                        object-fit:contain;
-                        flex-shrink:0;
-                    "
-                >
+                <div class="review-race-icon">
+                    🏁
+                </div>
 
-                {% endif %}
+                <div>
+                    <div class="review-race-name">
+                        {{ log.game.event_name }}
+                    </div>
 
-                <span
-                    style="
-                        font-size:16px;
-                        font-weight:800;
-                        line-height:1.1;
-                    "
-                >
-                    {{ log.game.away_team }}
-                </span>
+                    <div class="review-race-series">
+                        {{ log.game.competition }}
+                    </div>
+                </div>
 
             </div>
 
+        {% else %}
 
-            <!-- @ -->
+            <div class="review-matchup">
 
-            <span
-                style="
-                    color:#00d447;
-                    font-size:16px;
-                    font-weight:800;
-                    flex-shrink:0;
-                "
-            >
-                @
-            </span>
+                <!-- Away -->
+                <div class="review-team review-team-away">
+
+                    {% if log.game.away_logo %}
+                        <img
+                            src="{% static log.game.away_logo %}"
+                            alt="{{ log.game.away_team }} logo"
+                        >
+                    {% endif %}
+
+                    <span>
+                        {{ log.game.away_team }}
+                    </span>
+
+                </div>
 
 
-            <!-- Home -->
+                <div class="review-at">
+                    @
+                </div>
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    justify-content:flex-start;
-                    gap:8px;
-                    flex:1;
-                    min-width:0;
-                    text-align:left;
-                "
-            >
 
-                <span
-                    style="
-                        font-size:16px;
-                        font-weight:800;
-                        line-height:1.1;
-                    "
-                >
-                    {{ log.game.home_team }}
-                </span>
+                <!-- Home -->
+                <div class="review-team review-team-home">
 
-                {% if log.game.home_logo %}
+                    <span>
+                        {{ log.game.home_team }}
+                    </span>
 
-                <img
-                    src="{% static log.game.home_logo %}"
-                    alt="{{ log.game.home_team }} logo"
-                    style="
-                        width:32px;
-                        height:32px;
-                        object-fit:contain;
-                        flex-shrink:0;
-                    "
-                >
+                    {% if log.game.home_logo %}
+                        <img
+                            src="{% static log.game.home_logo %}"
+                            alt="{{ log.game.home_team }} logo"
+                        >
+                    {% endif %}
 
-                {% endif %}
+                </div>
 
             </div>
-
-        </div>
-
-
-        <!-- Date -->
-
-        <div
-            style="
-                text-align:center;
-                color:#999;
-                font-size:13px;
-                margin-bottom:6px;
-            "
-        >
-            {{ log.game.game_date }}
-        </div>
-
-
-        <!-- Rating -->
-
-        {% if log.quality_rating %}
-
-        <div
-            style="
-                text-align:center;
-                font-size:15px;
-                font-weight:700;
-                margin-bottom:6px;
-            "
-        >
-            ⭐ {{ log.quality_rating }}/5
-        </div>
 
         {% endif %}
 
+    </div>
 
-        <!-- Review -->
 
-        <div
-            style="
-                max-width:850px;
-                margin:0 auto;
-                text-align:center;
-                color:#d5d5d5;
-                font-size:14px;
-                line-height:1.4;
-            "
-        >
+    <!-- Date / Watch Type -->
+    <div class="review-card-meta">
 
-            {% if log.review|length > 120 %}
-                {{ log.review|slice:":120" }}...
-            {% else %}
-                {{ log.review }}
-            {% endif %}
+        <span>
+            {{ log.game.game_date|date:"M j, Y" }}
+        </span>
 
+        {% if log.watch_type %}
+            <span class="review-meta-dot">
+                •
+            </span>
+
+            <span>
+                {{ log.get_watch_type_display }}
+            </span>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Rating -->
+    {% if log.quality_rating %}
+
+        <div class="review-card-rating">
+            ⭐ {{ log.quality_rating }}/5
         </div>
 
+    {% endif %}
 
-        <!-- Read Review -->
 
-        <div
-            style="
-                text-align:center;
-                color:#00d447;
-                font-size:13px;
-                font-weight:800;
-                margin-top:8px;
-            "
-        >
-            Read Review →
-        </div>
+    <!-- Review -->
+    <div class="review-card-text">
 
-    </a>
+        {% if log.review|length > 140 %}
+            “{{ log.review|slice:":140" }}...”
+        {% else %}
+            “{{ log.review }}”
+        {% endif %}
+
+    </div>
+
+
+    <!-- Link -->
+    <div class="review-card-link">
+        Read Review →
+    </div>
+
+</a>
 
     {% empty %}
 
@@ -389,6 +317,8 @@
     </div>
 
     {% endfor %}
+
+
 
 </div>
 
