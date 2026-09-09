@@ -181,7 +181,7 @@ def todays_games(request):
     all_games = list(
         Game.objects
         .filter(game_date=selected_date)
-        .order_by("id")
+        .order_by("game_start", "id")
     )
 
     # ---------------------------------------------------------

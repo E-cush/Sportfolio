@@ -2,6 +2,9 @@ import hashlib
 import requests
 import pandas as pd
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from reviews.models import Game
 
 
@@ -73,7 +76,41 @@ def update_nfl(start_date, end_date):
             else "Final"
         )
 
-        game_id = stable_game_id(game["game_id"])
+        # ========================================================
+        # KICKOFF TIME
+        # NFLVerse gametime is Eastern Time
+        # ========================================================
+
+        game_start = None
+
+        gameday = game.get("gameday")
+        gametime = game.get("gametime")
+
+        if (
+                not pd.isna(gameday)
+                and not pd.isna(gametime)
+        ):
+            try:
+
+                kickoff_string = (
+                    f"{gameday} {gametime}"
+                )
+
+                game_start = datetime.strptime(
+                    kickoff_string,
+                    "%Y-%m-%d %H:%M",
+                )
+
+                game_start = game_start.replace(
+                    tzinfo=ZoneInfo("America/New_York")
+                )
+
+            except (ValueError, TypeError):
+                game_start = None
+
+        game_id = stable_game_id(
+            game["game_id"]
+        )
 
         rows = Game.objects.filter(
             game_id=game_id,
@@ -85,6 +122,7 @@ def update_nfl(start_date, end_date):
             venue=game["stadium"],
             game_type=game_type,
             game_date=game["gameday"],
+            game_start=game_start,
         )
 
         updated += rows
@@ -125,6 +163,9 @@ def update_nfl(start_date, end_date):
     except Exception as e:
         print(f"Failed to retrieve NFL preseason: {e}")
         return
+
+    start_date_obj = pd.to_datetime(start_date).date()
+    end_date_obj = pd.to_datetime(end_date).date()
 
     for event in preseason_games:
 
@@ -184,6 +225,12 @@ def update_nfl(start_date, end_date):
             .tz_convert("America/New_York")
             .date()
         )
+
+        if (
+            game_date < start_date_obj
+            or game_date > end_date_obj
+        ):
+            continue
 
         venue = (
             competition.get("venue", {})
