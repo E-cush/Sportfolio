@@ -2,10 +2,13 @@ import hashlib
 import requests
 import pandas as pd
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from reviews.models import Game
+
+
+EASTERN = ZoneInfo("America/New_York")
 
 
 def stable_game_id(source_game_id):
@@ -20,252 +23,412 @@ def stable_game_id(source_game_id):
     ) & 0x7FFFFFFFFFFFFFFF
 
 
+def normalize_nfl_team(team):
+    """
+    Make ESPN abbreviations match the abbreviations
+    already stored in Sportfolio.
+    """
+
+    aliases = {
+        "WSH": "WAS",
+        "JAC": "JAX",
+        "LA": "LAR",
+    }
+
+    team = (team or "").upper()
+
+    return aliases.get(team, team)
+
+
 def update_nfl(start_date, end_date):
     print(f"Updating NFL ({start_date} → {end_date})...")
 
-    updated = 0
-    created = 0
+    updated_game_ids = set()
 
     # ============================================================
-    # NFLVERSE — REGULAR SEASON / PLAYOFFS
+    # NFLVERSE — SCHEDULE / KICKOFF TIMES
     # ============================================================
 
     try:
         df = pd.read_csv(
             "https://github.com/nflverse/nfldata/raw/master/data/games.csv"
         )
+
     except Exception as e:
         print(f"Failed to retrieve NFL schedule: {e}")
-        return
+        df = pd.DataFrame()
 
-    df = df[
-        (df["season"] == 2026) &
-        (df["game_type"] != "PRE") &
-        (df["gameday"] >= start_date) &
-        (df["gameday"] <= end_date)
-    ]
+    if not df.empty:
 
-    for _, game in df.iterrows():
+        df = df[
+            (df["season"] == 2026) &
+            (df["game_type"] != "PRE") &
+            (df["gameday"] >= start_date) &
+            (df["gameday"] <= end_date)
+        ]
 
-        game_type = {
-            "REG": "Regular Season",
-            "WC": "Wild Card",
-            "DIV": "Divisional",
-            "CON": "Conference Championship",
-            "SB": "Super Bowl",
-        }.get(
-            game["game_type"],
-            game["game_type"],
-        )
+        for _, game in df.iterrows():
 
-        home_score = (
-            0
-            if pd.isna(game["home_score"])
-            else int(game["home_score"])
-        )
+            game_type = {
+                "REG": "Regular Season",
+                "WC": "Wild Card",
+                "DIV": "Divisional",
+                "CON": "Conference Championship",
+                "SB": "Super Bowl",
+            }.get(
+                game["game_type"],
+                game["game_type"],
+            )
 
-        away_score = (
-            0
-            if pd.isna(game["away_score"])
-            else int(game["away_score"])
-        )
+            home_score = (
+                0
+                if pd.isna(game["home_score"])
+                else int(game["home_score"])
+            )
 
-        status = (
-            "Scheduled"
-            if pd.isna(game["home_score"])
-            else "Final"
-        )
+            away_score = (
+                0
+                if pd.isna(game["away_score"])
+                else int(game["away_score"])
+            )
 
-        # ========================================================
-        # KICKOFF TIME
-        # NFLVerse gametime is Eastern Time
-        # ========================================================
+            status = (
+                "Scheduled"
+                if pd.isna(game["home_score"])
+                else "Final"
+            )
 
-        game_start = None
+            # ====================================================
+            # KICKOFF TIME
+            # NFLVerse gametime is Eastern Time
+            # ====================================================
 
-        gameday = game.get("gameday")
-        gametime = game.get("gametime")
+            game_start = None
 
-        if (
+            gameday = game.get("gameday")
+            gametime = game.get("gametime")
+
+            if (
                 not pd.isna(gameday)
                 and not pd.isna(gametime)
-        ):
-            try:
+            ):
+                try:
 
-                kickoff_string = (
-                    f"{gameday} {gametime}"
+                    kickoff_string = (
+                        f"{gameday} {gametime}"
+                    )
+
+                    game_start = datetime.strptime(
+                        kickoff_string,
+                        "%Y-%m-%d %H:%M",
+                    )
+
+                    game_start = game_start.replace(
+                        tzinfo=EASTERN
+                    )
+
+                except (ValueError, TypeError):
+                    game_start = None
+
+            game_id = stable_game_id(
+                game["game_id"]
+            )
+
+            queryset = Game.objects.filter(
+                game_id=game_id,
+                league="NFL",
+            )
+
+            ids = list(
+                queryset.values_list(
+                    "id",
+                    flat=True,
                 )
+            )
 
-                game_start = datetime.strptime(
-                    kickoff_string,
-                    "%Y-%m-%d %H:%M",
-                )
+            queryset.update(
+                status=status,
+                home_score=home_score,
+                away_score=away_score,
+                venue=(
+                    ""
+                    if pd.isna(game["stadium"])
+                    else game["stadium"]
+                ),
+                game_type=game_type,
+                game_date=game["gameday"],
+                game_start=game_start,
+            )
 
-                game_start = game_start.replace(
-                    tzinfo=ZoneInfo("America/New_York")
-                )
-
-            except (ValueError, TypeError):
-                game_start = None
-
-        game_id = stable_game_id(
-            game["game_id"]
-        )
-
-        rows = Game.objects.filter(
-            game_id=game_id,
-            league="NFL",
-        ).update(
-            status=status,
-            home_score=home_score,
-            away_score=away_score,
-            venue=game["stadium"],
-            game_type=game_type,
-            game_date=game["gameday"],
-            game_start=game_start,
-        )
-
-        updated += rows
+            updated_game_ids.update(ids)
 
     # ============================================================
-    # ESPN — PRESEASON
+    # ESPN — LIVE SCORES / STATUS / PRESEASON / PLAYOFFS
+    #
+    # This section runs AFTER NFLVerse so ESPN gets the final say
+    # on live score and live status.
     # ============================================================
 
-    preseason_url = (
+    espn_url = (
         "https://site.api.espn.com/apis/site/v2/sports/"
         "football/nfl/scoreboard"
     )
 
-    preseason_games = []
+    start_date_obj = pd.to_datetime(
+        start_date
+    ).date()
 
-    try:
+    end_date_obj = pd.to_datetime(
+        end_date
+    ).date()
 
-        for week in range(1, 5):
+    current_date = start_date_obj
+
+    while current_date <= end_date_obj:
+
+        try:
 
             response = requests.get(
-                preseason_url,
+                espn_url,
                 params={
-                    "dates": "2026",
-                    "seasontype": 1,
-                    "week": week,
+                    "dates": current_date.strftime(
+                        "%Y%m%d"
+                    ),
+                    "limit": 100,
                 },
                 timeout=30,
             )
 
             response.raise_for_status()
 
-            week_data = response.json()
+            data = response.json()
 
-            preseason_games.extend(
-                week_data.get("events", [])
+        except Exception as e:
+
+            print(
+                f"Failed to retrieve ESPN NFL data "
+                f"for {current_date}: {e}"
             )
 
-    except Exception as e:
-        print(f"Failed to retrieve NFL preseason: {e}")
-        return
-
-    start_date_obj = pd.to_datetime(start_date).date()
-    end_date_obj = pd.to_datetime(end_date).date()
-
-    for event in preseason_games:
-
-        season_info = event.get("season", {})
-
-        if isinstance(season_info, dict):
-
-            season_type = season_info.get("type", "")
-
-            if isinstance(season_type, dict):
-                event_season_type = str(
-                    season_type.get("id", "")
-                )
-            else:
-                event_season_type = str(
-                    season_type
-                )
-
-        else:
-            event_season_type = ""
-
-        if event_season_type != "1":
+            current_date += timedelta(days=1)
             continue
 
-        competition = event["competitions"][0]
+        events = data.get("events", [])
 
-        home_team = None
-        away_team = None
+        for event in events:
 
-        home_score = 0
-        away_score = 0
+            competitions = event.get(
+                "competitions",
+                [],
+            )
 
-        for competitor in competition["competitors"]:
+            if not competitions:
+                continue
 
-            team = competitor["team"]["abbreviation"]
+            competition = competitions[0]
 
-            score = competitor.get("score", 0)
+            home_team = None
+            away_team = None
 
-            if competitor["homeAway"] == "home":
-                home_team = team
+            home_score = 0
+            away_score = 0
+
+            # ====================================================
+            # TEAMS + LIVE SCORES
+            # ====================================================
+
+            for competitor in competition.get(
+                "competitors",
+                [],
+            ):
+
+                team_data = competitor.get(
+                    "team",
+                    {},
+                )
+
+                team = normalize_nfl_team(
+                    team_data.get(
+                        "abbreviation",
+                        "",
+                    )
+                )
+
+                score = competitor.get(
+                    "score",
+                    0,
+                )
 
                 try:
-                    home_score = int(score)
+                    score = int(score)
                 except (TypeError, ValueError):
-                    home_score = 0
+                    score = 0
+
+                if competitor.get(
+                    "homeAway"
+                ) == "home":
+
+                    home_team = team
+                    home_score = score
+
+                elif competitor.get(
+                    "homeAway"
+                ) == "away":
+
+                    away_team = team
+                    away_score = score
+
+            if not home_team or not away_team:
+                continue
+
+            # ====================================================
+            # GAME START + EASTERN DATE
+            # ====================================================
+
+            game_start = None
+            game_date = current_date
+
+            event_date = event.get("date")
+
+            if event_date:
+
+                try:
+
+                    game_start = datetime.fromisoformat(
+                        event_date.replace(
+                            "Z",
+                            "+00:00",
+                        )
+                    )
+
+                    game_start = (
+                        game_start.astimezone(
+                            EASTERN
+                        )
+                    )
+
+                    game_date = game_start.date()
+
+                except (
+                    ValueError,
+                    TypeError,
+                ):
+                    game_start = None
+
+            if (
+                game_date < start_date_obj
+                or game_date > end_date_obj
+            ):
+                continue
+
+            # ====================================================
+            # ESPN LIVE STATUS
+            # ====================================================
+
+            status_type = (
+                competition
+                .get("status", {})
+                .get("type", {})
+            )
+
+            completed = status_type.get(
+                "completed",
+                False,
+            )
+
+            state = str(
+                status_type.get(
+                    "state",
+                    "",
+                )
+            ).lower()
+
+            detail = (
+                status_type.get("shortDetail")
+                or status_type.get("detail")
+                or ""
+            )
+
+            if completed:
+                status = "Final"
+
+            elif state == "in":
+                status = (
+                    detail
+                    if detail
+                    else "In Progress"
+                )
 
             else:
-                away_team = team
+                status = "Scheduled"
 
-                try:
-                    away_score = int(score)
-                except (TypeError, ValueError):
-                    away_score = 0
+            # ====================================================
+            # VENUE
+            # ====================================================
 
-        game_date = (
-            pd.to_datetime(event["date"])
-            .tz_convert("America/New_York")
-            .date()
-        )
+            venue = (
+                competition
+                .get("venue", {})
+                .get("fullName", "")
+            )
 
-        if (
-            game_date < start_date_obj
-            or game_date > end_date_obj
-        ):
-            continue
+            # ====================================================
+            # FIND EXISTING SPORTFOLIO GAME
+            #
+            # Regular-season games use NFLVerse IDs,
+            # while ESPN has its own IDs.
+            #
+            # Matching by date + teams lets ESPN update the
+            # SAME database record rather than creating duplicates.
+            # ====================================================
 
-        venue = (
-            competition.get("venue", {})
-            .get("fullName", "")
-        )
+            queryset = Game.objects.filter(
+                league="NFL",
+                game_date=game_date,
+                home_team=home_team,
+                away_team=away_team,
+            )
 
-        completed = (
-            competition
-            .get("status", {})
-            .get("type", {})
-            .get("completed", False)
-        )
+            # ----------------------------------------------------
+            # Preseason fallback
+            # Existing preseason games may use ESPN_PRE IDs.
+            # ----------------------------------------------------
 
-        status = (
-            "Final"
-            if completed
-            else "Scheduled"
-        )
+            if not queryset.exists():
 
-        game_id = stable_game_id(
-            f"ESPN_PRE_{event['id']}"
-        )
+                espn_pre_id = stable_game_id(
+                    f"ESPN_PRE_{event.get('id')}"
+                )
 
-        rows = Game.objects.filter(
-            game_id=game_id,
-            league="NFL",
-        ).update(
-            status=status,
-            home_score=home_score,
-            away_score=away_score,
-            venue=venue,
-            game_type="Preseason",
-            game_date=game_date,
-        )
+                queryset = Game.objects.filter(
+                    league="NFL",
+                    game_id=espn_pre_id,
+                )
 
-        updated += rows
+            ids = list(
+                queryset.values_list(
+                    "id",
+                    flat=True,
+                )
+            )
 
-    print(f"Updated {updated} NFL games.")
+            if not ids:
+                continue
+
+            queryset.update(
+                status=status,
+                home_score=home_score,
+                away_score=away_score,
+                venue=venue,
+                game_start=game_start,
+            )
+
+            updated_game_ids.update(ids)
+
+        current_date += timedelta(days=1)
+
+    print(
+        f"Updated "
+        f"{len(updated_game_ids)} "
+        f"NFL games."
+    )
