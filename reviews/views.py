@@ -40,11 +40,18 @@ def home(request):
     # TODAY'S GAMES
     # ---------------------------------------------------------
 
-    today_games = (
-        Game.objects
-        .filter(game_date=today)
-        .order_by("game_start", "id")[:4]
-    )
+    # Prioritize NFL games on days when NFL is being played
+    nfl_games_today = Game.objects.filter(
+        league="NFL",
+        game_date=today
+    ).order_by("game_start", "id")[:4]
+
+    if nfl_games_today.exists():
+        today_games = nfl_games_today
+    else:
+        today_games = Game.objects.filter(
+            game_date=today
+        ).order_by("id")[:4]
 
     # ---------------------------------------------------------
     # RECENT COMMUNITY REVIEWS
